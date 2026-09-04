@@ -1,0 +1,70 @@
+@import "tailwindcss";
+
+@theme {
+  --color-surface-container: #e6eeff;
+  --color-tertiary-fixed-dim: #b4c5ff;
+  --color-error: #ba1a1a;
+  --color-surface-container-lowest: #ffffff;
+  --color-inverse-surface: #27313f;
+  --color-outline-variant: #c0c9be;
+  --color-on-secondary-fixed-variant: #6e3900;
+  --color-primary-fixed: #b1f2be;
+  --color-secondary-fixed-dim: #ffb77d;
+  --color-on-error: #ffffff;
+  --color-tertiary-container: #003fab;
+  --color-secondary: #904d00;
+  --color-on-primary-fixed: #00210d;
+  --color-on-tertiary-fixed: #00174b;
+  --color-primary: #003b1b;
+  --color-surface-bright: #f8f9ff;
+  --color-on-tertiary: #ffffff;
+  --color-error-container: #ffdad6;
+  --color-on-primary: #ffffff;
+  --color-on-secondary-fixed: #2f1500;
+  --color-on-secondary: #ffffff;
+  --color-on-primary-container: #87c695;
+  --color-outline: #717970;
+  --color-on-error-container: #93000a;
+  --color-surface-dim: #d0dbed;
+  --color-surface-variant: #d9e3f6;
+  --color-on-background: #121c2a;
+  --color-secondary-container: #fe932c;
+  --color-inverse-on-surface: #eaf1ff;
+  --color-tertiary: #002b7b;
+  --color-surface-tint: #2e6a41;
+  --color-on-surface: #121c2a;
+  --color-primary-container: #14532d;
+  --color-surface-container-high: #dee9fc;
+  --color-primary-fixed-dim: #96d5a3;
+  --color-on-primary-fixed-variant: #12512c;
+  --color-background: #f8f9ff;
+  --color-surface-container-highest: #d9e3f6;
+  --color-surface-container-low: #eff4ff;
+  --color-on-surface-variant: #404941;
+  --color-on-secondary-container: #663500;
+  --color-on-tertiary-container: #9eb5ff;
+  --color-on-tertiary-fixed-variant: #003ea8;
+  --color-surface: #f8f9ff;
+  --color-secondary-fixed: #ffdcc3;
+  --color-tertiary-fixed: #dbe1ff;
+  --color-inverse-primary: #96d5a3;
+}
+
+:root {
+  --font-public-sans: 'Public Sans', sans-serif;
+}
+
+body {
+  font-family: var(--font-public-sans);
+  background-color: #f8f9ff;
+  color: #121c2a;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

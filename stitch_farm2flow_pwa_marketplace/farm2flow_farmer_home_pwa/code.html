@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Farm2Flow - Direct Agricultural Platform</title>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Public Sans Typography -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS v3 -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "surface-container": "#e6eeff",
+            "tertiary-fixed-dim": "#b4c5ff",
+            "error": "#ba1a1a",
+            "surface-container-lowest": "#ffffff",
+            "inverse-surface": "#27313f",
+            "outline-variant": "#c0c9be",
+            "on-secondary-fixed-variant": "#6e3900",
+            "primary-fixed": "#b1f2be",
+            "secondary-fixed-dim": "#ffb77d",
+            "on-error": "#ffffff",
+            "tertiary-container": "#003fab",
+            "secondary": "#904d00",
+            "on-primary-fixed": "#00210d",
+            "on-tertiary-fixed": "#00174b",
+            "primary": "#003b1b",
+            "surface-bright": "#f8f9ff",
+            "on-tertiary": "#ffffff",
+            "error-container": "#ffdad6",
+            "on-primary": "#ffffff",
+            "on-secondary-fixed": "#2f1500",
+            "on-secondary": "#ffffff",
+            "on-primary-container": "#87c695",
+            "outline": "#717970",
+            "on-error-container": "#93000a",
+            "surface-dim": "#d0dbed",
+            "surface-variant": "#d9e3f6",
+            "on-background": "#121c2a",
+            "secondary-container": "#fe932c",
+            "inverse-on-surface": "#eaf1ff",
+            "tertiary": "#002b7b",
+            "surface-tint": "#2e6a41",
+            "on-surface": "#121c2a",
+            "primary-container": "#14532d",
+            "surface-container-high": "#dee9fc",
+            "primary-fixed-dim": "#96d5a3",
+            "on-primary-fixed-variant": "#12512c",
+            "background": "#f8f9ff",
+            "surface-container-highest": "#d9e3f6",
+            "surface-container-low": "#eff4ff",
+            "on-surface-variant": "#404941",
+            "on-secondary-container": "#663500",
+            "on-tertiary-container": "#9eb5ff",
+            "on-tertiary-fixed-variant": "#003ea8",
+            "surface": "#f8f9ff",
+            "secondary-fixed": "#ffdcc3",
+            "tertiary-fixed": "#dbe1ff",
+            "inverse-primary": "#96d5a3"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "stack-xl": "2rem",
+            "stack-lg": "1.5rem",
+            "gutter-mobile": "1rem",
+            "gutter-desktop": "1.5rem",
+            "stack-sm": "0.5rem",
+            "stack-md": "1rem",
+            "touch-target-min": "3rem",
+            "stack-xs": "0.25rem",
+            "card-padding": "1rem"
+          },
+          "fontFamily": {
+            "currency-lg": ["Public Sans"],
+            "body-lg": ["Public Sans"],
+            "body-sm": ["Public Sans"],
+            "headline-lg": ["Public Sans"],
+            "label-lg": ["Public Sans"],
+            "currency-md": ["Public Sans"],
+            "body-md": ["Public Sans"],
+            "label-sm": ["Public Sans"],
+            "headline-sm": ["Public Sans"],
+            "display-lg": ["Public Sans"],
+            "label-md": ["Public Sans"],
+            "headline-md": ["Public Sans"],
+            "display-lg-mobile": ["Public Sans"]
+          },
+          "fontSize": {
+            "currency-lg": ["30px", { "lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+            "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "500" }],
+            "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "headline-lg": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+            "label-lg": ["15px", { "lineHeight": "20px", "fontWeight": "600" }],
+            "currency-md": ["22px", { "lineHeight": "28px", "fontWeight": "700" }],
+            "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+            "label-sm": ["11px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700" }],
+            "headline-sm": ["18px", { "lineHeight": "24px", "fontWeight": "600" }],
+            "display-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "label-md": ["13px", { "lineHeight": "18px", "letterSpacing": "0.02em", "fontWeight": "600" }],
+            "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+            "display-lg-mobile": ["26px", { "lineHeight": "34px", "letterSpacing": "-0.01em", "fontWeight": "700" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .material-symbols-outlined[data-weight="fill"] {
+      font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+    }
+    /* Hide scrollbar for category pills while maintaining fluid gestures */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+<body class="bg-surface text-on-surface antialiased min-h-screen pb-28">
+<!-- Mobile Viewport Wrapper (390px - 430px optimal target) -->
+<div class="max-w-[430px] mx-auto min-h-screen bg-surface flex flex-col relative shadow-sm">
+<!-- Offline Simulation Status Strip (Dismissible / Toggable) -->
+<div class="bg-secondary-fixed text-on-secondary-fixed-variant px-4 py-2 text-label-sm font-label-sm flex items-center justify-between transition-all" id="connection-banner">
+<div class="flex items-center gap-2">
+<span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-600 animate-pulse"></span>
+<span class="text-on-secondary-fixed font-bold" id="connection-text">PWA Online • Direct Sync to e-NAM Mandi Active</span>
+</div>
+<button class="text-label-sm font-label-sm underline text-secondary hover:text-on-secondary-fixed min-h-[32px] px-2 py-1 flex items-center" onclick="toggleOfflineSim()">
+        Test Offline
+      </button>
+</div>
+<!-- PWA Installation Sticky Prompt -->
+<div class="bg-surface-container-lowest border-b border-outline-variant px-4 py-2.5 flex items-center justify-between shadow-xs" id="install-banner">
+<div class="flex items-center gap-2.5">
+<div class="w-9 h-9 rounded-lg bg-primary-container text-on-primary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[20px]" data-icon="agriculture">agriculture</span>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface leading-tight">Install Farm2Flow PWA</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant text-[11px] leading-tight">Low 2G data &amp; offline price caching</p>
+</div>
+</div>
+<div class="flex items-center gap-1.5">
+<button class="bg-primary-container text-on-primary px-3 py-1.5 rounded-lg text-label-sm font-label-sm min-h-[36px] active:scale-95 transition-transform" onclick="alert('PWA installed successfully!')">
+          Install App
+        </button>
+<button aria-label="Close banner" class="text-on-surface-variant hover:text-on-surface w-8 h-8 flex items-center justify-center" onclick="document.getElementById('install-banner').style.display='none'">
+<span class="material-symbols-outlined text-[18px]" data-icon="close">close</span>
+</button>
+</div>
+</div>
+<!-- TopAppBar (from Shared Components JSON: docked full-width, shadow-sm, headline Farm2Flow) -->
+<header class="bg-surface dark:bg-inverse-surface shadow-sm border-b border-outline-variant dark:border-outline sticky top-0 z-40">
+<div class="flex justify-between items-center w-full px-4 h-14 max-w-xl mx-auto">
+<!-- Leading agriculture icon & Brand Name -->
+<div class="flex items-center gap-2.5">
+<div class="w-10 h-10 rounded-lg bg-primary-container text-primary-fixed flex items-center justify-center">
+<span class="material-symbols-outlined text-[24px]" data-icon="agriculture" data-weight="fill">agriculture</span>
+</div>
+<div class="flex flex-col">
+<span class="text-headline-sm font-headline-sm font-bold text-primary dark:text-primary-fixed leading-tight">Farm2Flow</span>
+<span class="text-[10px] font-label-sm text-on-surface-variant leading-none">From Farm to Market, Smarter</span>
+</div>
+</div>
+<!-- Trailing actions: Language Switcher & Notifications -->
+<div class="flex items-center gap-2">
+<!-- Multi-lingual quick switch -->
+<div class="bg-surface-container-high rounded-full p-0.5 flex text-label-sm font-label-sm border border-outline-variant">
+<button class="px-2 py-0.5 bg-primary-container text-on-primary rounded-full font-bold">EN</button>
+<button class="px-1.5 py-0.5 text-on-surface-variant hover:text-on-surface">বাংলা</button>
+<button class="px-1.5 py-0.5 text-on-surface-variant hover:text-on-surface">हिन्दी</button>
+</div>
+<!-- Trailing notification icon with unread badge -->
+<button aria-label="Notifications" class="relative w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-container active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-primary dark:text-primary-fixed text-[24px]" data-icon="notifications">notifications</span>
+<span class="absolute top-2 right-2 w-2.5 h-2.5 bg-error rounded-full ring-2 ring-surface"></span>
+</button>
+</div>
+</div>
+</header>
+<!-- Sub-Header: Location & Weather strip -->
+<section class="bg-surface-container-low px-4 py-2 flex items-center justify-between border-b border-outline-variant">
+<div class="flex items-center gap-1 text-on-surface-variant font-label-md text-label-md">
+<span class="material-symbols-outlined text-[18px] text-secondary" data-icon="location_on" data-weight="fill">location_on</span>
+<span class="font-bold text-on-surface">Hooghly, West Bengal</span>
+</div>
+<div class="flex items-center gap-1.5 text-label-sm font-label-sm text-primary-container bg-surface-container-lowest px-2.5 py-1 rounded-full border border-outline-variant">
+<span class="material-symbols-outlined text-[14px] text-secondary" data-icon="partly_cloudy_day">partly_cloudy_day</span>
+<span>Ideal harvest • Mandi Open</span>
+</div>
+</section>
+<!-- Main Content Container with strict 16px gutter -->
+<main class="p-4 flex flex-col gap-4">
+<!-- Farmer Welcome Profile Bar -->
+<div class="flex items-center justify-between bg-surface-container-lowest p-3.5 rounded-xl border border-outline-variant shadow-xs">
+<div class="flex items-center gap-3">
+<div class="relative">
+<img class="w-12 h-12 rounded-full object-cover ring-2 ring-primary-fixed-dim" data-alt="A portrait of a hardworking Indian farmer named Ramesh standing proudly in his green sunlit vegetable field in West Bengal, wearing a crisp cotton kurta with soft natural golden morning light, styled in an authentic documentary photographic aesthetic with grounded earth tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCLQNLtnm9_bmMqToA1RQG3uAR0wlHjpr71XYRPQvmU_lw-FObKaoG5Ha4femqoO6PiS9_O-btFTzTJSocJ5fYPzoEhREnQtanF4LwazbvDWoyz4UFrzUKlESWDr5h8_DoAEBxuUWFPgN7zUDBIEQv38bLqFcOkw6dBvbY_QVzzMxSfWyrVaF4Hcjz0eaKezN77jmrhfVvKCF9evShE1AyW9icZ-XFIEpmOKPE33Ej6pZi_w_TR0pS-Xw"/>
+<div class="absolute -bottom-1 -right-1 bg-primary-container text-on-primary rounded-full w-5 h-5 flex items-center justify-center text-[10px] ring-1 ring-surface">
+              ✓
+            </div>
+</div>
+<div>
+<div class="flex items-center gap-1.5">
+<h1 class="text-headline-md font-headline-md text-on-surface font-bold">Ramesh Ghosh</h1>
+</div>
+<span class="inline-flex items-center gap-1 text-label-sm font-label-sm text-primary-container font-bold bg-primary-fixed px-2 py-0.5 rounded-md mt-0.5">
+<span class="material-symbols-outlined text-[12px]" data-icon="verified" data-weight="fill">verified</span>
+              NABARD / e-NAM Verified Farmer
+            </span>
+</div>
+</div>
+<button aria-label="Change field lot" class="h-10 px-3 bg-surface-container-high rounded-lg text-label-md font-label-md text-on-surface hover:bg-surface-variant flex items-center gap-1 active:scale-95 transition-transform">
+<span>Lot #4</span>
+<span class="material-symbols-outlined text-[16px]" data-icon="expand_more">expand_more</span>
+</button>
+</div>
+<!-- Quick Interactive Demo Journey Switcher (SIH 2026 Presentation Flow) -->
+<div class="overflow-x-auto no-scrollbar -mx-4 px-4 flex items-center gap-2 py-1">
+<a class="shrink-0 h-11 px-3.5 bg-primary-container text-on-primary rounded-full text-label-md font-label-md flex items-center gap-1.5 shadow-sm active:scale-95 transition-transform" href="#hero-opportunity">
+<span class="material-symbols-outlined text-[18px]" data-icon="add_circle">add_circle</span>
+<span>Sell Crop (Wizard)</span>
+</a>
+<a class="shrink-0 h-11 px-3.5 bg-surface-container-lowest text-on-surface border border-outline-variant rounded-full text-label-md font-label-md flex items-center gap-1.5 active:scale-95 transition-transform" href="#active-listing">
+<span class="material-symbols-outlined text-[18px] text-secondary" data-icon="handshake">handshake</span>
+<span>Smart Matching (2,000kg)</span>
+</a>
+<a class="shrink-0 h-11 px-3.5 bg-surface-container-lowest text-on-surface border border-outline-variant rounded-full text-label-md font-label-md flex items-center gap-1.5 active:scale-95 transition-transform" href="#ai-advice">
+<span class="material-symbols-outlined text-[18px] text-tertiary" data-icon="local_shipping">local_shipping</span>
+<span>Smart Route</span>
+</a>
+<a class="shrink-0 h-11 px-3.5 bg-surface-container-lowest text-on-surface border border-outline-variant rounded-full text-label-md font-label-md flex items-center gap-1.5 active:scale-95 transition-transform" href="#earnings-card">
+<span class="material-symbols-outlined text-[18px] text-primary" data-icon="payments">payments</span>
+<span>Earnings (+₹8,400)</span>
+</a>
+</div>
+<!-- PRIMARY HERO CARD: Today's Market Opportunity (Bento Highlight) -->
+<section class="bg-surface-container-lowest rounded-xl border-2 border-primary-container p-4 shadow-sm relative overflow-hidden" id="hero-opportunity">
+<!-- Top Demand Tag -->
+<div class="flex items-center justify-between pb-3 border-b border-outline-variant">
+<div class="flex items-center gap-1.5">
+<span class="w-2.5 h-2.5 rounded-full bg-secondary-container animate-ping"></span>
+<span class="text-label-md font-label-md text-secondary font-bold uppercase tracking-wider">🌟 High Demand Today</span>
+</div>
+<span class="bg-emerald-100 text-primary-container px-2.5 py-0.5 rounded-full text-label-sm font-label-sm font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" data-icon="trending_up">trending_up</span>
+            +18% Demand
+          </span>
+</div>
+<div class="pt-3.5 flex items-start justify-between gap-2">
+<div>
+<div class="flex items-center gap-2">
+<span class="text-2xl">🍅</span>
+<div>
+<h2 class="text-headline-lg font-headline-lg text-on-surface font-extrabold leading-tight">Tomato (Grade A)</h2>
+<p class="text-body-sm font-body-sm text-on-surface-variant">Hybrid Red • Firm harvest ready</p>
+</div>
+</div>
+</div>
+<div class="text-right">
+<span class="text-label-sm font-label-sm text-on-surface-variant">Expected Mandi Rate</span>
+<p class="text-currency-lg font-currency-lg text-primary-container leading-none font-bold">₹30<span class="text-headline-sm font-headline-sm text-on-surface-variant font-normal"> / kg</span></p>
+<span class="text-label-sm font-label-sm text-secondary font-semibold">Range: ₹28 – ₹32</span>
+</div>
+</div>
+<!-- Metric badges row -->
+<div class="grid grid-cols-2 gap-2 my-3.5 bg-surface-container-low p-2.5 rounded-lg border border-outline-variant">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded bg-surface-container-lowest flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]" data-icon="storefront">storefront</span>
+</div>
+<div>
+<p class="text-label-sm font-label-sm text-on-surface-variant leading-none">Top Market</p>
+<p class="text-label-md font-label-md text-on-surface font-bold">Kolkata (42 km)</p>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded bg-surface-container-lowest flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[20px]" data-icon="group">group</span>
+</div>
+<div>
+<p class="text-label-sm font-label-sm text-on-surface-variant leading-none">Active Buyers</p>
+<p class="text-label-md font-label-md text-on-surface font-bold">14 Verified Aggregators</p>
+</div>
+</div>
+</div>
+<!-- Primary Action Touch Target >= 52px -->
+<button class="w-full h-[52px] bg-primary-container hover:bg-primary text-on-primary rounded-lg font-label-lg text-label-lg font-bold flex items-center justify-center gap-2 shadow-sm active:scale-[0.98] transition-all">
+<span>View Opportunity &amp; Buyers</span>
+<span class="material-symbols-outlined text-[20px]" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</section>
+<!-- FARMER'S ACTIVE PRODUCE CARD (Listing Status) -->
+<section class="bg-surface-container-lowest rounded-xl border border-outline-variant p-4 shadow-xs" id="active-listing">
+<div class="flex items-center justify-between mb-2">
+<h3 class="text-headline-sm font-headline-sm text-on-surface font-bold">Your Listed Produce</h3>
+<span class="px-2.5 py-1 bg-primary-fixed text-on-primary-fixed text-label-sm font-label-sm rounded-full font-bold flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-primary-container"></span>
+            Listed &amp; Active
+          </span>
+</div>
+<div class="flex items-center gap-3 py-2">
+<div class="w-14 h-14 rounded-lg bg-surface-container-low flex items-center justify-center text-3xl border border-outline-variant shrink-0">
+            🍅
+          </div>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<div>
+<h4 class="text-headline-sm font-headline-sm font-bold text-on-surface">Tomato • 800 kg</h4>
+<p class="text-body-sm font-body-sm text-on-surface-variant">Batch #WB-HG-902 • Graded</p>
+</div>
+<div class="text-right">
+<span class="text-headline-md font-headline-md text-primary-container font-extrabold">₹24,000</span>
+<p class="text-label-sm font-label-sm text-on-surface-variant">Est. Realization</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Live Buyer Interest Notification -->
+<div class="bg-amber-50 border border-secondary-fixed-dim rounded-lg p-2.5 my-2 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[20px]" data-icon="visibility">visibility</span>
+<span class="text-label-md font-label-md text-on-secondary-fixed-variant">
+<strong>3 bulk buyers</strong> reviewed your harvest lot
+            </span>
+</div>
+<span class="text-label-sm font-label-sm text-secondary font-bold">2 mins ago</span>
+</div>
+<!-- Manage CTA (Min height 48px) -->
+<div class="grid grid-cols-2 gap-2 mt-3 pt-2 border-t border-outline-variant">
+<button class="h-12 bg-surface-container-high text-on-surface rounded-lg font-label-md text-label-md font-bold flex items-center justify-center gap-1 hover:bg-surface-variant active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-[18px]" data-icon="edit_note">edit_note</span>
+<span>Manage Listing</span>
+</button>
+<button class="h-12 bg-secondary text-on-secondary rounded-lg font-label-md text-label-md font-bold flex items-center justify-center gap-1 hover:bg-on-secondary-fixed-variant active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-[18px]" data-icon="handshake">handshake</span>
+<span>Review 2 Bids</span>
+</button>
+</div>
+</section>
+<!-- TODAY'S SMART AI ADVICE (Agritech Intelligence Banner) -->
+<section class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-200 p-4 relative shadow-xs" id="ai-advice">
+<div class="flex items-center justify-between mb-2">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-tertiary-container text-on-tertiary flex items-center justify-center shadow-xs">
+<span class="material-symbols-outlined text-[20px]" data-icon="smart_toy">smart_toy</span>
+</div>
+<span class="text-label-lg font-label-lg text-tertiary font-bold">Today's Smart AI Advice</span>
+</div>
+<span class="bg-white text-tertiary text-label-sm font-label-sm px-2 py-0.5 rounded-full border border-blue-200 font-bold">
+            87% Confidence
+          </span>
+</div>
+<p class="text-body-md font-body-md text-on-surface italic mt-1 leading-relaxed">
+          “Tomato demand is rising <strong class="text-primary-container font-bold">+21%</strong> across Kolkata &amp; Howrah wholesale mandis. Consider listing your remaining harvest before Thursday morning for maximum price realization.”
+        </p>
+<a class="inline-flex items-center gap-1.5 text-label-md font-label-md font-bold text-tertiary hover:underline mt-3 pt-2 border-t border-blue-200 w-full justify-between" href="#mandi-forecast">
+<span>See Mandi 7-Day Forecast &amp; Price Curve</span>
+<span class="material-symbols-outlined text-[18px]" data-icon="trending_up">trending_up</span>
+</a>
+</section>
+<!-- FARMER EARNINGS SNAPSHOT & DIRECT BENEFIT -->
+<section class="bg-surface-container-lowest rounded-xl border border-outline-variant p-4 shadow-xs" id="earnings-card">
+<div class="flex items-center justify-between mb-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[24px]" data-icon="account_balance_wallet" data-weight="fill">account_balance_wallet</span>
+<h3 class="text-headline-sm font-headline-sm font-bold text-on-surface">Monthly Earnings</h3>
+</div>
+<span class="text-label-sm font-label-sm text-on-surface-variant">Nov 2024</span>
+</div>
+<div class="bg-surface-container-low p-3.5 rounded-xl border border-outline-variant flex items-center justify-between">
+<div>
+<span class="text-label-md font-label-md text-on-surface-variant">This Month's Realization</span>
+<p class="text-currency-lg font-currency-lg text-primary-container font-extrabold leading-tight">₹56,600</p>
+</div>
+<div class="text-right">
+<div class="inline-flex items-center gap-1 bg-emerald-100 text-primary-container px-2.5 py-1 rounded-lg text-label-sm font-label-sm font-bold">
+<span>+₹8,400</span>
+<span class="material-symbols-outlined text-[14px]" data-icon="arrow_upward">arrow_upward</span>
+</div>
+<p class="text-[11px] font-label-sm text-on-surface-variant mt-1">vs middlemen cut</p>
+</div>
+</div>
+<!-- Trust Anchor Badges -->
+<div class="grid grid-cols-2 gap-2 mt-3 pt-2 border-t border-outline-variant text-[12px] font-label-md text-on-surface-variant">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-[18px]" data-icon="security" data-weight="fill">security</span>
+<span>Escrow Protected (NABARD)</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-secondary text-[18px]" data-icon="speed">speed</span>
+<span>Instant T+0 Bank Credit</span>
+</div>
+</div>
+</section>
+<!-- Quick Crop Catalog Quick-Add Stepper Row -->
+<section class="bg-surface-container-lowest rounded-xl border border-outline-variant p-4">
+<h3 class="text-headline-sm font-headline-sm font-bold text-on-surface mb-2">Popular Mandi Commodities</h3>
+<div class="grid grid-cols-3 gap-2">
+<div class="p-2.5 bg-surface-container-low rounded-lg border border-outline-variant text-center">
+<span class="text-2xl block mb-1">🥔</span>
+<span class="text-label-md font-label-md font-bold text-on-surface block">Potato</span>
+<span class="text-label-sm font-label-sm text-primary-container font-bold">₹19/kg</span>
+</div>
+<div class="p-2.5 bg-surface-container-low rounded-lg border border-outline-variant text-center">
+<span class="text-2xl block mb-1">🧅</span>
+<span class="text-label-md font-label-md font-bold text-on-surface block">Onion</span>
+<span class="text-label-sm font-label-sm text-primary-container font-bold">₹42/kg</span>
+</div>
+<div class="p-2.5 bg-surface-container-low rounded-lg border border-outline-variant text-center">
+<span class="text-2xl block mb-1">🌾</span>
+<span class="text-label-md font-label-md font-bold text-on-surface block">Rice (Paddy)</span>
+<span class="text-label-sm font-label-sm text-primary-container font-bold">₹2,300/Q</span>
+</div>
+</div>
+</section>
+</main>
+<!-- FLOATING VOICE ASSISTANT ACTION BUTTON (Contextual FAB for Indian Farmers) -->
+<div class="fixed bottom-20 right-4 z-40">
+<button aria-label="Voice Assistant in Local Language" class="h-14 px-4 bg-secondary text-on-secondary rounded-full shadow-lg flex items-center gap-2 border-2 border-secondary-fixed active:scale-95 transition-all hover:bg-on-secondary-fixed-variant" onclick="simulateVoiceInput()">
+<span class="material-symbols-outlined text-[24px] animate-bounce" data-icon="mic" data-weight="fill">mic</span>
+<span class="text-label-md font-label-md font-bold pr-1">Bolye / बोलिये</span>
+</button>
+</div>
+<!-- BottomNavBar (from Shared Components JSON: docked bottom-0, shadow-lg, 5 tabs: Home, Market, Sell, Orders, Profile) -->
+<!-- Home is ACTIVE: style_active_navigation="flex flex-col items-center justify-center bg-primary-container dark:bg-primary-container text-on-primary-container dark:text-primary-fixed rounded-xl px-3 py-1.5 min-h-[48px]" -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-2 py-1 max-w-xl mx-auto bg-surface dark:bg-inverse-surface border-t border-outline-variant dark:border-outline shadow-lg">
+<!-- Home (ACTIVE - Intent mapped to Home Screen) -->
+<a class="flex flex-col items-center justify-center bg-primary-container dark:bg-primary-container text-on-primary-container dark:text-primary-fixed rounded-xl px-3 py-1.5 min-h-[48px] active:scale-95 transition-transform" href="#home">
+<span class="material-symbols-outlined text-[22px]" data-icon="home" data-weight="fill">home</span>
+<span class="text-label-sm font-label-sm font-bold text-white">Home</span>
+</a>
+<!-- Market (INACTIVE) -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-3 py-1.5 min-h-[48px] hover:bg-surface-container-high dark:hover:bg-surface-variant active:scale-95 transition-transform" href="#market">
+<span class="material-symbols-outlined text-[22px]" data-icon="storefront">storefront</span>
+<span class="text-label-sm font-label-sm">Market</span>
+</a>
+<!-- Sell (INACTIVE - Prominent Action) -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-3 py-1.5 min-h-[48px] hover:bg-surface-container-high dark:hover:bg-surface-variant active:scale-95 transition-transform" href="#sell">
+<div class="w-8 h-8 rounded-full bg-secondary-container text-on-secondary flex items-center justify-center shadow-xs -mt-2">
+<span class="material-symbols-outlined text-[22px]" data-icon="add_circle">add_circle</span>
+</div>
+<span class="text-label-sm font-label-sm font-bold text-secondary">Sell</span>
+</a>
+<!-- Orders (INACTIVE) -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-3 py-1.5 min-h-[48px] hover:bg-surface-container-high dark:hover:bg-surface-variant active:scale-95 transition-transform" href="#orders">
+<span class="material-symbols-outlined text-[22px]" data-icon="local_shipping">local_shipping</span>
+<span class="text-label-sm font-label-sm">Orders</span>
+</a>
+<!-- Profile (INACTIVE) -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-3 py-1.5 min-h-[48px] hover:bg-surface-container-high dark:hover:bg-surface-variant active:scale-95 transition-transform" href="#profile">
+<span class="material-symbols-outlined text-[22px]" data-icon="person">person</span>
+<span class="text-label-sm font-label-sm">Profile</span>
+</a>
+</nav>
+</div>
+<!-- Micro-interactions Script for SIH 2026 Demonstration -->
+<script>
+    let isOffline = false;
+    function toggleOfflineSim() {
+      const banner = document.getElementById('connection-banner');
+      const text = document.getElementById('connection-text');
+      isOffline = !isOffline;
+
+      if (isOffline) {
+        banner.classList.remove('bg-secondary-fixed', 'text-on-secondary-fixed-variant');
+        banner.classList.add('bg-error-container', 'text-on-error-container');
+        text.innerHTML = '⚠️ Offline Mode (2G Interrupted) — Local Cache Active. Sync queued.';
+      } else {
+        banner.classList.remove('bg-error-container', 'text-on-error-container');
+        banner.classList.add('bg-secondary-fixed', 'text-on-secondary-fixed-variant');
+        text.innerHTML = 'PWA Online • Direct Sync to e-NAM Mandi Active';
+      }
+    }
+
+    function simulateVoiceInput() {
+      alert("🎙️ 'Bolye Ramesh-ji' (Listening in Bengali/Hindi/English): Say 'Tomato rate today' or 'Sell 500kg potato'");
+    }
+  </script>
+</body></html>

@@ -1,0 +1,11 @@
+@import "tailwindcss";
+
+:root {
+  --font-public-sans: 'Public Sans', sans-serif;
+}
+
+body {
+  font-family: var(--font-public-sans);
+  background-color: #f8f9ff;
+  color: #121c2a;
+}
