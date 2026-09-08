@@ -1,499 +1,459 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { getStoredProduce, getDemandForecast, getPriceEstimate, getLogisticsOptimization, getImpactMetrics, getOrders, saveProduce } from '@/services/api';
-import { Produce, Order } from '@/types';
-import { PredefinedHelpModal } from '@/components/PredefinedHelpModal';
-import { ListProduceWizard } from '@/components/ListProduceWizard';
-import { BuyerSmartMatchModal } from '@/components/BuyerSmartMatchModal';
+import React, { useState } from 'react';
+import { initialProduceList, mockLogisticsData, initialOrders } from '@/data/mockData';
 
-export default function Farm2FlowApp() {
-  // Navigation & Role States
-  const [role, setRole] = useState<'farmer' | 'buyer' | 'admin'>('farmer');
-  const [language, setLanguage] = useState<'EN' | 'BN' | 'HI'>('EN');
-  const [isOfflineSim, setIsOfflineSim] = useState(false);
-  const [offlineNotice, setOfflineNotice] = useState('');
+export default function RootAppPage() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [role, setRole] = useState<'farmer' | 'fpo' | 'buyer' | 'admin'>('farmer');
+  const [farmerTab, setFarmerTab] = useState<'home' | 'market' | 'sell' | 'orders' | 'profile'>('home');
+  const [buyerTab, setBuyerTab] = useState<'home' | 'browse' | 'buy' | 'orders'>('home');
+  const [produce, setProduce] = useState(initialProduceList);
+  const [orders, setOrders] = useState(initialOrders);
   
-  // App Data States
-  const [produceList, setProduceList] = useState<Produce[]>([]);
-  const [ordersList, setOrdersList] = useState<Order[]>([]);
-  const [selectedCrop, setSelectedCrop] = useState('Tomato');
-  
-  // Modal Visibility States
-  const [isHelpOpen, setIsHelpOpen] = useState(false);
-  const [isListWizardOpen, setIsListWizardOpen] = useState(false);
-  const [isSmartMatchOpen, setIsSmartMatchOpen] = useState(false);
-  const [isPwaInstalled, setIsPwaInstalled] = useState(false);
-  const [showPwaBanner, setShowPwaBanner] = useState(true);
+  // Modals
+  const [showWizard, setShowWizard] = useState(false);
+  const [showMatch, setShowMatch] = useState(false);
+  const [crop, setCrop] = useState('Tomato');
+  const [quantity, setQuantity] = useState(800);
+  const [price, setPrice] = useState(30);
 
-  // Active View Tab inside role
-  const [farmerTab, setFarmerTab] = useState<'dashboard' | 'listings' | 'earnings'>('dashboard');
+  // Buyer custom selection state: selected produce item IDs
+  const [selectedProduceIds, setSelectedProduceIds] = useState<string[]>(['prod-001', 'prod-002', 'prod-003', 'prod-004']);
 
-  useEffect(() => {
-    // Initial data hydration
-    setProduceList(getStoredProduce());
-    setOrdersList(getOrders());
+  const availableFarmersCount = new Set(produce.map(p => p.farmerId)).size;
+  const totalAvailableKg = produce.reduce((acc, p) => acc + p.quantityKg, 0);
 
-    // Service worker registration
-    if ('serviceWorker' in navigator && process.env.NODE_ENV === 'production') {
-      navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW reg error:', err));
-    }
-  }, []);
+  const getDistanceKm = (location: string) => {
+    if (location.includes('Singur')) return 18;
+    if (location.includes('Barasat')) return 24;
+    if (location.includes('Hooghly')) return 32;
+    if (location.includes('Tarakeswar')) return 45;
+    return 28;
+  };
 
-  const handleProduceCreated = (newProduce: Produce) => {
-    const updated = saveProduce(newProduce);
-    setProduceList(getStoredProduce());
-    if (isOfflineSim) {
-      setOfflineNotice("Saved. Will sync when you're back online.");
-      setTimeout(() => setOfflineNotice(''), 4000);
+  const toggleProduceSelection = (id: string) => {
+    if (selectedProduceIds.includes(id)) {
+      if (selectedProduceIds.length === 1) return; // keep at least 1 selected
+      setSelectedProduceIds(selectedProduceIds.filter(i => i !== id));
+    } else {
+      setSelectedProduceIds([...selectedProduceIds, id]);
     }
   };
 
-  const handleOrderCreated = (newOrder: Order) => {
-    setOrdersList(getOrders());
+  const selectedItems = produce.filter(p => selectedProduceIds.includes(p.id));
+  const selectedTotalKg = selectedItems.reduce((acc, p) => acc + p.quantityKg, 0);
+  const selectedTotalAmount = selectedItems.reduce((acc, p) => acc + (p.quantityKg * p.expectedPricePerKg), 0);
+
+  const handleLogin = (selectedRole: 'farmer' | 'fpo' | 'buyer' | 'admin') => {
+    setRole(selectedRole);
+    setIsLoggedIn(true);
+  };
+
+  const handleAddProduce = (e: React.FormEvent) => {
+    e.preventDefault();
+    const newListing = {
+      id: `prod-${Date.now().toString().slice(-4)}`,
+      farmerId: 'f-101',
+      farmerName: 'Ramesh Ghosh',
+      farmerLocation: 'Hooghly (32 km)',
+      cropName: crop,
+      variety: 'Hybrid Red',
+      grade: 'Grade A' as const,
+      quantityKg: quantity,
+      expectedPricePerKg: price,
+      marketSuggestedPriceMin: 28,
+      marketSuggestedPriceMax: 32,
+      harvestDate: '2026-09-06',
+      demandStatus: 'High' as const,
+      demandForecastPct: 18,
+      status: 'Available' as const,
+      fpoVerified: true,
+      createdAt: new Date().toISOString()
+    };
+    setProduce([newListing, ...produce]);
+    setShowWizard(false);
+  };
+
+  const handleCreateOrder = () => {
+    const newOrd = {
+      id: `ord-${Date.now().toString().slice(-4)}`,
+      orderNumber: `FF-${Math.floor(1000 + Math.random() * 9000)}`,
+      buyerId: 'b-201',
+      buyerName: 'Kolkata Wholesale Mandi',
+      destination: 'Posta Mandi, Kolkata',
+      items: selectedItems.map(p => ({
+        produceId: p.id,
+        farmerName: p.farmerName,
+        cropName: p.cropName,
+        quantityKg: p.quantityKg,
+        pricePerKg: p.expectedPricePerKg,
+        subtotal: p.quantityKg * p.expectedPricePerKg
+      })),
+      totalQuantityKg: selectedTotalKg,
+      totalAmount: selectedTotalAmount,
+      savingsRealized: Math.round(selectedTotalAmount * 0.18),
+      status: 'In Transit' as const,
+      expectedDelivery: 'Tomorrow, 2:30 PM',
+      createdAt: new Date().toISOString(),
+      routeId: 'route-opt-101'
+    };
+    setOrders([newOrd, ...orders]);
+    setShowMatch(false);
     setRole('buyer');
+    setBuyerTab('orders');
   };
 
-  // Automated SIH Presentation Demo Sequence
-  const runSihDemoSequence = () => {
-    // Step 1: Login as Farmer & Show High Demand
-    setRole('farmer');
-    setFarmerTab('dashboard');
-    setSelectedCrop('Tomato');
+  // 1. INITIAL LOGIN PAGE SCREEN
+  if (!isLoggedIn) {
+    return (
+      <div className="min-h-screen bg-[#f8f9ff] text-[#121c2a] flex flex-col justify-center items-center p-4">
+        <div className="w-full max-w-[420px] bg-white border border-[#c0c9be] rounded-2xl p-6 shadow-md flex flex-col gap-5">
+          <div className="text-center flex flex-col items-center gap-1.5">
+            <div className="w-12 h-12 rounded-xl bg-[#14532d] text-[#b1f2be] flex items-center justify-center font-bold">
+              <span className="material-symbols-outlined text-[28px]">agriculture</span>
+            </div>
+            <h1 className="text-[22px] font-extrabold text-[#003b1b]">Farm2Flow</h1>
+            <p className="text-[12px] text-[#404941] font-bold">From Farm to Market, Smarter.</p>
+          </div>
 
-    // Step 2: List Produce Wizard automatically
-    setTimeout(() => {
-      setIsListWizardOpen(true);
-    }, 800);
-  };
+          <div className="bg-[#eff4ff] p-3.5 rounded-xl border border-[#c0c9be] flex flex-col gap-2">
+            <span className="text-[11px] font-bold text-[#904d00] uppercase tracking-wider">🌟 1-Click SIH Role Login</span>
+            <div className="grid grid-cols-2 gap-2 text-[12px] font-bold">
+              <button onClick={() => handleLogin('farmer')} className="p-3 bg-white hover:bg-[#14532d] hover:text-white border border-[#c0c9be] rounded-xl flex items-center gap-2 transition-all">
+                <span className="text-xl">🌾</span>
+                <div>
+                  <p className="leading-tight font-extrabold">Farmer</p>
+                  <p className="text-[10px] text-[#404941]">Ramesh (Hooghly)</p>
+                </div>
+              </button>
 
-  const forecast = getDemandForecast(selectedCrop);
-  const priceEst = getPriceEstimate(selectedCrop);
-  const logistics = getLogisticsOptimization();
-  const impact = getImpactMetrics();
+              <button onClick={() => handleLogin('fpo')} className="p-3 bg-white hover:bg-[#14532d] hover:text-white border border-[#c0c9be] rounded-xl flex items-center gap-2 transition-all">
+                <span className="text-xl">🏡</span>
+                <div>
+                  <p className="leading-tight font-extrabold">FPO Hub</p>
+                  <p className="text-[10px] text-[#404941]">Singur Collective</p>
+                </div>
+              </button>
 
+              <button onClick={() => handleLogin('buyer')} className="p-3 bg-white hover:bg-[#14532d] hover:text-white border border-[#c0c9be] rounded-xl flex items-center gap-2 transition-all">
+                <span className="text-xl">🏪</span>
+                <div>
+                  <p className="leading-tight font-extrabold">Buyer</p>
+                  <p className="text-[10px] text-[#404941]">Kolkata Mandi</p>
+                </div>
+              </button>
+
+              <button onClick={() => handleLogin('admin')} className="p-3 bg-white hover:bg-[#14532d] hover:text-white border border-[#c0c9be] rounded-xl flex items-center gap-2 transition-all">
+                <span className="text-xl">📊</span>
+                <div>
+                  <p className="leading-tight font-extrabold">Admin Web</p>
+                  <p className="text-[10px] text-[#404941]">Command Center</p>
+                </div>
+              </button>
+            </div>
+          </div>
+
+          <form onSubmit={(e) => { e.preventDefault(); handleLogin(role); }} className="flex flex-col gap-3">
+            <div>
+              <label className="text-[12px] font-bold text-[#404941]">Phone Number or Email</label>
+              <input type="text" defaultValue="buyer@farm2flow.in" className="w-full px-3.5 py-2.5 mt-1 bg-[#eff4ff] border border-[#c0c9be] rounded-xl text-[14px] font-bold" />
+            </div>
+            <div>
+              <label className="text-[12px] font-bold text-[#404941]">Password</label>
+              <input type="password" defaultValue="demo1234" className="w-full px-3.5 py-2.5 mt-1 bg-[#eff4ff] border border-[#c0c9be] rounded-xl text-[14px] font-bold" />
+            </div>
+            <button type="submit" className="w-full py-3.5 bg-[#14532d] text-white rounded-xl text-[15px] font-extrabold hover:bg-[#003b1b] shadow-md mt-1">
+              Sign In to Farm2Flow
+            </button>
+          </form>
+        </div>
+      </div>
+    );
+  }
+
+  // 2. ADMIN WEB COMMAND CENTER
+  if (role === 'admin') {
+    return (
+      <div className="flex w-full min-h-screen bg-[#f8f9ff] text-[#121c2a]">
+        <aside className="w-64 bg-[#27313f] text-white p-5 flex flex-col gap-6 shrink-0 shadow-lg">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-lg bg-[#14532d] text-[#b1f2be] flex items-center justify-center font-bold">F2F</div>
+            <div>
+              <h1 className="font-bold text-[18px] text-white leading-tight">Farm2Flow</h1>
+              <p className="text-[11px] text-gray-300">Admin Command Center</p>
+            </div>
+          </div>
+          <nav className="flex flex-col gap-1 text-[13px] font-bold">
+            <button className="px-3 py-2.5 rounded-xl bg-[#14532d] text-white text-left">Dashboard Overview</button>
+            <button className="px-3 py-2.5 rounded-xl text-gray-300 hover:bg-white/10 text-left">Farmers & FPOs</button>
+            <button className="px-3 py-2.5 rounded-xl text-gray-300 hover:bg-white/10 text-left">Logistics Control Center</button>
+          </nav>
+          <button onClick={() => setIsLoggedIn(false)} className="mt-auto py-2.5 bg-white/10 hover:bg-white/20 text-white rounded-xl text-[12px] font-bold">
+            ← Logout / Switch Role
+          </button>
+        </aside>
+
+        <main className="flex-1 p-8 flex flex-col gap-6">
+          <header className="flex justify-between items-center pb-4 border-b border-[#c0c9be]">
+            <h1 className="text-[24px] font-extrabold text-[#003b1b]">Agricultural Supply Chain Command Center</h1>
+            <button onClick={() => setIsLoggedIn(false)} className="bg-[#14532d] text-white px-4 py-2 rounded-xl text-[13px] font-bold">Sign Out</button>
+          </header>
+
+          <div className="grid grid-cols-4 gap-4">
+            <div className="bg-white p-5 rounded-2xl border border-[#c0c9be]">
+              <span className="text-[11px] text-[#404941] font-bold uppercase">Connected Farmers</span>
+              <p className="text-[32px] font-extrabold text-[#003b1b]">1,248</p>
+            </div>
+            <div className="bg-white p-5 rounded-2xl border border-[#c0c9be]">
+              <span className="text-[11px] text-[#404941] font-bold uppercase">Produce Traded</span>
+              <p className="text-[32px] font-extrabold text-[#003b1b]">482 tonnes</p>
+            </div>
+            <div className="bg-white p-5 rounded-2xl border border-[#c0c9be]">
+              <span className="text-[11px] text-[#404941] font-bold uppercase">Farmer Realization</span>
+              <p className="text-[32px] font-extrabold text-emerald-700">+17%</p>
+            </div>
+            <div className="bg-white p-5 rounded-2xl border border-[#c0c9be]">
+              <span className="text-[11px] text-[#404941] font-bold uppercase">Logistics Savings</span>
+              <p className="text-[32px] font-extrabold text-[#904d00]">23%</p>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  // 3. FARMER / FPO / BUYER FIELD PWA VIEW
   return (
-    <div className="bg-surface text-on-surface antialiased min-h-screen pb-28 font-sans">
-      <div className="max-w-[430px] mx-auto min-h-screen bg-surface flex flex-col relative shadow-md border-x border-outline-variant">
+    <div className="bg-[#f8f9ff] text-[#121c2a] min-h-screen pb-24 font-sans">
+      <div className="max-w-[430px] mx-auto min-h-screen bg-[#f8f9ff] flex flex-col border-x border-[#c0c9be] relative shadow-md">
         
-        {/* Connection & Sync Status Banner */}
-        <div className={`px-4 py-2 text-[11px] font-bold flex items-center justify-between transition-colors ${
-          isOfflineSim ? 'bg-amber-100 text-amber-900 border-b border-amber-300' : 'bg-secondary-fixed text-on-secondary-fixed-variant'
-        }`}>
+        {/* Header */}
+        <header className="bg-white border-b border-[#c0c9be] p-4 flex justify-between items-center sticky top-0 z-40">
           <div className="flex items-center gap-2">
-            <span className={`inline-block w-2.5 h-2.5 rounded-full ${isOfflineSim ? 'bg-amber-600' : 'bg-emerald-600 animate-pulse'}`}></span>
-            <span>
-              {isOfflineSim ? "You're offline • Cached Mode" : "Online • Direct Sync Active"}
-            </span>
+            <div className="w-9 h-9 rounded-lg bg-[#14532d] text-white flex items-center justify-center font-bold">F2F</div>
+            <div>
+              <h1 className="font-extrabold text-[16px] text-[#003b1b] leading-tight">Farm2Flow PWA</h1>
+              <p className="text-[10px] text-[#404941]">From Farm to Market, Smarter</p>
+            </div>
           </div>
-          <button 
-            onClick={() => setIsOfflineSim(!isOfflineSim)}
-            className="underline hover:opacity-80 text-[11px]"
-          >
-            {isOfflineSim ? 'Go Online' : 'Simulate Offline'}
+          <button onClick={() => setIsLoggedIn(false)} className="text-[12px] font-bold text-[#904d00] hover:underline">
+            Switch Role
           </button>
-        </div>
-
-        {/* Local Offline Sync Message Notice */}
-        {offlineNotice && (
-          <div className="bg-emerald-700 text-white px-4 py-2 text-[12px] font-bold text-center animate-in slide-in-from-top duration-300">
-            {offlineNotice}
-          </div>
-        )}
-
-        {/* PWA Installation Prompt */}
-        {showPwaBanner && (
-          <div className="bg-surface-container-lowest border-b border-outline-variant px-4 py-2.5 flex items-center justify-between shadow-xs">
-            <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-lg bg-primary-container text-on-primary flex items-center justify-center shrink-0 font-bold text-sm">
-                F2F
-              </div>
-              <div>
-                <p className="font-bold text-[13px] text-on-surface leading-tight">Install Farm2Flow PWA</p>
-                <p className="text-on-surface-variant text-[11px] leading-tight">Fast low-2G offline mandi rates</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <button 
-                onClick={() => {
-                  setIsPwaInstalled(true);
-                  setShowPwaBanner(false);
-                }}
-                className="bg-primary-container text-on-primary px-3 py-1.5 rounded-lg text-[12px] font-bold active:scale-95 transition-transform"
-              >
-                {isPwaInstalled ? 'Installed' : 'Install App'}
-              </button>
-              <button onClick={() => setShowPwaBanner(false)} className="text-on-surface-variant w-7 h-7 flex items-center justify-center">
-                <span className="material-symbols-outlined text-[18px]">close</span>
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* SIH 2026 Presentation Quick Demo Launcher Bar */}
-        <div className="bg-primary-container text-on-primary px-3 py-1.5 flex items-center justify-between text-[11px] font-bold">
-          <span className="flex items-center gap-1">
-            <span className="material-symbols-outlined text-[14px]">play_circle</span>
-            SIH 2026 PS 26033 Demo Mode
-          </span>
-          <button
-            onClick={runSihDemoSequence}
-            className="bg-secondary text-on-secondary px-2.5 py-0.5 rounded-full hover:bg-secondary-container text-[11px] active:scale-95"
-          >
-            Start 1-Click Demo
-          </button>
-        </div>
-
-        {/* Top Navigation Bar */}
-        <header className="bg-surface border-b border-outline-variant sticky top-0 z-40">
-          <div className="flex justify-between items-center w-full px-4 h-14">
-            {/* Brand Logo */}
-            <div className="flex items-center gap-2.5">
-              <div className="w-10 h-10 rounded-lg bg-primary-container text-primary-fixed flex items-center justify-center">
-                <span className="material-symbols-outlined text-[24px]">agriculture</span>
-              </div>
-              <div className="flex flex-col">
-                <span className="text-[18px] font-bold text-primary leading-tight">Farm2Flow</span>
-                <span className="text-[10px] text-on-surface-variant">From Farm to Market, Smarter</span>
-              </div>
-            </div>
-
-            {/* Language & Voice Assistant Action */}
-            <div className="flex items-center gap-2">
-              <div className="bg-surface-container-high rounded-full p-0.5 flex text-[11px] border border-outline-variant font-bold">
-                <button onClick={() => setLanguage('EN')} className={`px-2 py-0.5 rounded-full ${language === 'EN' ? 'bg-primary-container text-on-primary' : 'text-on-surface-variant'}`}>EN</button>
-                <button onClick={() => setLanguage('BN')} className={`px-1.5 py-0.5 rounded-full ${language === 'BN' ? 'bg-primary-container text-on-primary' : 'text-on-surface-variant'}`}>বাংলা</button>
-                <button onClick={() => setLanguage('HI')} className={`px-1.5 py-0.5 rounded-full ${language === 'HI' ? 'bg-primary-container text-on-primary' : 'text-on-surface-variant'}`}>हिन्दी</button>
-              </div>
-
-              <button 
-                onClick={() => setIsHelpOpen(true)}
-                className="w-9 h-9 rounded-full flex items-center justify-center bg-surface-container-high text-primary hover:bg-surface-container active:scale-95 transition-transform"
-                title="Voice & Help Assistant"
-              >
-                <span className="material-symbols-outlined text-[20px]">mic</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Role Switcher Bar */}
-          <div className="grid grid-cols-3 bg-surface-container-low border-t border-outline-variant px-2 py-1 text-[13px] font-bold text-center">
-            <button
-              onClick={() => setRole('farmer')}
-              className={`py-1.5 rounded-md transition-all ${role === 'farmer' ? 'bg-primary-container text-on-primary shadow-xs' : 'text-on-surface-variant'}`}
-            >
-              🌾 Farmer
-            </button>
-            <button
-              onClick={() => setRole('buyer')}
-              className={`py-1.5 rounded-md transition-all ${role === 'buyer' ? 'bg-primary-container text-on-primary shadow-xs' : 'text-on-surface-variant'}`}
-            >
-              🏪 Buyer
-            </button>
-            <button
-              onClick={() => setRole('admin')}
-              className={`py-1.5 rounded-md transition-all ${role === 'admin' ? 'bg-primary-container text-on-primary shadow-xs' : 'text-on-surface-variant'}`}
-            >
-              📊 Admin Impact
-            </button>
-          </div>
         </header>
 
-        {/* Location Strip */}
-        <section className="bg-surface-container-low px-4 py-2 flex items-center justify-between border-b border-outline-variant text-[12px]">
-          <div className="flex items-center gap-1 font-bold text-on-surface">
-            <span className="material-symbols-outlined text-[16px] text-secondary">location_on</span>
-            <span>Hooghly, West Bengal</span>
-          </div>
-          <div className="bg-surface-container-lowest px-2.5 py-0.5 rounded-full border border-outline-variant font-bold text-primary-container">
-            Mandi Status: Open
-          </div>
-        </section>
+        {/* Role Bar */}
+        <div className="grid grid-cols-3 bg-[#eff4ff] border-b border-[#c0c9be] p-1 text-[12px] font-bold text-center">
+          <button onClick={() => { setRole('farmer'); setFarmerTab('home'); }} className={`py-1.5 rounded-md ${role === 'farmer' ? 'bg-[#14532d] text-white' : 'text-[#404941]'}`}>🌾 Farmer</button>
+          <button onClick={() => setRole('fpo')} className={`py-1.5 rounded-md ${role === 'fpo' ? 'bg-[#14532d] text-white' : 'text-[#404941]'}`}>🏡 FPO</button>
+          <button onClick={() => { setRole('buyer'); setBuyerTab('home'); }} className={`py-1.5 rounded-md ${role === 'buyer' ? 'bg-[#14532d] text-white' : 'text-[#404941]'}`}>🏪 Buyer</button>
+        </div>
 
-        {/* MAIN CONTENT ROLE ROUTER */}
+        {/* MAIN BODY */}
         <main className="p-4 flex flex-col gap-4">
 
-          {/* ===================== 1. FARMER ROLE FLOW ===================== */}
+          {/* FARMER ROLE */}
           {role === 'farmer' && (
             <>
-              {/* Farmer Profile welcome bar */}
-              <div className="flex items-center justify-between bg-surface-container-lowest p-3.5 rounded-xl border border-outline-variant">
-                <div className="flex items-center gap-3">
-                  <div className="w-11 h-11 rounded-full bg-primary-fixed-dim text-primary font-bold text-lg flex items-center justify-center border-2 border-primary">
-                    RG
+              {farmerTab === 'home' && (
+                <div className="bg-white p-4 rounded-xl border border-[#c0c9be] flex flex-col gap-3">
+                  <div className="flex justify-between items-center border-b pb-2">
+                    <span className="text-[12px] font-bold text-[#904d00]">🌟 High Demand Opportunity</span>
+                    <span className="bg-emerald-100 text-[#14532d] px-2 py-0.5 rounded-full text-[11px] font-bold">+18% Demand</span>
                   </div>
                   <div>
-                    <h1 className="text-[17px] font-bold text-on-surface leading-tight">Ramesh Ghosh</h1>
-                    <span className="inline-flex items-center gap-1 text-[10px] font-bold text-primary-container bg-primary-fixed px-2 py-0.5 rounded-md mt-0.5">
-                      ✓ NABARD / e-NAM Verified Farmer
-                    </span>
+                    <h2 className="text-[20px] font-extrabold text-[#121c2a]">Tomato (Grade A)</h2>
+                    <p className="text-[12px] text-[#404941]">Mandi Rate: ₹28–32 / kg</p>
                   </div>
+                  <button onClick={() => setShowWizard(true)} className="w-full py-3 bg-[#14532d] text-white rounded-xl font-bold hover:bg-[#003b1b]">
+                    + List Produce for Sale
+                  </button>
                 </div>
-              </div>
-
-              {/* Sub-tabs for Farmer */}
-              <div className="flex gap-2 border-b border-outline-variant pb-2">
-                <button
-                  onClick={() => setFarmerTab('dashboard')}
-                  className={`px-3 py-1.5 rounded-lg text-[13px] font-bold ${farmerTab === 'dashboard' ? 'bg-primary text-on-primary' : 'bg-surface-container-high text-on-surface-variant'}`}
-                >
-                  Dashboard
-                </button>
-                <button
-                  onClick={() => setFarmerTab('listings')}
-                  className={`px-3 py-1.5 rounded-lg text-[13px] font-bold ${farmerTab === 'listings' ? 'bg-primary text-on-primary' : 'bg-surface-container-high text-on-surface-variant'}`}
-                >
-                  My Listings ({produceList.filter(p => p.farmerId === 'f-101').length})
-                </button>
-                <button
-                  onClick={() => setFarmerTab('earnings')}
-                  className={`px-3 py-1.5 rounded-lg text-[13px] font-bold ${farmerTab === 'earnings' ? 'bg-primary text-on-primary' : 'bg-surface-container-high text-on-surface-variant'}`}
-                >
-                  Earnings (+₹8,400)
-                </button>
-              </div>
-
-              {farmerTab === 'dashboard' && (
-                <>
-                  {/* Hero Opportunity Card */}
-                  <section className="bg-surface-container-lowest rounded-xl border-2 border-primary-container p-4 shadow-xs flex flex-col gap-3">
-                    <div className="flex items-center justify-between pb-2 border-b border-outline-variant">
-                      <span className="text-[12px] text-secondary font-bold uppercase tracking-wider">🌟 High Demand Today</span>
-                      <span className="bg-emerald-100 text-primary-container px-2.5 py-0.5 rounded-full text-[11px] font-bold">
-                        +{forecast.percentageChange}% Demand
-                      </span>
-                    </div>
-
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <h2 className="text-[20px] font-bold text-on-surface">Tomato (Grade A)</h2>
-                        <p className="text-[12px] text-on-surface-variant">Hybrid Red • Firm Harvest Ready</p>
-                      </div>
-                      <div className="text-right">
-                        <span className="text-[11px] text-on-surface-variant">Estimated Mandi Rate</span>
-                        <p className="text-[24px] font-extrabold text-primary-container leading-none">
-                          ₹{priceEst.suggestedMin}–{priceEst.suggestedMax} <span className="text-[12px] font-normal">/kg</span>
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* AI Recommendation Banner */}
-                    <div className="bg-surface-container-low p-3 rounded-lg border border-outline-variant flex items-start gap-2.5">
-                      <span className="material-symbols-outlined text-tertiary text-[20px]">smart_toy</span>
-                      <div>
-                        <p className="text-[12px] font-bold text-on-surface">AI Demand Recommendation</p>
-                        <p className="text-[12px] text-on-surface-variant mt-0.5">"{forecast.recommendation}"</p>
-                      </div>
-                    </div>
-
-                    <button
-                      onClick={() => setIsListWizardOpen(true)}
-                      className="w-full py-3 bg-primary-container text-on-primary rounded-xl text-[14px] font-bold hover:bg-primary transition-all flex items-center justify-center gap-2 active:scale-95"
-                    >
-                      <span className="material-symbols-outlined text-[20px]">add_circle</span>
-                      <span>List Produce for Sale</span>
-                    </button>
-                  </section>
-
-                  {/* Market Intelligence Summary */}
-                  <section className="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant flex flex-col gap-2">
-                    <h3 className="text-[15px] font-bold text-on-surface">Market Intelligence</h3>
-                    <div className="grid grid-cols-2 gap-2 text-[12px]">
-                      <div className="bg-surface-container-low p-2.5 rounded-lg border border-outline-variant">
-                        <p className="text-on-surface-variant">Current Demand</p>
-                        <p className="font-bold text-on-surface">{forecast.currentDemandTonnes} tonnes/week</p>
-                      </div>
-                      <div className="bg-surface-container-low p-2.5 rounded-lg border border-outline-variant">
-                        <p className="text-on-surface-variant">Forecast Demand</p>
-                        <p className="font-bold text-primary">{forecast.forecastDemandTonnes} tonnes/week</p>
-                      </div>
-                    </div>
-                  </section>
-                </>
               )}
 
-              {farmerTab === 'listings' && (
+              {farmerTab === 'sell' && (
                 <div className="flex flex-col gap-3">
                   <div className="flex justify-between items-center">
-                    <h3 className="text-[16px] font-bold text-on-surface">Active Crop Listings</h3>
-                    <button
-                      onClick={() => setIsListWizardOpen(true)}
-                      className="bg-primary-container text-on-primary px-3 py-1.5 rounded-lg text-[12px] font-bold"
-                    >
-                      + Add New
-                    </button>
+                    <h3 className="font-bold text-[16px]">Active Crop Listings</h3>
+                    <button onClick={() => setShowWizard(true)} className="bg-[#14532d] text-white px-3 py-1 rounded-lg text-[12px] font-bold">+ Add</button>
                   </div>
-
-                  {produceList.map(item => (
-                    <div key={item.id} className="bg-surface-container-lowest p-3.5 rounded-xl border border-outline-variant flex flex-col gap-2">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <h4 className="font-bold text-on-surface text-[15px]">{item.cropName} ({item.grade})</h4>
-                          <p className="text-[12px] text-on-surface-variant">{item.farmerLocation} • Listed {new Date(item.createdAt).toLocaleDateString()}</p>
-                        </div>
-                        <span className="bg-emerald-100 text-primary-container px-2 py-0.5 rounded-full text-[11px] font-bold">
-                          {item.status}
-                        </span>
+                  {produce.map(item => (
+                    <div key={item.id} className="bg-white p-3.5 rounded-xl border border-[#c0c9be] flex justify-between items-center">
+                      <div>
+                        <p className="font-bold text-[14px]">{item.cropName} ({item.grade})</p>
+                        <p className="text-[11px] text-[#404941]">{item.quantityKg} kg • ₹{item.expectedPricePerKg}/kg</p>
                       </div>
-                      <div className="flex justify-between items-center text-[13px] pt-1 border-t border-outline-variant">
-                        <span className="font-bold text-on-surface">{item.quantityKg} kg available</span>
-                        <span className="font-extrabold text-primary">₹{item.expectedPricePerKg} / kg</span>
-                      </div>
+                      <span className="bg-emerald-100 text-[#14532d] px-2.5 py-0.5 rounded-full text-[11px] font-bold">{item.status}</span>
                     </div>
                   ))}
-                </div>
-              )}
-
-              {farmerTab === 'earnings' && (
-                <div className="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant flex flex-col gap-3">
-                  <h3 className="text-[16px] font-bold text-on-surface">Earnings Summary</h3>
-                  <div className="p-4 bg-primary-container text-on-primary rounded-xl flex flex-col gap-1">
-                    <span className="text-[12px] opacity-80">Total Realized Payout</span>
-                    <span className="text-[28px] font-extrabold">₹58,400</span>
-                    <span className="text-[11px] text-primary-fixed">Direct bank credit via e-NAM • Zero Middlemen Commission</span>
-                  </div>
-                  <div className="text-[12px] space-y-2">
-                    <div className="flex justify-between py-1 border-b border-outline-variant">
-                      <span>Order #FF2048 (800kg Tomato)</span>
-                      <span className="font-bold text-primary">₹24,000</span>
-                    </div>
-                    <div className="flex justify-between py-1 border-b border-outline-variant">
-                      <span>Order #FF1980 (1200kg Potato)</span>
-                      <span className="font-bold text-primary">₹21,600</span>
-                    </div>
-                  </div>
                 </div>
               )}
             </>
           )}
 
-          {/* ===================== 2. BUYER ROLE FLOW ===================== */}
+          {/* BUYER ROLE WITH MULTI-FARMER SELECTION OPTION */}
           {role === 'buyer' && (
             <div className="flex flex-col gap-4">
-              <div className="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant flex flex-col gap-3">
+              
+              {/* Buyer Overview Card */}
+              <div className="bg-white p-4 rounded-xl border border-[#c0c9be] flex flex-col gap-3">
                 <div className="flex justify-between items-center">
-                  <h2 className="text-[18px] font-bold text-on-surface">Buyer Marketplace</h2>
-                  <span className="bg-primary-fixed text-on-primary-fixed px-2.5 py-0.5 rounded-full text-[11px] font-bold">
-                    Kolkata Mandi Buyer
-                  </span>
+                  <h3 className="font-bold text-[16px] text-[#003b1b]">Custom Multi-Farmer Procurement</h3>
+                  <span className="bg-[#b1f2be] text-[#00210d] px-2.5 py-0.5 rounded-full text-[11px] font-bold">Kolkata Mandi</span>
                 </div>
-                <p className="text-[12px] text-on-surface-variant">Find direct verified farmers & FPOs without intermediaries.</p>
+                
+                <p className="text-[12px] text-[#404941]">Select exact farmers below or let Smart Match aggregate automatically.</p>
 
-                <button
-                  onClick={() => setIsSmartMatchOpen(true)}
-                  className="w-full py-3 bg-primary-container text-on-primary rounded-xl text-[14px] font-bold hover:bg-primary transition-all flex items-center justify-center gap-2 active:scale-95"
-                >
-                  <span className="material-symbols-outlined text-[20px]">handshake</span>
-                  <span>Run Smart Matching Engine (2,000 kg)</span>
+                <div className="grid grid-cols-2 gap-2 text-center">
+                  <div className="p-2.5 bg-[#eff4ff] rounded-xl border border-[#c0c9be]">
+                    <p className="text-[10px] text-[#404941] font-bold uppercase">Selected Farmers</p>
+                    <p className="text-[20px] font-extrabold text-[#14532d]">{selectedItems.length} of {produce.length}</p>
+                  </div>
+                  <div className="p-2.5 bg-[#eff4ff] rounded-xl border border-[#c0c9be]">
+                    <p className="text-[10px] text-[#404941] font-bold uppercase">Combined Volume</p>
+                    <p className="text-[20px] font-extrabold text-[#904d00]">{selectedTotalKg.toLocaleString()} kg</p>
+                  </div>
+                </div>
+
+                <button onClick={() => setShowMatch(true)} className="w-full py-3.5 bg-[#14532d] text-white rounded-xl font-extrabold hover:bg-[#003b1b] shadow-md">
+                  Order Selected Farmers ({selectedTotalKg.toLocaleString()} kg • ₹{selectedTotalAmount.toLocaleString()})
                 </button>
               </div>
 
-              {/* Active Orders Track */}
-              <div className="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant flex flex-col gap-3">
-                <h3 className="text-[16px] font-bold text-on-surface">Track Logistics Orders</h3>
-                {ordersList.map(ord => (
-                  <div key={ord.id} className="p-3.5 bg-surface-container-low border border-outline-variant rounded-xl flex flex-col gap-2">
-                    <div className="flex justify-between items-center">
-                      <span className="font-bold text-primary text-[14px]">{ord.orderNumber}</span>
-                      <span className="bg-amber-100 text-amber-900 px-2 py-0.5 rounded-full text-[11px] font-bold">
-                        {ord.status}
-                      </span>
+              {/* Interactive Multi-Farmer Selection List */}
+              <div className="bg-white p-4 rounded-xl border border-[#c0c9be] flex flex-col gap-3">
+                <div className="flex justify-between items-center">
+                  <h3 className="font-bold text-[16px]">Select Farmers to Order From</h3>
+                  <span className="text-[11px] text-[#904d00] font-bold">Check/uncheck items</span>
+                </div>
+
+                {produce.map(item => {
+                  const dist = getDistanceKm(item.farmerLocation);
+                  const isSelected = selectedProduceIds.includes(item.id);
+                  return (
+                    <div 
+                      key={item.id} 
+                      onClick={() => toggleProduceSelection(item.id)}
+                      className={`p-3.5 rounded-xl border cursor-pointer transition-all flex items-center justify-between ${
+                        isSelected ? 'bg-emerald-50 border-[#14532d] ring-1 ring-[#14532d]' : 'bg-[#eff4ff] border-[#c0c9be] opacity-75'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <input 
+                          type="checkbox" 
+                          checked={isSelected}
+                          onChange={() => {}} // handled by parent div onClick
+                          className="w-5 h-5 accent-[#14532d] rounded" 
+                        />
+                        <div>
+                          <p className="font-bold text-[14px] text-[#121c2a]">{item.cropName} ({item.grade})</p>
+                          <p className="text-[12px] font-bold text-[#14532d]">{item.farmerName}</p>
+                          <p className="text-[11px] text-[#404941] flex items-center gap-1 mt-0.5">
+                            <span className="material-symbols-outlined text-[13px] text-[#904d00]">location_on</span>
+                            <span>{item.farmerLocation} • <strong>{dist} km away</strong></span>
+                          </p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-extrabold text-[15px] text-[#14532d]">{item.quantityKg} kg</p>
+                        <p className="text-[12px] font-bold text-[#904d00]">₹{item.expectedPricePerKg}/kg</p>
+                      </div>
                     </div>
-                    <div className="text-[12px] text-on-surface-variant">
-                      <p><strong className="text-on-surface">Quantity:</strong> {ord.totalQuantityKg} kg Tomato</p>
-                      <p><strong className="text-on-surface">Destination:</strong> {ord.destination}</p>
-                      <p><strong className="text-on-surface">Expected Delivery:</strong> {ord.expectedDelivery}</p>
+                  );
+                })}
+              </div>
+
+              {/* Active Orders */}
+              {buyerTab === 'orders' && (
+                <div className="bg-white p-4 rounded-xl border border-[#c0c9be] flex flex-col gap-3">
+                  <h3 className="font-bold text-[16px]">Track Active Orders</h3>
+                  {orders.map(o => (
+                    <div key={o.id} className="p-3.5 bg-[#eff4ff] rounded-xl text-[12px] flex flex-col gap-1 border border-[#c0c9be]">
+                      <div className="flex justify-between font-bold text-[#14532d]">
+                        <span>{o.orderNumber}</span>
+                        <span className="bg-amber-100 text-amber-900 px-2 py-0.5 rounded-full text-[10px]">{o.status}</span>
+                      </div>
+                      <p>Destination: {o.destination}</p>
+                      <p className="font-bold text-[14px]">Total Value: ₹{o.totalAmount.toLocaleString()}</p>
                     </div>
-                    <div className="flex justify-between items-center text-[13px] font-bold text-on-surface pt-2 border-t border-outline-variant">
-                      <span>Total Amount</span>
-                      <span className="text-primary text-[16px]">₹{ord.totalAmount.toLocaleString()}</span>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+        </main>
+
+        {/* MODAL: Smart Match Summary of Selected Farmers */}
+        {showMatch && (
+          <div className="fixed inset-0 bg-black/60 z-50 flex items-end justify-center p-4">
+            <div className="bg-white w-full max-w-[410px] rounded-2xl p-5 border border-[#c0c9be] flex flex-col gap-3">
+              <h3 className="font-bold text-[16px]">Confirm Order from {selectedItems.length} Farmers</h3>
+              
+              <div className="bg-emerald-50 p-3.5 rounded-xl text-[12px] border border-emerald-300 flex flex-col gap-1">
+                <p className="font-extrabold text-[#14532d] text-[14px]">Selected Total: {selectedTotalKg.toLocaleString()} kg • ₹{selectedTotalAmount.toLocaleString()}</p>
+                <p className="text-[#404941]">Direct logistics route will be dispatched to pick up from all selected farm locations.</p>
+              </div>
+
+              <div className="flex flex-col gap-2 max-h-[220px] overflow-y-auto">
+                {selectedItems.map(item => (
+                  <div key={item.id} className="p-2.5 bg-[#eff4ff] rounded-lg text-[12px] flex justify-between items-center border border-[#c0c9be]">
+                    <div>
+                      <p className="font-bold">{item.farmerName} • {item.quantityKg} kg</p>
+                      <p className="text-[11px] text-[#904d00]">Distance: {getDistanceKm(item.farmerLocation)} km</p>
                     </div>
+                    <span className="font-extrabold text-[#14532d]">₹{item.expectedPricePerKg}/kg</span>
                   </div>
                 ))}
               </div>
 
-              {/* Logistics Optimization Card */}
-              <div className="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant flex flex-col gap-3">
-                <h3 className="text-[16px] font-bold text-on-surface">Smart Route Logistics Optimization</h3>
-                <div className="grid grid-cols-2 gap-2 text-[12px]">
-                  <div className="p-2.5 bg-red-50 text-red-900 rounded-lg border border-red-200">
-                    <p className="font-bold">Before Optimization</p>
-                    <p>Distance: {logistics.before.distanceKm} km</p>
-                    <p>Cost: ₹{logistics.before.estimatedCostRs}</p>
-                    <p>Vehicles: {logistics.before.vehiclesCount}</p>
-                  </div>
-                  <div className="p-2.5 bg-emerald-50 text-emerald-900 rounded-lg border border-emerald-200">
-                    <p className="font-bold">Optimized Route</p>
-                    <p>Distance: {logistics.optimized.distanceKm} km</p>
-                    <p>Cost: ₹{logistics.optimized.estimatedCostRs}</p>
-                    <p>Vehicles: {logistics.optimized.vehiclesCount}</p>
-                  </div>
-                </div>
-                <div className="p-2.5 bg-primary-container text-on-primary rounded-lg text-center font-bold text-[13px]">
-                  Estimated Logistics Saving: ₹{logistics.savingsRs} ({logistics.savingsPct}%)
-                </div>
+              <div className="flex gap-2 mt-1">
+                <button type="button" onClick={() => setShowMatch(false)} className="flex-1 py-2.5 bg-gray-200 rounded-xl font-bold">Cancel</button>
+                <button type="button" onClick={handleCreateOrder} className="flex-1 py-2.5 bg-[#14532d] text-white rounded-xl font-bold">Confirm & Dispatch</button>
               </div>
             </div>
-          )}
+          </div>
+        )}
 
-          {/* ===================== 3. ADMIN IMPACT ROLE FLOW ===================== */}
-          {role === 'admin' && (
-            <div className="flex flex-col gap-4">
-              <div className="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant flex flex-col gap-3">
-                <h2 className="text-[18px] font-bold text-on-surface">SIH Aggregate Impact Dashboard</h2>
-                <p className="text-[12px] text-on-surface-variant">Real-time simulation metrics connecting farmers directly to mandis.</p>
-
-                <div className="grid grid-cols-2 gap-3 text-center">
-                  <div className="p-3.5 bg-surface-container-low rounded-xl border border-outline-variant">
-                    <span className="text-[11px] text-on-surface-variant font-bold uppercase">Farmers Connected</span>
-                    <p className="text-[24px] font-extrabold text-primary">{impact.farmersConnected.toLocaleString()}</p>
-                  </div>
-                  <div className="p-3.5 bg-surface-container-low rounded-xl border border-outline-variant">
-                    <span className="text-[11px] text-on-surface-variant font-bold uppercase">Produce Traded</span>
-                    <p className="text-[24px] font-extrabold text-primary">{impact.produceTradedTonnes} tonnes</p>
-                  </div>
-                  <div className="p-3.5 bg-surface-container-low rounded-xl border border-outline-variant">
-                    <span className="text-[11px] text-on-surface-variant font-bold uppercase">Farmer Realization</span>
-                    <p className="text-[24px] font-extrabold text-emerald-700">+{impact.farmerRealizationPct}%</p>
-                  </div>
-                  <div className="p-3.5 bg-surface-container-low rounded-xl border border-outline-variant">
-                    <span className="text-[11px] text-on-surface-variant font-bold uppercase">Logistics Savings</span>
-                    <p className="text-[24px] font-extrabold text-secondary">{impact.logisticsSavingsPct}%</p>
-                  </div>
+        {/* MODAL: List Produce Wizard */}
+        {showWizard && (
+          <div className="fixed inset-0 bg-black/60 z-50 flex items-end justify-center p-4">
+            <div className="bg-white w-full max-w-[400px] rounded-2xl p-5 border border-[#c0c9be] flex flex-col gap-3">
+              <h3 className="font-bold text-[16px]">List Produce for Sale</h3>
+              <form onSubmit={handleAddProduce} className="flex flex-col gap-3">
+                <div>
+                  <label className="text-[12px] font-bold">Crop</label>
+                  <select value={crop} onChange={e => setCrop(e.target.value)} className="w-full p-2 border rounded-lg font-bold">
+                    <option value="Tomato">Tomato</option>
+                    <option value="Potato">Potato</option>
+                    <option value="Onion">Onion</option>
+                  </select>
                 </div>
-
-                <div className="p-3 bg-surface-container-high rounded-xl border border-outline-variant text-[12px] text-center font-bold text-on-surface">
-                  Over {impact.middlemenEliminated} levels of intermediaries eliminated per transaction!
+                <div>
+                  <label className="text-[12px] font-bold">Quantity (kg): {quantity}</label>
+                  <input type="range" min="100" max="3000" step="100" value={quantity} onChange={e => setQuantity(Number(e.target.value))} className="w-full" />
                 </div>
-              </div>
+                <div>
+                  <label className="text-[12px] font-bold">Expected Price (₹/kg)</label>
+                  <input type="number" value={price} onChange={e => setPrice(Number(e.target.value))} className="w-full p-2 border rounded-lg font-bold" />
+                </div>
+                <div className="flex gap-2 mt-2">
+                  <button type="button" onClick={() => setShowWizard(false)} className="flex-1 py-2.5 bg-gray-200 rounded-xl font-bold">Cancel</button>
+                  <button type="submit" className="flex-1 py-2.5 bg-[#14532d] text-white rounded-xl font-bold">List Produce</button>
+                </div>
+              </form>
             </div>
-          )}
+          </div>
+        )}
 
-        </main>
-
-        {/* Modals */}
-        <PredefinedHelpModal
-          isOpen={isHelpOpen}
-          onClose={() => setIsHelpOpen(false)}
-          onSelectAction={(actionKey) => {
-            if (actionKey === 'sell') setIsListWizardOpen(true);
-            if (actionKey === 'buyers') setIsSmartMatchOpen(true);
-            if (actionKey === 'track') setRole('buyer');
-            if (actionKey === 'prices') { setRole('farmer'); setFarmerTab('dashboard'); }
-          }}
-        />
-
-        <ListProduceWizard
-          isOpen={isListWizardOpen}
-          onClose={() => setIsListWizardOpen(false)}
-          onSuccess={handleProduceCreated}
-        />
-
-        <BuyerSmartMatchModal
-          isOpen={isSmartMatchOpen}
-          onClose={() => setIsSmartMatchOpen(false)}
-          onOrderCreated={handleOrderCreated}
-        />
+        {/* Bottom Navigation */}
+        {role === 'buyer' && (
+          <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] bg-white border-t border-[#c0c9be] grid grid-cols-4 text-[11px] font-bold text-center py-2 z-40">
+            <button onClick={() => setBuyerTab('home')} className={buyerTab === 'home' ? 'text-[#14532d]' : 'text-[#404941]'}>Home</button>
+            <button onClick={() => setBuyerTab('browse')} className={buyerTab === 'browse' ? 'text-[#14532d]' : 'text-[#404941]'}>Browse</button>
+            <button onClick={() => setShowMatch(true)} className="text-[#904d00]">Buy</button>
+            <button onClick={() => setBuyerTab('orders')} className={buyerTab === 'orders' ? 'text-[#14532d]' : 'text-[#404941]'}>Orders</button>
+          </nav>
+        )}
       </div>
     </div>
   );
