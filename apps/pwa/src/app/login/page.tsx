@@ -6,22 +6,20 @@ import { useRouter } from 'next/navigation';
 export default function LoginPage() {
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState<'farmer' | 'fpo' | 'buyer' | 'admin'>('farmer');
+  const [role, setRole] = useState<'farmer' | 'buyer' | 'admin'>('farmer');
   const [rememberMe, setRememberMe] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const router = useRouter();
 
-  // Role-based 1-click SIH Demo Login Accounts (PRD Section 2)
-  const handleDemoLogin = (demoRole: 'farmer' | 'fpo' | 'buyer' | 'admin') => {
+  // Role-based 1-click Demo Login Accounts (Farmer & Buyer)
+  const handleDemoLogin = (demoRole: 'farmer' | 'buyer' | 'admin') => {
     setRole(demoRole);
     if (demoRole === 'farmer') setIdentifier('farmer@farm2flow.in');
-    if (demoRole === 'fpo') setIdentifier('fpo@farm2flow.in');
     if (demoRole === 'buyer') setIdentifier('buyer@farm2flow.in');
     if (demoRole === 'admin') setIdentifier('admin@farm2flow.in');
     setPassword('demo1234');
     
-    // Execute login transition
     executeLogin(demoRole);
   };
 
@@ -34,12 +32,11 @@ export default function LoginPage() {
     executeLogin(role);
   };
 
-  const executeLogin = (selectedRole: 'farmer' | 'fpo' | 'buyer' | 'admin') => {
+  const executeLogin = (selectedRole: 'farmer' | 'buyer' | 'admin') => {
     setIsLoading(true);
     setError('');
 
     setTimeout(() => {
-      // Store authenticated user session locally
       const userSession = {
         identifier,
         role: selectedRole,
@@ -51,18 +48,18 @@ export default function LoginPage() {
 
       setIsLoading(false);
 
-      // RBAC Router: Farmer/FPO/Buyer -> PWA, Admin -> Admin Web Command Center
       if (selectedRole === 'admin') {
         window.location.href = 'http://localhost:3001';
+      } else if (selectedRole === 'buyer') {
+        router.push('/buyer');
       } else {
-        router.push(`/?role=${selectedRole}`);
+        router.push('/farmer');
       }
-    }, 600);
+    }, 500);
   };
 
   return (
     <div className="min-h-screen bg-surface text-on-surface flex flex-col justify-center items-center p-4">
-      {/* Mobile Frame Container (360px - 430px optimal target) */}
       <div className="w-full max-w-[430px] bg-surface-container-lowest border border-outline-variant rounded-2xl p-6 shadow-md flex flex-col gap-6">
         
         {/* Brand Header */}
@@ -76,58 +73,34 @@ export default function LoginPage() {
           </div>
         </div>
 
-        {/* SIH 2026 Presentation Demo Login Quick Switcher */}
+        {/* Demo 1-Click Login Quick Switcher */}
         <div className="bg-surface-container-low p-3.5 rounded-xl border border-outline-variant flex flex-col gap-2">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-secondary uppercase tracking-wider">🌟 SIH Demo 1-Click Login</span>
-            <span className="text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-bold">PS 26033</span>
+            <span className="text-[11px] font-bold text-secondary uppercase tracking-wider">🌟 1-Click Fast Login</span>
+            <span className="text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-bold">Direct Access</span>
           </div>
           <div className="grid grid-cols-2 gap-2 text-[12px] font-bold">
             <button
               type="button"
               onClick={() => handleDemoLogin('farmer')}
-              className="p-2.5 bg-white hover:bg-primary-fixed-dim/20 border border-outline-variant rounded-lg flex items-center gap-2 text-left transition-all active:scale-95"
+              className="p-3 bg-white hover:bg-primary-fixed-dim/20 border border-outline-variant rounded-xl flex items-center gap-2 text-left transition-all active:scale-95 shadow-xs"
             >
-              <span className="text-lg">🌾</span>
+              <span className="text-xl">🌾</span>
               <div>
-                <p className="leading-tight text-on-surface">Farmer</p>
-                <p className="text-[10px] text-on-surface-variant font-normal">Ramesh (Hooghly)</p>
-              </div>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => handleDemoLogin('fpo')}
-              className="p-2.5 bg-white hover:bg-primary-fixed-dim/20 border border-outline-variant rounded-lg flex items-center gap-2 text-left transition-all active:scale-95"
-            >
-              <span className="text-lg">🏡</span>
-              <div>
-                <p className="leading-tight text-on-surface">FPO Hub</p>
-                <p className="text-[10px] text-on-surface-variant font-normal">Singur Collective</p>
+                <p className="leading-tight text-on-surface font-extrabold">Farmer</p>
+                <p className="text-[11px] text-on-surface-variant font-normal">Ramesh (Hooghly)</p>
               </div>
             </button>
 
             <button
               type="button"
               onClick={() => handleDemoLogin('buyer')}
-              className="p-2.5 bg-white hover:bg-primary-fixed-dim/20 border border-outline-variant rounded-lg flex items-center gap-2 text-left transition-all active:scale-95"
+              className="p-3 bg-white hover:bg-primary-fixed-dim/20 border border-outline-variant rounded-xl flex items-center gap-2 text-left transition-all active:scale-95 shadow-xs"
             >
-              <span className="text-lg">🏪</span>
+              <span className="text-xl">🏪</span>
               <div>
-                <p className="leading-tight text-on-surface">Buyer</p>
-                <p className="text-[10px] text-on-surface-variant font-normal">Kolkata Mandi</p>
-              </div>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => handleDemoLogin('admin')}
-              className="p-2.5 bg-white hover:bg-primary-fixed-dim/20 border border-outline-variant rounded-lg flex items-center gap-2 text-left transition-all active:scale-95"
-            >
-              <span className="text-lg">📊</span>
-              <div>
-                <p className="leading-tight text-on-surface">Admin</p>
-                <p className="text-[10px] text-on-surface-variant font-normal">Command Center</p>
+                <p className="leading-tight text-on-surface font-extrabold">Buyer</p>
+                <p className="text-[11px] text-on-surface-variant font-normal">Kolkata Mandi</p>
               </div>
             </button>
           </div>
@@ -141,20 +114,20 @@ export default function LoginPage() {
             </div>
           )}
 
-          {/* Role Selector Tabs */}
+          {/* Role Selector Tabs (Farmer & Buyer) */}
           <div>
             <label className="text-[12px] font-bold text-on-surface-variant">Select Account Role</label>
-            <div className="grid grid-cols-4 gap-1 bg-surface-container-high p-1 rounded-xl mt-1 text-[11px] font-bold">
-              {(['farmer', 'fpo', 'buyer', 'admin'] as const).map(r => (
+            <div className="grid grid-cols-2 gap-1.5 bg-surface-container-high p-1 rounded-xl mt-1 text-[12px] font-bold">
+              {(['farmer', 'buyer'] as const).map(r => (
                 <button
                   key={r}
                   type="button"
                   onClick={() => setRole(r)}
                   className={`py-2 rounded-lg capitalize transition-all ${
-                    role === r ? 'bg-primary-container text-on-primary shadow-xs' : 'text-on-surface-variant hover:text-on-surface'
+                    role === r ? 'bg-primary-container text-on-primary shadow-xs font-extrabold' : 'text-on-surface-variant hover:text-on-surface'
                   }`}
                 >
-                  {r}
+                  {r === 'farmer' ? '🌾 Farmer' : '🏪 Buyer'}
                 </button>
               ))}
             </div>
@@ -201,7 +174,7 @@ export default function LoginPage() {
               />
               <span>Remember me</span>
             </label>
-            <a href="#forgot" onClick={(e) => { e.preventDefault(); alert("Password reset link sent to registered mobile/email."); }} className="text-secondary hover:underline">
+            <a href="#forgot" onClick={(e) => { e.preventDefault(); alert("Password reset link sent."); }} className="text-secondary hover:underline">
               Forgot password?
             </a>
           </div>
@@ -216,7 +189,7 @@ export default function LoginPage() {
               <span>Signing in...</span>
             ) : (
               <>
-                <span>Sign In to Farm2Flow</span>
+                <span>Sign In as {role === 'farmer' ? 'Farmer' : 'Buyer'}</span>
                 <span className="material-symbols-outlined text-[20px]">arrow_forward</span>
               </>
             )}
@@ -225,7 +198,7 @@ export default function LoginPage() {
 
         {/* Footer */}
         <div className="text-center text-[11px] text-on-surface-variant border-t border-outline-variant pt-3">
-          Need help? Contact NABARD / e-NAM Support Center: <strong>1800-180-1551</strong>
+          Direct Agricultural Platform • Helpline: <strong>1800-180-1551</strong>
         </div>
       </div>
     </div>

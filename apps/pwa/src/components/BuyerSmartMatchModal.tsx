@@ -14,7 +14,7 @@ export const BuyerSmartMatchModal: React.FC<BuyerSmartMatchModalProps> = ({
   onOrderCreated
 }) => {
   const [crop, setCrop] = React.useState('Tomato');
-  const [requiredKg, setRequiredKg] = React.useState(2000);
+  const [requiredKg, setRequiredKg] = React.useState(50);
   const [matchResult, setMatchResult] = React.useState<SmartMatchResult | null>(null);
   const [isSearching, setIsSearching] = React.useState(false);
   const [isCreatingOrder, setIsCreatingOrder] = React.useState(false);
@@ -72,19 +72,35 @@ export const BuyerSmartMatchModal: React.FC<BuyerSmartMatchModalProps> = ({
           </div>
 
           <div>
-            <div className="flex justify-between text-body-sm text-[12px] text-on-surface-variant">
-              <span>Required Bulk Quantity</span>
-              <span className="font-extrabold text-primary">{requiredKg.toLocaleString()} kg</span>
+            <div className="flex justify-between items-center text-body-sm text-[12px] text-on-surface-variant">
+              <span>Required Purchase Quantity</span>
+              <div className="flex items-center gap-1">
+                <input
+                  type="number"
+                  min="2"
+                  max="5000"
+                  value={requiredKg}
+                  onChange={e => setRequiredKg(Math.max(2, Number(e.target.value)))}
+                  className="w-20 px-2 py-1 bg-surface-container border border-outline-variant rounded-lg font-extrabold text-primary text-right text-[14px]"
+                />
+                <span className="font-bold text-primary">kg</span>
+              </div>
             </div>
             <input
               type="range"
-              min="500"
+              min="2"
               max="5000"
-              step="100"
+              step="1"
               value={requiredKg}
               onChange={e => setRequiredKg(Number(e.target.value))}
               className="w-full mt-2 h-2 bg-surface-container-high rounded-lg appearance-none cursor-pointer accent-primary"
             />
+            <div className="flex justify-between text-[10px] text-on-surface-variant font-bold mt-1">
+              <span>2 kg (Retail / Min)</span>
+              <span>250 kg</span>
+              <span>1,000 kg</span>
+              <span>5,000 kg (Bulk)</span>
+            </div>
           </div>
 
           <button
