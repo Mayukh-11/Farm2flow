@@ -29,11 +29,12 @@ function FarmerPage() {
     const [produceList, setProduceList] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])([]);
     const [ordersList, setOrdersList] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])([]);
     const [selectedCrop, setSelectedCrop] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])('Tomato');
+    const [farmerName, setFarmerName] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])('Ramesh Ghosh');
     const [currentLocation, setCurrentLocation] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])('Hooghly (Singur), West Bengal');
+    const [farmerAddress, setFarmerAddress] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])('Singur Vegetable Cluster, Hooghly, WB');
     // Modal Visibility States
     const [isHelpOpen, setIsHelpOpen] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
     const [isListWizardOpen, setIsListWizardOpen] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
-    const [isMapOpen, setIsMapOpen] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
     // Active Bottom Navigation Tab for Farmer
     const [farmerTab, setFarmerTab] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])('home');
     const t = __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$src$2f$data$2f$translations$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["translations"][language] || __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$src$2f$data$2f$translations$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["translations"].EN;
@@ -43,6 +44,25 @@ function FarmerPage() {
         ;
         setProduceList((0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$src$2f$services$2f$api$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["getStoredProduce"])());
         setOrdersList((0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$src$2f$services$2f$api$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["getOrders"])());
+        // Real-time synchronization when produce is listed or updated
+        const handleProduceUpdated = (e)=>{
+            if (e?.detail?.produceList) {
+                setProduceList(e.detail.produceList);
+            } else {
+                setProduceList((0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$src$2f$services$2f$api$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["getStoredProduce"])());
+            }
+        };
+        const handleStorageChange = (e)=>{
+            if (e.key === 'farm2flow_produce_items') {
+                setProduceList((0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$src$2f$services$2f$api$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["getStoredProduce"])());
+            }
+        };
+        window.addEventListener('farm2flow_produce_updated', handleProduceUpdated);
+        window.addEventListener('storage', handleStorageChange);
+        return ()=>{
+            window.removeEventListener('farm2flow_produce_updated', handleProduceUpdated);
+            window.removeEventListener('storage', handleStorageChange);
+        };
     }, []);
     const handleProduceCreated = (newProduce)=>{
         (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$src$2f$services$2f$api$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["saveProduce"])(newProduce);
@@ -52,64 +72,72 @@ function FarmerPage() {
             setTimeout(()=>setOfflineNotice(''), 4000);
         }
     };
+    const handleDeleteProduce = (produceId, cropName)=>{
+        const confirmDelete = window.confirm(`Are you sure you want to remove ${cropName} from your listed produce?`);
+        if (!confirmDelete) return;
+        const updated = (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$src$2f$services$2f$api$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["deleteProduce"])(produceId);
+        setProduceList(updated);
+        setOfflineNotice(`✓ ${cropName} listing removed in real-time.`);
+        setTimeout(()=>setOfflineNotice(''), 3000);
+    };
     const forecast = (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$src$2f$services$2f$api$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["getDemandForecast"])(selectedCrop);
     const priceEst = (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$src$2f$services$2f$api$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["getPriceEstimate"])(selectedCrop);
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-        className: "bg-surface text-on-surface antialiased min-h-screen pb-28 font-sans",
+        className: "bg-slate-950 text-on-surface antialiased min-h-screen pb-28 font-sans",
         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-            className: "max-w-[430px] mx-auto min-h-screen bg-surface flex flex-col relative shadow-md border-x border-outline-variant",
+            className: "max-w-[430px] mx-auto min-h-screen bg-slate-50 flex flex-col relative shadow-2xl border-x border-slate-200/80",
             children: [
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                    className: `px-4 py-2 text-[11px] font-bold flex items-center justify-between transition-colors ${isOfflineSim ? 'bg-amber-100 text-amber-900 border-b border-amber-300' : 'bg-secondary-fixed text-on-secondary-fixed-variant'}`,
+                    className: `px-4 py-2 text-[11px] font-bold flex items-center justify-between transition-colors ${isOfflineSim ? 'bg-amber-100 text-amber-900 border-b border-amber-300' : 'bg-emerald-900 text-emerald-100'}`,
                     children: [
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                             className: "flex items-center gap-2",
                             children: [
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                    className: `inline-block w-2.5 h-2.5 rounded-full ${isOfflineSim ? 'bg-amber-600' : 'bg-emerald-600 animate-pulse'}`
+                                    className: `inline-block w-2.5 h-2.5 rounded-full ${isOfflineSim ? 'bg-amber-400' : 'bg-emerald-400 animate-pulse'}`
                                 }, void 0, false, {
                                     fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                    lineNumber: 67,
+                                    lineNumber: 105,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                     children: isOfflineSim ? t.offlineDraft : t.onlineSync
                                 }, void 0, false, {
                                     fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                    lineNumber: 68,
+                                    lineNumber: 106,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                            lineNumber: 66,
+                            lineNumber: 104,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                             onClick: ()=>setIsOfflineSim(!isOfflineSim),
-                            className: "underline hover:opacity-80 text-[11px]",
+                            className: "underline hover:opacity-80 text-[11px] font-bold text-emerald-200",
                             children: isOfflineSim ? t.goOnline : t.simulateOffline
                         }, void 0, false, {
                             fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                            lineNumber: 72,
+                            lineNumber: 110,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                    lineNumber: 63,
+                    lineNumber: 101,
                     columnNumber: 9
                 }, this),
                 offlineNotice && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                    className: "bg-emerald-700 text-white px-4 py-2 text-[12px] font-bold text-center animate-in slide-in-from-top duration-300",
+                    className: "bg-emerald-800 text-white px-4 py-2 text-[12px] font-bold text-center animate-in slide-in-from-top duration-300 border-b border-emerald-600",
                     children: offlineNotice
                 }, void 0, false, {
                     fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                    lineNumber: 82,
+                    lineNumber: 120,
                     columnNumber: 11
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("header", {
-                    className: "bg-surface border-b border-outline-variant sticky top-0 z-40",
+                    className: "bg-white/90 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-40 transition-all shadow-xs",
                     children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: "flex justify-between items-center w-full px-4 h-14",
                         children: [
@@ -117,18 +145,18 @@ function FarmerPage() {
                                 className: "flex items-center gap-2.5",
                                 children: [
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                        className: "w-10 h-10 rounded-lg bg-primary-container text-primary-fixed flex items-center justify-center",
+                                        className: "w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-900 to-emerald-700 text-white flex items-center justify-center shadow-sm",
                                         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                            className: "material-symbols-outlined text-[24px]",
+                                            className: "material-symbols-outlined text-[22px]",
                                             children: "agriculture"
                                         }, void 0, false, {
                                             fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                            lineNumber: 92,
+                                            lineNumber: 130,
                                             columnNumber: 17
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                        lineNumber: 91,
+                                        lineNumber: 129,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -138,156 +166,146 @@ function FarmerPage() {
                                                 className: "flex items-center gap-1.5",
                                                 children: [
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                        className: "text-[17px] font-extrabold text-primary leading-tight",
+                                                        className: "text-[17px] font-black text-emerald-950 leading-tight tracking-tight",
                                                         children: t.appTitle
                                                     }, void 0, false, {
                                                         fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                                        lineNumber: 96,
+                                                        lineNumber: 134,
                                                         columnNumber: 19
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                        className: "text-[10px] bg-primary-container text-on-primary font-bold px-1.5 py-0.2 rounded",
-                                                        children: t.farmerRole
+                                                        className: "text-[9px] bg-emerald-100 text-emerald-800 font-extrabold px-1.5 py-0.5 rounded-md uppercase border border-emerald-300/60",
+                                                        children: "Farmer"
                                                     }, void 0, false, {
                                                         fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                                        lineNumber: 97,
+                                                        lineNumber: 135,
                                                         columnNumber: 19
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                                lineNumber: 95,
+                                                lineNumber: 133,
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                className: "text-[10px] text-on-surface-variant font-bold",
+                                                className: "text-[10px] text-slate-500 font-bold",
                                                 children: t.tagline
                                             }, void 0, false, {
                                                 fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                                lineNumber: 99,
+                                                lineNumber: 139,
                                                 columnNumber: 17
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                        lineNumber: 94,
+                                        lineNumber: 132,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                lineNumber: 90,
+                                lineNumber: 128,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                 className: "flex items-center gap-2",
                                 children: [
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                        className: "bg-surface-container-high rounded-full p-0.5 flex text-[11px] border border-outline-variant font-bold",
+                                        className: "bg-slate-100/90 rounded-full p-0.5 flex text-[11px] border border-slate-200 font-bold shadow-xs",
                                         children: [
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                                 onClick: ()=>setLanguage('EN'),
-                                                className: `px-2 py-0.5 rounded-full transition-all ${language === 'EN' ? 'bg-primary-container text-on-primary font-bold shadow-xs' : 'text-on-surface-variant'}`,
+                                                className: `px-2 py-0.5 rounded-full transition-all ${language === 'EN' ? 'bg-emerald-800 text-white font-black shadow-xs' : 'text-slate-600 hover:text-slate-900'}`,
                                                 children: "EN"
                                             }, void 0, false, {
                                                 fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                                lineNumber: 105,
+                                                lineNumber: 145,
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                                 onClick: ()=>setLanguage('BN'),
-                                                className: `px-2 py-0.5 rounded-full transition-all ${language === 'BN' ? 'bg-primary-container text-on-primary font-bold shadow-xs' : 'text-on-surface-variant'}`,
+                                                className: `px-2 py-0.5 rounded-full transition-all ${language === 'BN' ? 'bg-emerald-800 text-white font-black shadow-xs' : 'text-slate-600 hover:text-slate-900'}`,
                                                 children: "বাংলা"
                                             }, void 0, false, {
                                                 fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                                lineNumber: 106,
+                                                lineNumber: 146,
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                                 onClick: ()=>setLanguage('HI'),
-                                                className: `px-2 py-0.5 rounded-full transition-all ${language === 'HI' ? 'bg-primary-container text-on-primary font-bold shadow-xs' : 'text-on-surface-variant'}`,
+                                                className: `px-2 py-0.5 rounded-full transition-all ${language === 'HI' ? 'bg-emerald-800 text-white font-black shadow-xs' : 'text-slate-600 hover:text-slate-900'}`,
                                                 children: "हिन्दी"
                                             }, void 0, false, {
                                                 fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                                lineNumber: 107,
+                                                lineNumber: 147,
                                                 columnNumber: 17
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                        lineNumber: 104,
+                                        lineNumber: 144,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                         onClick: ()=>setIsHelpOpen(true),
-                                        className: "w-9 h-9 rounded-full flex items-center justify-center bg-surface-container-high text-primary hover:bg-surface-container active:scale-95 transition-transform",
+                                        className: "w-9 h-9 rounded-full flex items-center justify-center bg-emerald-50 text-emerald-800 border border-emerald-200 hover:bg-emerald-100 active:scale-95 transition-transform",
                                         title: t.voiceAssistant,
                                         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                             className: "material-symbols-outlined text-[20px]",
                                             children: "mic"
                                         }, void 0, false, {
                                             fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                            lineNumber: 115,
+                                            lineNumber: 155,
                                             columnNumber: 17
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                        lineNumber: 110,
+                                        lineNumber: 150,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                lineNumber: 103,
+                                lineNumber: 143,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                        lineNumber: 89,
+                        lineNumber: 127,
                         columnNumber: 11
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                    lineNumber: 88,
+                    lineNumber: 126,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
                     className: "bg-surface-container-low px-4 py-2 flex items-center justify-between border-b border-outline-variant text-[11px]",
                     children: [
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                            onClick: ()=>setIsMapOpen(true),
-                            className: "flex items-center gap-1.5 font-bold text-on-surface hover:text-primary transition-colors text-left max-w-[280px]",
-                            title: "Open Interactive Map (InDrive style)",
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                            className: "flex items-center gap-1.5 font-bold text-on-surface max-w-[280px]",
                             children: [
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                    className: "material-symbols-outlined text-[18px] text-primary animate-pulse",
+                                    className: "material-symbols-outlined text-[18px] text-primary",
                                     children: "location_on"
                                 }, void 0, false, {
                                     fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                    lineNumber: 128,
+                                    lineNumber: 164,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                    className: "truncate underline decoration-dotted",
+                                    className: "truncate",
                                     children: currentLocation
                                 }, void 0, false, {
                                     fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                    lineNumber: 129,
-                                    columnNumber: 13
-                                }, this),
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                    className: "text-[9px] bg-primary/10 text-primary px-1.5 py-0.5 rounded-md uppercase font-extrabold shrink-0",
-                                    children: "Map"
-                                }, void 0, false, {
-                                    fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                    lineNumber: 130,
+                                    lineNumber: 165,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                            lineNumber: 123,
+                            lineNumber: 163,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -295,13 +313,13 @@ function FarmerPage() {
                             children: t.mandiOpen
                         }, void 0, false, {
                             fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                            lineNumber: 132,
+                            lineNumber: 167,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                    lineNumber: 122,
+                    lineNumber: 162,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("main", {
@@ -317,20 +335,20 @@ function FarmerPage() {
                                             children: [
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                     className: "w-10 h-10 rounded-full bg-primary-fixed-dim text-primary font-extrabold text-base flex items-center justify-center border-2 border-primary",
-                                                    children: "RG"
+                                                    children: farmerName.split(' ').map((n)=>n[0]).join('').slice(0, 2).toUpperCase() || 'FM'
                                                 }, void 0, false, {
                                                     fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                                    lineNumber: 144,
+                                                    lineNumber: 179,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                     children: [
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
                                                             className: "text-[16px] font-extrabold text-on-surface leading-tight",
-                                                            children: "Ramesh Ghosh"
+                                                            children: farmerName
                                                         }, void 0, false, {
                                                             fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                                            lineNumber: 148,
+                                                            lineNumber: 183,
                                                             columnNumber: 21
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -338,19 +356,19 @@ function FarmerPage() {
                                                             children: t.verifiedFarmer
                                                         }, void 0, false, {
                                                             fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                                            lineNumber: 149,
+                                                            lineNumber: 184,
                                                             columnNumber: 21
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                                    lineNumber: 147,
+                                                    lineNumber: 182,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                            lineNumber: 143,
+                                            lineNumber: 178,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -362,26 +380,26 @@ function FarmerPage() {
                                                     children: "add"
                                                 }, void 0, false, {
                                                     fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                                    lineNumber: 158,
+                                                    lineNumber: 193,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                     children: t.sellNav
                                                 }, void 0, false, {
                                                     fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                                    lineNumber: 159,
+                                                    lineNumber: 194,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                            lineNumber: 154,
+                                            lineNumber: 189,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                    lineNumber: 142,
+                                    lineNumber: 177,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
@@ -395,7 +413,7 @@ function FarmerPage() {
                                                     children: t.highDemandOpp
                                                 }, void 0, false, {
                                                     fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                                    lineNumber: 166,
+                                                    lineNumber: 201,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -403,13 +421,13 @@ function FarmerPage() {
                                                     children: t.demandSurge
                                                 }, void 0, false, {
                                                     fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                                    lineNumber: 167,
+                                                    lineNumber: 202,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                            lineNumber: 165,
+                                            lineNumber: 200,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -421,7 +439,7 @@ function FarmerPage() {
                                                         children: t.tomatoGradeA
                                                     }, void 0, false, {
                                                         fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                                        lineNumber: 174,
+                                                        lineNumber: 209,
                                                         columnNumber: 21
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -429,18 +447,18 @@ function FarmerPage() {
                                                         children: t.hybridRedDesc
                                                     }, void 0, false, {
                                                         fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                                        lineNumber: 175,
+                                                        lineNumber: 210,
                                                         columnNumber: 21
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                                lineNumber: 173,
+                                                lineNumber: 208,
                                                 columnNumber: 19
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                            lineNumber: 172,
+                                            lineNumber: 207,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -452,26 +470,26 @@ function FarmerPage() {
                                                     children: "add_circle"
                                                 }, void 0, false, {
                                                     fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                                    lineNumber: 183,
+                                                    lineNumber: 218,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                     children: t.listProduceBtn
                                                 }, void 0, false, {
                                                     fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                                    lineNumber: 184,
+                                                    lineNumber: 219,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                            lineNumber: 179,
+                                            lineNumber: 214,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                    lineNumber: 164,
+                                    lineNumber: 199,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -485,7 +503,7 @@ function FarmerPage() {
                                                     children: t.activeListings
                                                 }, void 0, false, {
                                                     fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                                    lineNumber: 191,
+                                                    lineNumber: 226,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -493,7 +511,7 @@ function FarmerPage() {
                                                     children: produceList.length
                                                 }, void 0, false, {
                                                     fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                                    lineNumber: 192,
+                                                    lineNumber: 227,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -501,13 +519,13 @@ function FarmerPage() {
                                                     children: t.directToVerified
                                                 }, void 0, false, {
                                                     fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                                    lineNumber: 193,
+                                                    lineNumber: 228,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                            lineNumber: 190,
+                                            lineNumber: 225,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -518,7 +536,7 @@ function FarmerPage() {
                                                     children: t.confirmedOrders
                                                 }, void 0, false, {
                                                     fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                                    lineNumber: 196,
+                                                    lineNumber: 231,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -526,7 +544,7 @@ function FarmerPage() {
                                                     children: ordersList.length
                                                 }, void 0, false, {
                                                     fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                                    lineNumber: 197,
+                                                    lineNumber: 232,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -534,25 +552,25 @@ function FarmerPage() {
                                                     children: t.pickupScheduled
                                                 }, void 0, false, {
                                                     fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                                    lineNumber: 198,
+                                                    lineNumber: 233,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                            lineNumber: 195,
+                                            lineNumber: 230,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                    lineNumber: 189,
+                                    lineNumber: 224,
                                     columnNumber: 15
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                            lineNumber: 140,
+                            lineNumber: 175,
                             columnNumber: 13
                         }, this),
                         farmerTab === 'market' && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -563,7 +581,7 @@ function FarmerPage() {
                                     children: t.marketIntel
                                 }, void 0, false, {
                                     fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                    lineNumber: 206,
+                                    lineNumber: 241,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -577,7 +595,7 @@ function FarmerPage() {
                                                     children: t.currentMandiDemand
                                                 }, void 0, false, {
                                                     fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                                    lineNumber: 209,
+                                                    lineNumber: 244,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -588,13 +606,13 @@ function FarmerPage() {
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                                    lineNumber: 210,
+                                                    lineNumber: 245,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                            lineNumber: 208,
+                                            lineNumber: 243,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -605,7 +623,7 @@ function FarmerPage() {
                                                     children: t.forecastDemand
                                                 }, void 0, false, {
                                                     fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                                    lineNumber: 213,
+                                                    lineNumber: 248,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -616,19 +634,19 @@ function FarmerPage() {
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                                    lineNumber: 214,
+                                                    lineNumber: 249,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                            lineNumber: 212,
+                                            lineNumber: 247,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                    lineNumber: 207,
+                                    lineNumber: 242,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -639,7 +657,7 @@ function FarmerPage() {
                                             children: t.directPriceRealization
                                         }, void 0, false, {
                                             fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                            lineNumber: 219,
+                                            lineNumber: 254,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -647,13 +665,13 @@ function FarmerPage() {
                                             children: t.directPriceDesc
                                         }, void 0, false, {
                                             fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                            lineNumber: 220,
+                                            lineNumber: 255,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                    lineNumber: 218,
+                                    lineNumber: 253,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -664,38 +682,46 @@ function FarmerPage() {
                                             children: t.cropSelection
                                         }, void 0, false, {
                                             fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                            lineNumber: 224,
+                                            lineNumber: 259,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                            className: "flex gap-2",
+                                            className: "flex gap-2 overflow-x-auto no-scrollbar py-1",
                                             children: [
                                                 'Tomato',
-                                                'Potato'
+                                                'Potato',
+                                                'Onion',
+                                                'Rice',
+                                                'Wheat',
+                                                'Chilli',
+                                                'Cauliflower',
+                                                'Cabbage',
+                                                'Carrot',
+                                                'Apple'
                                             ].map((c)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                                     onClick: ()=>setSelectedCrop(c),
-                                                    className: `px-3 py-1.5 rounded-lg text-[12px] font-bold ${selectedCrop === c ? 'bg-primary-container text-on-primary' : 'bg-surface-container-high text-on-surface-variant'}`,
+                                                    className: `px-3 py-1.5 rounded-lg text-[12px] font-bold whitespace-nowrap transition-all ${selectedCrop === c ? 'bg-primary-container text-on-primary shadow-xs' : 'bg-surface-container-high text-on-surface-variant hover:bg-surface-container-highest'}`,
                                                     children: c
                                                 }, c, false, {
                                                     fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                                    lineNumber: 227,
+                                                    lineNumber: 262,
                                                     columnNumber: 21
                                                 }, this))
                                         }, void 0, false, {
                                             fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                            lineNumber: 225,
+                                            lineNumber: 260,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                    lineNumber: 223,
+                                    lineNumber: 258,
                                     columnNumber: 15
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                            lineNumber: 205,
+                            lineNumber: 240,
                             columnNumber: 13
                         }, this),
                         farmerTab === 'sell' && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -709,7 +735,7 @@ function FarmerPage() {
                                             children: t.myActiveListings
                                         }, void 0, false, {
                                             fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                            lineNumber: 245,
+                                            lineNumber: 280,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -721,30 +747,30 @@ function FarmerPage() {
                                                     children: "add"
                                                 }, void 0, false, {
                                                     fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                                    lineNumber: 250,
+                                                    lineNumber: 285,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                     children: t.listProduce
                                                 }, void 0, false, {
                                                     fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                                    lineNumber: 251,
+                                                    lineNumber: 286,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                            lineNumber: 246,
+                                            lineNumber: 281,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                    lineNumber: 244,
+                                    lineNumber: 279,
                                     columnNumber: 15
                                 }, this),
                                 produceList.map((item)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                        className: "bg-surface-container-lowest p-3.5 rounded-xl border border-outline-variant flex flex-col gap-2",
+                                        className: "bg-surface-container-lowest p-3.5 rounded-xl border border-outline-variant flex flex-col gap-2 shadow-xs transition-all hover:border-outline",
                                         children: [
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                 className: "flex justify-between items-start",
@@ -761,7 +787,7 @@ function FarmerPage() {
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                                                lineNumber: 258,
+                                                                lineNumber: 293,
                                                                 columnNumber: 23
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -773,31 +799,58 @@ function FarmerPage() {
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                                                lineNumber: 259,
+                                                                lineNumber: 294,
                                                                 columnNumber: 23
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                                        lineNumber: 257,
+                                                        lineNumber: 292,
                                                         columnNumber: 21
                                                     }, this),
-                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                        className: "bg-emerald-100 text-primary-container px-2 py-0.5 rounded-full text-[11px] font-bold",
-                                                        children: item.status
-                                                    }, void 0, false, {
+                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                        className: "flex items-center gap-1.5",
+                                                        children: [
+                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                                className: "bg-emerald-100 text-primary-container px-2 py-0.5 rounded-full text-[11px] font-bold",
+                                                                children: item.status
+                                                            }, void 0, false, {
+                                                                fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
+                                                                lineNumber: 297,
+                                                                columnNumber: 23
+                                                            }, this),
+                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                                                onClick: ()=>handleDeleteProduce(item.id, item.cropName),
+                                                                className: "p-1 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors",
+                                                                title: "Delete this listed product",
+                                                                "aria-label": "Delete listing",
+                                                                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                                    className: "material-symbols-outlined text-[18px]",
+                                                                    children: "delete"
+                                                                }, void 0, false, {
+                                                                    fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
+                                                                    lineNumber: 306,
+                                                                    columnNumber: 25
+                                                                }, this)
+                                                            }, void 0, false, {
+                                                                fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
+                                                                lineNumber: 300,
+                                                                columnNumber: 23
+                                                            }, this)
+                                                        ]
+                                                    }, void 0, true, {
                                                         fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                                        lineNumber: 261,
+                                                        lineNumber: 296,
                                                         columnNumber: 21
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                                lineNumber: 256,
+                                                lineNumber: 291,
                                                 columnNumber: 19
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                className: "flex justify-between items-center text-[13px] pt-1 border-t border-outline-variant",
+                                                className: "flex justify-between items-center text-[13px] pt-1.5 border-t border-outline-variant",
                                                 children: [
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                         className: "font-bold text-on-surface",
@@ -807,37 +860,61 @@ function FarmerPage() {
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                                        lineNumber: 266,
+                                                        lineNumber: 311,
                                                         columnNumber: 21
                                                     }, this),
-                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                        className: "font-extrabold text-primary",
+                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                        className: "flex items-center gap-3",
                                                         children: [
-                                                            "₹",
-                                                            item.expectedPricePerKg,
-                                                            " / kg"
+                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                                className: "font-extrabold text-primary",
+                                                                children: [
+                                                                    "₹",
+                                                                    item.expectedPricePerKg,
+                                                                    " / kg"
+                                                                ]
+                                                            }, void 0, true, {
+                                                                fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
+                                                                lineNumber: 313,
+                                                                columnNumber: 23
+                                                            }, this),
+                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                                                onClick: ()=>handleDeleteProduce(item.id, item.cropName),
+                                                                className: "text-[11px] font-bold text-red-600 hover:text-red-800 underline flex items-center gap-0.5",
+                                                                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                                    children: "Remove"
+                                                                }, void 0, false, {
+                                                                    fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
+                                                                    lineNumber: 318,
+                                                                    columnNumber: 25
+                                                                }, this)
+                                                            }, void 0, false, {
+                                                                fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
+                                                                lineNumber: 314,
+                                                                columnNumber: 23
+                                                            }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                                        lineNumber: 267,
+                                                        lineNumber: 312,
                                                         columnNumber: 21
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                                lineNumber: 265,
+                                                lineNumber: 310,
                                                 columnNumber: 19
                                             }, this)
                                         ]
                                     }, item.id, true, {
                                         fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                        lineNumber: 255,
+                                        lineNumber: 290,
                                         columnNumber: 17
                                     }, this))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                            lineNumber: 243,
+                            lineNumber: 278,
                             columnNumber: 13
                         }, this),
                         farmerTab === 'orders' && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -848,7 +925,7 @@ function FarmerPage() {
                                     children: t.activeOrdersDispatches
                                 }, void 0, false, {
                                     fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                    lineNumber: 276,
+                                    lineNumber: 329,
                                     columnNumber: 15
                                 }, this),
                                 ordersList.map((ord)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -862,7 +939,7 @@ function FarmerPage() {
                                                         children: ord.orderNumber
                                                     }, void 0, false, {
                                                         fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                                        lineNumber: 280,
+                                                        lineNumber: 333,
                                                         columnNumber: 21
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -870,13 +947,13 @@ function FarmerPage() {
                                                         children: ord.status
                                                     }, void 0, false, {
                                                         fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                                        lineNumber: 281,
+                                                        lineNumber: 334,
                                                         columnNumber: 21
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                                lineNumber: 279,
+                                                lineNumber: 332,
                                                 columnNumber: 19
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -888,13 +965,13 @@ function FarmerPage() {
                                                         children: ord.buyerName
                                                     }, void 0, false, {
                                                         fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                                        lineNumber: 283,
+                                                        lineNumber: 336,
                                                         columnNumber: 65
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                                lineNumber: 283,
+                                                lineNumber: 336,
                                                 columnNumber: 19
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -905,7 +982,7 @@ function FarmerPage() {
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                                lineNumber: 284,
+                                                lineNumber: 337,
                                                 columnNumber: 19
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -915,7 +992,7 @@ function FarmerPage() {
                                                         children: t.orderValue
                                                     }, void 0, false, {
                                                         fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                                        lineNumber: 286,
+                                                        lineNumber: 339,
                                                         columnNumber: 21
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -926,25 +1003,25 @@ function FarmerPage() {
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                                        lineNumber: 287,
+                                                        lineNumber: 340,
                                                         columnNumber: 21
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                                lineNumber: 285,
+                                                lineNumber: 338,
                                                 columnNumber: 19
                                             }, this)
                                         ]
                                     }, ord.id, true, {
                                         fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                        lineNumber: 278,
+                                        lineNumber: 331,
                                         columnNumber: 17
                                     }, this))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                            lineNumber: 275,
+                            lineNumber: 328,
                             columnNumber: 13
                         }, this),
                         farmerTab === 'profile' && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -955,7 +1032,7 @@ function FarmerPage() {
                                     children: t.farmerProfile
                                 }, void 0, false, {
                                     fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                    lineNumber: 296,
+                                    lineNumber: 349,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -964,14 +1041,15 @@ function FarmerPage() {
                                             children: "Name:"
                                         }, void 0, false, {
                                             fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                            lineNumber: 297,
+                                            lineNumber: 350,
                                             columnNumber: 18
                                         }, this),
-                                        " Ramesh Ghosh"
+                                        " ",
+                                        farmerName
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                    lineNumber: 297,
+                                    lineNumber: 350,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -983,14 +1061,14 @@ function FarmerPage() {
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                            lineNumber: 298,
+                                            lineNumber: 351,
                                             columnNumber: 18
                                         }, this),
                                         " +91 98310 44210"
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                    lineNumber: 298,
+                                    lineNumber: 351,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1002,14 +1080,32 @@ function FarmerPage() {
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                            lineNumber: 299,
+                                            lineNumber: 352,
                                             columnNumber: 18
                                         }, this),
-                                        " Hooghly, West Bengal"
+                                        " ",
+                                        currentLocation
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                    lineNumber: 299,
+                                    lineNumber: 352,
+                                    columnNumber: 15
+                                }, this),
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                    children: [
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("strong", {
+                                            children: "Address:"
+                                        }, void 0, false, {
+                                            fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
+                                            lineNumber: 353,
+                                            columnNumber: 18
+                                        }, this),
+                                        " ",
+                                        farmerAddress
+                                    ]
+                                }, void 0, true, {
+                                    fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
+                                    lineNumber: 353,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1021,14 +1117,14 @@ function FarmerPage() {
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                            lineNumber: 300,
+                                            lineNumber: 354,
                                             columnNumber: 18
                                         }, this),
                                         " NABARD / e-NAM Verified ✓"
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                    lineNumber: 300,
+                                    lineNumber: 354,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1039,128 +1135,100 @@ function FarmerPage() {
                                         children: t.signOut
                                     }, void 0, false, {
                                         fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                        lineNumber: 302,
+                                        lineNumber: 356,
                                         columnNumber: 17
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                    lineNumber: 301,
+                                    lineNumber: 355,
                                     columnNumber: 15
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                            lineNumber: 295,
+                            lineNumber: 348,
                             columnNumber: 13
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                    lineNumber: 138,
+                    lineNumber: 173,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("nav", {
-                    className: "fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] bg-surface-container-lowest border-t border-outline-variant grid grid-cols-5 text-[10px] font-bold text-center py-2 z-40",
+                    className: "fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] bg-surface-container-lowest/95 backdrop-blur-md border-t border-outline-variant grid grid-cols-5 text-[11px] font-bold text-center py-2 z-40 shadow-lg px-2",
                     children: [
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                            onClick: ()=>setFarmerTab('home'),
-                            className: farmerTab === 'home' ? 'text-primary' : 'text-on-surface-variant',
+                        {
+                            id: 'home',
+                            icon: 'home',
+                            label: t.homeNav
+                        },
+                        {
+                            id: 'market',
+                            icon: 'analytics',
+                            label: t.marketNav
+                        },
+                        {
+                            id: 'sell',
+                            icon: 'add_circle',
+                            label: t.sellNav
+                        },
+                        {
+                            id: 'orders',
+                            icon: 'local_shipping',
+                            label: t.ordersNav
+                        },
+                        {
+                            id: 'profile',
+                            icon: 'person',
+                            label: t.profileNav
+                        }
+                    ].map((item)=>{
+                        const isActive = farmerTab === item.id;
+                        return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                            onClick: ()=>setFarmerTab(item.id),
+                            className: `relative flex flex-col items-center justify-center py-1 rounded-xl transition-all duration-200 ${isActive ? 'text-primary font-black scale-105' : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high/50'}`,
                             children: [
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                    className: "material-symbols-outlined block text-[20px]",
-                                    children: "home"
+                                isActive && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                    className: "absolute -top-2 w-8 h-1 bg-primary rounded-full animate-in fade-in zoom-in duration-200"
                                 }, void 0, false, {
                                     fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                    lineNumber: 313,
-                                    columnNumber: 13
+                                    lineNumber: 385,
+                                    columnNumber: 19
                                 }, this),
-                                t.homeNav
-                            ]
-                        }, void 0, true, {
-                            fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                            lineNumber: 312,
-                            columnNumber: 11
-                        }, this),
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                            onClick: ()=>setFarmerTab('market'),
-                            className: farmerTab === 'market' ? 'text-primary' : 'text-on-surface-variant',
-                            children: [
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                    className: "material-symbols-outlined block text-[20px]",
-                                    children: "analytics"
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                    className: `p-1 rounded-full transition-all ${isActive ? 'bg-primary/15' : ''}`,
+                                    children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                        className: `material-symbols-outlined block text-[22px] ${isActive ? 'fill-current' : ''}`,
+                                        children: item.icon
+                                    }, void 0, false, {
+                                        fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
+                                        lineNumber: 388,
+                                        columnNumber: 19
+                                    }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                    lineNumber: 316,
-                                    columnNumber: 13
+                                    lineNumber: 387,
+                                    columnNumber: 17
                                 }, this),
-                                t.marketNav
-                            ]
-                        }, void 0, true, {
-                            fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                            lineNumber: 315,
-                            columnNumber: 11
-                        }, this),
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                            onClick: ()=>setFarmerTab('sell'),
-                            className: farmerTab === 'sell' ? 'text-primary' : 'text-on-surface-variant',
-                            children: [
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                    className: "material-symbols-outlined block text-[20px]",
-                                    children: "add_circle"
+                                    className: `text-[10px] tracking-tight ${isActive ? 'font-extrabold text-primary' : 'font-medium'}`,
+                                    children: item.label
                                 }, void 0, false, {
                                     fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                    lineNumber: 319,
-                                    columnNumber: 13
-                                }, this),
-                                t.sellNav
+                                    lineNumber: 392,
+                                    columnNumber: 17
+                                }, this)
                             ]
-                        }, void 0, true, {
+                        }, item.id, true, {
                             fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                            lineNumber: 318,
-                            columnNumber: 11
-                        }, this),
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                            onClick: ()=>setFarmerTab('orders'),
-                            className: farmerTab === 'orders' ? 'text-primary' : 'text-on-surface-variant',
-                            children: [
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                    className: "material-symbols-outlined block text-[20px]",
-                                    children: "local_shipping"
-                                }, void 0, false, {
-                                    fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                    lineNumber: 322,
-                                    columnNumber: 13
-                                }, this),
-                                t.ordersNav
-                            ]
-                        }, void 0, true, {
-                            fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                            lineNumber: 321,
-                            columnNumber: 11
-                        }, this),
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                            onClick: ()=>setFarmerTab('profile'),
-                            className: farmerTab === 'profile' ? 'text-primary' : 'text-on-surface-variant',
-                            children: [
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                    className: "material-symbols-outlined block text-[20px]",
-                                    children: "person"
-                                }, void 0, false, {
-                                    fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                                    lineNumber: 325,
-                                    columnNumber: 13
-                                }, this),
-                                t.profileNav
-                            ]
-                        }, void 0, true, {
-                            fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                            lineNumber: 324,
-                            columnNumber: 11
-                        }, this)
-                    ]
-                }, void 0, true, {
+                            lineNumber: 375,
+                            columnNumber: 15
+                        }, this);
+                    })
+                }, void 0, false, {
                     fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                    lineNumber: 311,
+                    lineNumber: 365,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$src$2f$components$2f$PredefinedHelpModal$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["PredefinedHelpModal"], {
@@ -1178,7 +1246,7 @@ function FarmerPage() {
                     }
                 }, void 0, false, {
                     fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                    lineNumber: 330,
+                    lineNumber: 401,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$src$2f$components$2f$ListProduceWizard$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["ListProduceWizard"], {
@@ -1189,18 +1257,18 @@ function FarmerPage() {
                     onSuccess: handleProduceCreated
                 }, void 0, false, {
                     fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-                    lineNumber: 345,
+                    lineNumber: 416,
                     columnNumber: 9
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-            lineNumber: 60,
+            lineNumber: 98,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/apps/pwa/src/app/farmer/page.tsx",
-        lineNumber: 59,
+        lineNumber: 97,
         columnNumber: 5
     }, this);
 }
@@ -1271,13 +1339,13 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
         {
             name: 'Tomato',
             icon: '🍅',
-            variety: 'Hybrid Red',
+            variety: 'Hybrid Red Flavour',
             suggestedPrice: '₹28–32/kg'
         },
         {
             name: 'Potato',
             icon: '🥔',
-            variety: 'Jyoti',
+            variety: 'Jyoti Golden',
             suggestedPrice: '₹16–20/kg'
         },
         {
@@ -1288,36 +1356,76 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
         },
         {
             name: 'Rice',
+            icon: '🍚',
+            variety: 'Gobindobhog Aromatic',
+            suggestedPrice: '₹70–80/kg'
+        },
+        {
+            name: 'Wheat',
             icon: '🌾',
-            variety: 'Minikit',
-            suggestedPrice: '₹38–44/kg'
+            variety: 'Sharbati Gold',
+            suggestedPrice: '₹26–30/kg'
+        },
+        {
+            name: 'Chilli',
+            icon: '🌶️',
+            variety: 'Bullet Green Spicy',
+            suggestedPrice: '₹44–50/kg'
+        },
+        {
+            name: 'Cauliflower',
+            icon: '🥦',
+            variety: 'Snowball White',
+            suggestedPrice: '₹20–25/kg'
+        },
+        {
+            name: 'Cabbage',
+            icon: '🥬',
+            variety: 'Green Globe Crisp',
+            suggestedPrice: '₹12–16/kg'
+        },
+        {
+            name: 'Carrot',
+            icon: '🥕',
+            variety: 'Kuroda Sweet Orange',
+            suggestedPrice: '₹28–35/kg'
+        },
+        {
+            name: 'Brinjal',
+            icon: '🍆',
+            variety: 'Muktakeshi Purple',
+            suggestedPrice: '₹24–30/kg'
         }
     ];
     const handleSubmit = (e)=>{
         e.preventDefault();
         setIsSubmitting(true);
+        let activeFarmerName = 'Ramesh Ghosh';
+        let activeFarmerLocation = 'Hooghly (Singur)';
+        if ("TURBOPACK compile-time falsy", 0) //TURBOPACK unreachable
+        ;
         setTimeout(()=>{
             const created = {
                 id: `prod-${Date.now().toString().slice(-4)}`,
-                farmerId: 'f-101',
-                farmerName: 'Farmer A (Ramesh Ghosh)',
-                farmerLocation: 'Hooghly (32 km)',
-                cropName: selectedCrop,
-                variety: cropOptions.find((c)=>c.name.toLowerCase() === selectedCrop.toLowerCase())?.variety || 'Hybrid',
+                farmerId: `f-${Date.now().toString().slice(-3)}`,
+                farmerName: activeFarmerName,
+                farmerLocation: activeFarmerLocation,
+                cropName: selectedCrop.trim(),
+                variety: cropOptions.find((c)=>c.name.toLowerCase() === selectedCrop.toLowerCase())?.variety || 'Farm Fresh',
                 grade,
                 quantityKg,
                 expectedPricePerKg: expectedPrice,
-                marketSuggestedPriceMin: selectedCrop === 'Tomato' ? 28 : 16,
-                marketSuggestedPriceMax: selectedCrop === 'Tomato' ? 32 : 20,
+                marketSuggestedPriceMin: Math.max(10, Math.round(expectedPrice * 0.9)),
+                marketSuggestedPriceMax: Math.round(expectedPrice * 1.15),
                 harvestDate,
                 demandStatus: 'High',
-                demandForecastPct: 18,
+                demandForecastPct: 20,
                 status: 'Available',
                 fpoVerified: true,
                 createdAt: new Date().toISOString()
             };
             setIsSubmitting(false);
-            setSuccessMsg('Produce listed successfully. Saved locally and synced to e-NAM!');
+            setSuccessMsg('Produce listed successfully! Synced real-time to Pan-India map & buyer feeds.');
             setTimeout(()=>{
                 onSuccess(created);
                 setSuccessMsg('');
@@ -1341,7 +1449,7 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                     children: "List Produce for Direct Sale"
                                 }, void 0, false, {
                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                    lineNumber: 226,
+                                    lineNumber: 243,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1353,13 +1461,13 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                    lineNumber: 227,
+                                    lineNumber: 244,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                            lineNumber: 225,
+                            lineNumber: 242,
                             columnNumber: 11
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1375,12 +1483,12 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                         children: "mic"
                                     }, void 0, false, {
                                         fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                        lineNumber: 239,
+                                        lineNumber: 256,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0))
                                 }, void 0, false, {
                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                    lineNumber: 231,
+                                    lineNumber: 248,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1391,24 +1499,24 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                         children: "close"
                                     }, void 0, false, {
                                         fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                        lineNumber: 242,
+                                        lineNumber: 259,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0))
                                 }, void 0, false, {
                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                    lineNumber: 241,
+                                    lineNumber: 258,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                            lineNumber: 230,
+                            lineNumber: 247,
                             columnNumber: 11
                         }, ("TURBOPACK compile-time value", void 0))
                     ]
                 }, void 0, true, {
                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                    lineNumber: 224,
+                    lineNumber: 241,
                     columnNumber: 9
                 }, ("TURBOPACK compile-time value", void 0)),
                 voiceNotice && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1416,7 +1524,7 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                     children: voiceNotice
                 }, void 0, false, {
                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                    lineNumber: 249,
+                    lineNumber: 266,
                     columnNumber: 11
                 }, ("TURBOPACK compile-time value", void 0)),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1426,27 +1534,27 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                             className: `h-full transition-all duration-300 ${step >= 1 ? 'bg-primary flex-1' : 'bg-transparent'}`
                         }, void 0, false, {
                             fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                            lineNumber: 256,
+                            lineNumber: 273,
                             columnNumber: 11
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                             className: `h-full transition-all duration-300 ${step >= 2 ? 'bg-primary flex-1' : 'bg-transparent'}`
                         }, void 0, false, {
                             fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                            lineNumber: 257,
+                            lineNumber: 274,
                             columnNumber: 11
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                             className: `h-full transition-all duration-300 ${step >= 3 ? 'bg-primary flex-1' : 'bg-transparent'}`
                         }, void 0, false, {
                             fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                            lineNumber: 258,
+                            lineNumber: 275,
                             columnNumber: 11
                         }, ("TURBOPACK compile-time value", void 0))
                     ]
                 }, void 0, true, {
                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                    lineNumber: 255,
+                    lineNumber: 272,
                     columnNumber: 9
                 }, ("TURBOPACK compile-time value", void 0)),
                 successMsg ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1459,12 +1567,12 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                 children: "check_circle"
                             }, void 0, false, {
                                 fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                lineNumber: 264,
+                                lineNumber: 281,
                                 columnNumber: 15
                             }, ("TURBOPACK compile-time value", void 0))
                         }, void 0, false, {
                             fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                            lineNumber: 263,
+                            lineNumber: 280,
                             columnNumber: 13
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1472,13 +1580,13 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                             children: successMsg
                         }, void 0, false, {
                             fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                            lineNumber: 266,
+                            lineNumber: 283,
                             columnNumber: 13
                         }, ("TURBOPACK compile-time value", void 0))
                     ]
                 }, void 0, true, {
                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                    lineNumber: 262,
+                    lineNumber: 279,
                     columnNumber: 11
                 }, ("TURBOPACK compile-time value", void 0)) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("form", {
                     onSubmit: handleSubmit,
@@ -1495,7 +1603,7 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                             children: "Step 1: Select or Type Crop"
                                         }, void 0, false, {
                                             fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                            lineNumber: 274,
+                                            lineNumber: 291,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1503,13 +1611,13 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                             children: "Voice or Type"
                                         }, void 0, false, {
                                             fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                            lineNumber: 275,
+                                            lineNumber: 292,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                    lineNumber: 273,
+                                    lineNumber: 290,
                                     columnNumber: 17
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1522,7 +1630,7 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                                     children: "Add Custom Crop / Product Name"
                                                 }, void 0, false, {
                                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                                    lineNumber: 281,
+                                                    lineNumber: 298,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1530,13 +1638,13 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                                     children: "Voice Enabled"
                                                 }, void 0, false, {
                                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                                    lineNumber: 282,
+                                                    lineNumber: 299,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                            lineNumber: 280,
+                                            lineNumber: 297,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1547,7 +1655,7 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                                     children: "eco"
                                                 }, void 0, false, {
                                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                                    lineNumber: 286,
+                                                    lineNumber: 303,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -1558,7 +1666,7 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                                     className: "w-full pl-10 pr-12 py-3 bg-white border border-outline-variant rounded-xl text-[14px] font-bold text-on-surface focus:outline-none focus:border-primary shadow-xs"
                                                 }, void 0, false, {
                                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                                    lineNumber: 287,
+                                                    lineNumber: 304,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1571,24 +1679,24 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                                         children: "mic"
                                                     }, void 0, false, {
                                                         fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                                        lineNumber: 302,
+                                                        lineNumber: 319,
                                                         columnNumber: 23
                                                     }, ("TURBOPACK compile-time value", void 0))
                                                 }, void 0, false, {
                                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                                    lineNumber: 294,
+                                                    lineNumber: 311,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                            lineNumber: 285,
+                                            lineNumber: 302,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                    lineNumber: 279,
+                                    lineNumber: 296,
                                     columnNumber: 17
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1598,7 +1706,7 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                             className: "h-px bg-outline-variant flex-1"
                                         }, void 0, false, {
                                             fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                            lineNumber: 308,
+                                            lineNumber: 325,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1606,24 +1714,24 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                             children: "Or Choose Popular Crops"
                                         }, void 0, false, {
                                             fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                            lineNumber: 309,
+                                            lineNumber: 326,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                             className: "h-px bg-outline-variant flex-1"
                                         }, void 0, false, {
                                             fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                            lineNumber: 310,
+                                            lineNumber: 327,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                    lineNumber: 307,
+                                    lineNumber: 324,
                                     columnNumber: 17
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                    className: "grid grid-cols-2 gap-2.5",
+                                    className: "grid grid-cols-2 gap-2.5 max-h-[220px] overflow-y-auto pr-1",
                                     children: cropOptions.map((crop)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                             type: "button",
                                             onClick: ()=>setSelectedCrop(crop.name),
@@ -1634,7 +1742,7 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                                     children: crop.icon
                                                 }, void 0, false, {
                                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                                    lineNumber: 326,
+                                                    lineNumber: 343,
                                                     columnNumber: 23
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1642,7 +1750,7 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                                     children: crop.name
                                                 }, void 0, false, {
                                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                                    lineNumber: 327,
+                                                    lineNumber: 344,
                                                     columnNumber: 23
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1650,18 +1758,18 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                                     children: crop.variety
                                                 }, void 0, false, {
                                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                                    lineNumber: 328,
+                                                    lineNumber: 345,
                                                     columnNumber: 23
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, crop.name, true, {
                                             fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                            lineNumber: 316,
+                                            lineNumber: 333,
                                             columnNumber: 21
                                         }, ("TURBOPACK compile-time value", void 0)))
                                 }, void 0, false, {
                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                    lineNumber: 314,
+                                    lineNumber: 331,
                                     columnNumber: 17
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1679,7 +1787,7 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                             children: "Continue to Quantity"
                                         }, void 0, false, {
                                             fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                            lineNumber: 344,
+                                            lineNumber: 361,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1687,19 +1795,19 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                             children: "arrow_forward"
                                         }, void 0, false, {
                                             fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                            lineNumber: 345,
+                                            lineNumber: 362,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                    lineNumber: 333,
+                                    lineNumber: 350,
                                     columnNumber: 17
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                            lineNumber: 272,
+                            lineNumber: 289,
                             columnNumber: 15
                         }, ("TURBOPACK compile-time value", void 0)),
                         step === 2 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1710,7 +1818,7 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                     children: "Step 2: Harvest Quantity (Kg)"
                                 }, void 0, false, {
                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                    lineNumber: 353,
+                                    lineNumber: 370,
                                     columnNumber: 17
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1724,7 +1832,7 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                                     children: "Available Lot Quantity"
                                                 }, void 0, false, {
                                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                                    lineNumber: 357,
+                                                    lineNumber: 374,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1735,13 +1843,13 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                                    lineNumber: 358,
+                                                    lineNumber: 375,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                            lineNumber: 356,
+                                            lineNumber: 373,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -1754,7 +1862,7 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                             className: "w-full h-2 bg-surface-container-high rounded-lg appearance-none cursor-pointer accent-primary"
                                         }, void 0, false, {
                                             fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                            lineNumber: 360,
+                                            lineNumber: 377,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1764,33 +1872,33 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                                     children: "100 kg"
                                                 }, void 0, false, {
                                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                                    lineNumber: 370,
+                                                    lineNumber: 387,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                     children: "1,000 kg"
                                                 }, void 0, false, {
                                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                                    lineNumber: 371,
+                                                    lineNumber: 388,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                     children: "5,000 kg"
                                                 }, void 0, false, {
                                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                                    lineNumber: 372,
+                                                    lineNumber: 389,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                            lineNumber: 369,
+                                            lineNumber: 386,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                    lineNumber: 355,
+                                    lineNumber: 372,
                                     columnNumber: 17
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1803,7 +1911,7 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                             children: "Back"
                                         }, void 0, false, {
                                             fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                            lineNumber: 377,
+                                            lineNumber: 394,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1815,7 +1923,7 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                                     children: "Set Quality & Price"
                                                 }, void 0, false, {
                                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                                    lineNumber: 389,
+                                                    lineNumber: 406,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1823,25 +1931,25 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                                     children: "arrow_forward"
                                                 }, void 0, false, {
                                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                                    lineNumber: 390,
+                                                    lineNumber: 407,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                            lineNumber: 384,
+                                            lineNumber: 401,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                    lineNumber: 376,
+                                    lineNumber: 393,
                                     columnNumber: 17
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                            lineNumber: 352,
+                            lineNumber: 369,
                             columnNumber: 15
                         }, ("TURBOPACK compile-time value", void 0)),
                         step === 3 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1852,7 +1960,7 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                     children: "Step 3: Quality, Price & Date"
                                 }, void 0, false, {
                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                    lineNumber: 399,
+                                    lineNumber: 416,
                                     columnNumber: 17
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1862,7 +1970,7 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                             children: "Quality Grade"
                                         }, void 0, false, {
                                             fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                            lineNumber: 402,
+                                            lineNumber: 419,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1878,18 +1986,18 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                                     children: g
                                                 }, g, false, {
                                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                                    lineNumber: 405,
+                                                    lineNumber: 422,
                                                     columnNumber: 23
                                                 }, ("TURBOPACK compile-time value", void 0)))
                                         }, void 0, false, {
                                             fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                            lineNumber: 403,
+                                            lineNumber: 420,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                    lineNumber: 401,
+                                    lineNumber: 418,
                                     columnNumber: 17
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1899,7 +2007,7 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                             children: "Expected Price per Kg (₹)"
                                         }, void 0, false, {
                                             fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                            lineNumber: 422,
+                                            lineNumber: 439,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1910,7 +2018,7 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                                     children: "₹"
                                                 }, void 0, false, {
                                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                                    lineNumber: 424,
+                                                    lineNumber: 441,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -1921,19 +2029,19 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                                     className: "w-full pl-8 pr-4 py-2.5 bg-surface-container-lowest border border-outline-variant rounded-xl font-bold text-on-surface focus:outline-none focus:border-primary"
                                                 }, void 0, false, {
                                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                                    lineNumber: 425,
+                                                    lineNumber: 442,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                            lineNumber: 423,
+                                            lineNumber: 440,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                    lineNumber: 421,
+                                    lineNumber: 438,
                                     columnNumber: 17
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1943,7 +2051,7 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                             children: "Expected Harvest / Dispatch Date"
                                         }, void 0, false, {
                                             fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                            lineNumber: 436,
+                                            lineNumber: 453,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -1953,13 +2061,13 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                             className: "w-full px-3.5 py-2.5 mt-1 bg-surface-container-lowest border border-outline-variant rounded-xl font-bold text-on-surface focus:outline-none focus:border-primary"
                                         }, void 0, false, {
                                             fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                            lineNumber: 437,
+                                            lineNumber: 454,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                    lineNumber: 435,
+                                    lineNumber: 452,
                                     columnNumber: 17
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1972,7 +2080,7 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                             children: "Back"
                                         }, void 0, false, {
                                             fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                            lineNumber: 446,
+                                            lineNumber: 463,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1982,36 +2090,36 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                             children: isSubmitting ? 'Listing Produce...' : 'List My Produce'
                                         }, void 0, false, {
                                             fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                            lineNumber: 453,
+                                            lineNumber: 470,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                    lineNumber: 445,
+                                    lineNumber: 462,
                                     columnNumber: 17
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                            lineNumber: 398,
+                            lineNumber: 415,
                             columnNumber: 15
                         }, ("TURBOPACK compile-time value", void 0))
                     ]
                 }, void 0, true, {
                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                    lineNumber: 269,
+                    lineNumber: 286,
                     columnNumber: 11
                 }, ("TURBOPACK compile-time value", void 0))
             ]
         }, void 0, true, {
             fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-            lineNumber: 221,
+            lineNumber: 238,
             columnNumber: 7
         }, ("TURBOPACK compile-time value", void 0))
     }, void 0, false, {
         fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-        lineNumber: 220,
+        lineNumber: 237,
         columnNumber: 5
     }, ("TURBOPACK compile-time value", void 0));
 };
@@ -2675,16 +2783,16 @@ const initialProduceList = [
     {
         id: 'prod-001',
         farmerId: 'f-101',
-        farmerName: 'Farmer A (Ramesh Ghosh)',
-        farmerLocation: 'Hooghly (32 km)',
+        farmerName: 'Ramesh Ghosh',
+        farmerLocation: 'Hooghly (Singur)',
         cropName: 'Tomato',
-        variety: 'Hybrid Red',
+        variety: 'Hybrid Red Flavour',
         grade: 'Grade A',
         quantityKg: 800,
         expectedPricePerKg: 30,
         marketSuggestedPriceMin: 28,
         marketSuggestedPriceMax: 32,
-        harvestDate: '2026-09-04',
+        harvestDate: '2026-09-10',
         demandStatus: 'High',
         demandForecastPct: 18,
         status: 'Available',
@@ -2694,7 +2802,7 @@ const initialProduceList = [
     {
         id: 'prod-002',
         farmerId: 'f-102',
-        farmerName: 'Farmer B (Suhas Biswas)',
+        farmerName: 'Suhas Biswas',
         farmerLocation: 'Barasat (24 km)',
         cropName: 'Tomato',
         variety: 'Roma Organic',
@@ -2703,7 +2811,7 @@ const initialProduceList = [
         expectedPricePerKg: 29,
         marketSuggestedPriceMin: 28,
         marketSuggestedPriceMax: 32,
-        harvestDate: '2026-09-04',
+        harvestDate: '2026-09-10',
         demandStatus: 'High',
         demandForecastPct: 18,
         status: 'Available',
@@ -2713,18 +2821,18 @@ const initialProduceList = [
     {
         id: 'prod-003',
         farmerId: 'f-103',
-        farmerName: 'FPO C (Hooghly Agri Collective)',
-        farmerLocation: 'Singur (18 km)',
-        cropName: 'Tomato',
-        variety: 'Desi Hybrid',
-        grade: 'Grade A',
-        quantityKg: 400,
-        expectedPricePerKg: 28,
-        marketSuggestedPriceMin: 28,
-        marketSuggestedPriceMax: 32,
-        harvestDate: '2026-09-03',
+        farmerName: 'Subhash Mondal',
+        farmerLocation: 'Burdwan (Shaktigarh)',
+        cropName: 'Rice',
+        variety: 'Gobindobhog Aromatic',
+        grade: 'Export Quality',
+        quantityKg: 3500,
+        expectedPricePerKg: 78,
+        marketSuggestedPriceMin: 72,
+        marketSuggestedPriceMax: 84,
+        harvestDate: '2026-09-08',
         demandStatus: 'High',
-        demandForecastPct: 18,
+        demandForecastPct: 22,
         status: 'Available',
         fpoVerified: true,
         createdAt: new Date().toISOString()
@@ -2732,37 +2840,227 @@ const initialProduceList = [
     {
         id: 'prod-004',
         farmerId: 'f-104',
-        farmerName: 'Farmer D (Bimal Halder)',
-        farmerLocation: 'Tarakeswar (45 km)',
-        cropName: 'Tomato',
-        variety: 'Red Globe',
+        farmerName: 'Bimal Halder',
+        farmerLocation: 'Tarakeswar, Hooghly',
+        cropName: 'Potato',
+        variety: 'Jyoti Golden Super',
         grade: 'Grade A',
-        quantityKg: 300,
-        expectedPricePerKg: 31,
-        marketSuggestedPriceMin: 28,
-        marketSuggestedPriceMax: 32,
-        harvestDate: '2026-09-05',
-        demandStatus: 'High',
-        demandForecastPct: 18,
+        quantityKg: 4500,
+        expectedPricePerKg: 17,
+        marketSuggestedPriceMin: 15,
+        marketSuggestedPriceMax: 19,
+        harvestDate: '2026-09-09',
+        demandStatus: 'Steady',
+        demandForecastPct: 8,
         status: 'Available',
-        fpoVerified: false,
+        fpoVerified: true,
         createdAt: new Date().toISOString()
     },
     {
         id: 'prod-005',
-        farmerId: 'f-101',
-        farmerName: 'Ramesh Ghosh',
-        farmerLocation: 'Hooghly (32 km)',
-        cropName: 'Potato',
-        variety: 'Jyoti',
+        farmerId: 'f-105',
+        farmerName: 'Animesh Biswas',
+        farmerLocation: 'Nadia (Ranaghat)',
+        cropName: 'Chilli',
+        variety: 'Bullet Green Spicy',
         grade: 'Grade A',
-        quantityKg: 1200,
-        expectedPricePerKg: 18,
-        marketSuggestedPriceMin: 16,
-        marketSuggestedPriceMax: 20,
-        harvestDate: '2026-09-02',
+        quantityKg: 650,
+        expectedPricePerKg: 46,
+        marketSuggestedPriceMin: 42,
+        marketSuggestedPriceMax: 50,
+        harvestDate: '2026-09-10',
+        demandStatus: 'High',
+        demandForecastPct: 25,
+        status: 'Available',
+        fpoVerified: true,
+        createdAt: new Date().toISOString()
+    },
+    {
+        id: 'prod-006',
+        farmerId: 'f-106',
+        farmerName: 'Vasantrao Patil',
+        farmerLocation: 'Lasalgaon Mandi, Nashik',
+        cropName: 'Onion',
+        variety: 'Nashik Red Premium',
+        grade: 'Grade A',
+        quantityKg: 6000,
+        expectedPricePerKg: 24,
+        marketSuggestedPriceMin: 22,
+        marketSuggestedPriceMax: 26,
+        harvestDate: '2026-09-08',
+        demandStatus: 'High',
+        demandForecastPct: 20,
+        status: 'Available',
+        fpoVerified: true,
+        createdAt: new Date().toISOString()
+    },
+    {
+        id: 'prod-007',
+        farmerId: 'f-107',
+        farmerName: 'Gurpreet Singh',
+        farmerLocation: 'Khanna Mandi, Ludhiana',
+        cropName: 'Wheat',
+        variety: 'HD-3086 Premium Grade',
+        grade: 'Export Quality',
+        quantityKg: 12000,
+        expectedPricePerKg: 27,
+        marketSuggestedPriceMin: 25,
+        marketSuggestedPriceMax: 30,
+        harvestDate: '2026-09-07',
         demandStatus: 'Steady',
-        demandForecastPct: 5,
+        demandForecastPct: 10,
+        status: 'Available',
+        fpoVerified: true,
+        createdAt: new Date().toISOString()
+    },
+    {
+        id: 'prod-008',
+        farmerId: 'f-108',
+        farmerName: 'K. Venkata Rao',
+        farmerLocation: 'Guntur Mirchi Yard, AP',
+        cropName: 'Chilli',
+        variety: 'Guntur Teja S17 Fiery',
+        grade: 'Export Quality',
+        quantityKg: 3200,
+        expectedPricePerKg: 195,
+        marketSuggestedPriceMin: 185,
+        marketSuggestedPriceMax: 210,
+        harvestDate: '2026-09-09',
+        demandStatus: 'High',
+        demandForecastPct: 30,
+        status: 'Available',
+        fpoVerified: true,
+        createdAt: new Date().toISOString()
+    },
+    {
+        id: 'prod-009',
+        farmerId: 'f-109',
+        farmerName: 'Bhawani Singh Rathore',
+        farmerLocation: 'Kumher Mandi, Bharatpur, RJ',
+        cropName: 'Mustard',
+        variety: 'Black Bold Oil-Rich (42%)',
+        grade: 'Export Quality',
+        quantityKg: 6400,
+        expectedPricePerKg: 58,
+        marketSuggestedPriceMin: 54,
+        marketSuggestedPriceMax: 62,
+        harvestDate: '2026-09-08',
+        demandStatus: 'Steady',
+        demandForecastPct: 12,
+        status: 'Available',
+        fpoVerified: true,
+        createdAt: new Date().toISOString()
+    },
+    {
+        id: 'prod-010',
+        farmerId: 'f-110',
+        farmerName: 'Chander Mohan Thakur',
+        farmerLocation: 'Kotkhai, Shimla, HP',
+        cropName: 'Apple',
+        variety: 'Royal Delicious Mountain Fresh',
+        grade: 'Export Quality',
+        quantityKg: 2500,
+        expectedPricePerKg: 92,
+        marketSuggestedPriceMin: 85,
+        marketSuggestedPriceMax: 105,
+        harvestDate: '2026-09-09',
+        demandStatus: 'High',
+        demandForecastPct: 24,
+        status: 'Available',
+        fpoVerified: true,
+        createdAt: new Date().toISOString()
+    },
+    {
+        id: 'prod-011',
+        farmerId: 'f-111',
+        farmerName: 'Prabhat Mondal',
+        farmerLocation: 'Bongaon, North 24 Parganas',
+        cropName: 'Cauliflower',
+        variety: 'Snowball White Compact',
+        grade: 'Grade A',
+        quantityKg: 1400,
+        expectedPricePerKg: 22,
+        marketSuggestedPriceMin: 20,
+        marketSuggestedPriceMax: 25,
+        harvestDate: '2026-09-10',
+        demandStatus: 'High',
+        demandForecastPct: 15,
+        status: 'Available',
+        fpoVerified: true,
+        createdAt: new Date().toISOString()
+    },
+    {
+        id: 'prod-012',
+        farmerId: 'f-112',
+        farmerName: 'Harish Patel',
+        farmerLocation: 'Anand Horticulture Hub, Gujarat',
+        cropName: 'Cabbage',
+        variety: 'Green Globe Crisp',
+        grade: 'Grade A',
+        quantityKg: 2800,
+        expectedPricePerKg: 14,
+        marketSuggestedPriceMin: 12,
+        marketSuggestedPriceMax: 16,
+        harvestDate: '2026-09-09',
+        demandStatus: 'Steady',
+        demandForecastPct: 8,
+        status: 'Available',
+        fpoVerified: true,
+        createdAt: new Date().toISOString()
+    },
+    {
+        id: 'prod-013',
+        farmerId: 'f-113',
+        farmerName: 'Manjunath Gowda',
+        farmerLocation: 'Kolar Agro Belt, Karnataka',
+        cropName: 'Carrot',
+        variety: 'Kuroda Sweet Orange',
+        grade: 'Grade A',
+        quantityKg: 1800,
+        expectedPricePerKg: 32,
+        marketSuggestedPriceMin: 28,
+        marketSuggestedPriceMax: 35,
+        harvestDate: '2026-09-10',
+        demandStatus: 'High',
+        demandForecastPct: 17,
+        status: 'Available',
+        fpoVerified: true,
+        createdAt: new Date().toISOString()
+    },
+    {
+        id: 'prod-014',
+        farmerId: 'f-114',
+        farmerName: 'Debabrata Das',
+        farmerLocation: 'Baruipur, South 24 Parganas',
+        cropName: 'Brinjal',
+        variety: 'Muktakeshi Purple Gloss',
+        grade: 'Grade A',
+        quantityKg: 900,
+        expectedPricePerKg: 26,
+        marketSuggestedPriceMin: 24,
+        marketSuggestedPriceMax: 30,
+        harvestDate: '2026-09-10',
+        demandStatus: 'Steady',
+        demandForecastPct: 11,
+        status: 'Available',
+        fpoVerified: true,
+        createdAt: new Date().toISOString()
+    },
+    {
+        id: 'prod-015',
+        farmerId: 'f-115',
+        farmerName: 'Manoj Mandal',
+        farmerLocation: 'Katihar Mandi, Bihar',
+        cropName: 'Rice',
+        variety: 'Katarni Bhagalpur Fragrant',
+        grade: 'Grade A',
+        quantityKg: 4200,
+        expectedPricePerKg: 54,
+        marketSuggestedPriceMin: 50,
+        marketSuggestedPriceMax: 60,
+        harvestDate: '2026-09-08',
+        demandStatus: 'High',
+        demandForecastPct: 19,
         status: 'Available',
         fpoVerified: true,
         createdAt: new Date().toISOString()
@@ -2937,7 +3235,6 @@ const translations = {
     EN: {
         appTitle: 'Farm2Flow',
         farmerRole: 'Farmer',
-        buyerRole: 'Buyer',
         tagline: 'From Farm to Market, Smarter',
         offlineDraft: 'Offline Draft Mode • Changes Queued',
         onlineSync: 'PWA Online • Direct Sync Active',
@@ -3009,35 +3306,36 @@ const translations = {
         submitting: 'Listing Produce...',
         listSuccess: 'Produce listed successfully. Saved locally and synced to e-NAM!',
         voiceAutofillPrompt: 'Listening... say crop, quantity, or price (e.g. "500 kg at 32 rupees")',
-        // Buyer Portal Translations
-        buyerTitle: 'Wholesale Procurement',
-        buyerSubtitle: 'Procure directly from verified Hooghly & Bengal farmers.',
-        verifiedAggregator: 'Verified Aggregator',
-        farmEconomicsTitle: 'Direct Farm-to-Buyer Economics:',
-        farmEconomicsDesc: 'Average savings realized: 18% – 25% compared to traditional multi-tier middlemen mandis.',
-        runSmartMatchBtn: 'Create Requirement & Run Smart Match',
-        availableLotsTitle: 'Available Direct Farm Lots',
-        viewAllLots: 'View All',
-        browseTitle: 'Browse All Farm Listings',
-        procureViaSmartMatch: 'Procure via Smart Match',
-        trackOrdersTitle: 'Track Dispatches & Orders',
+        // Consumer Portal Translations
+        buyerRole: 'Consumer',
+        buyerTitle: 'Direct Farm-to-Consumer',
+        buyerSubtitle: 'Order freshly harvested crops directly from verified local & national farmers.',
+        verifiedAggregator: 'Verified Consumer',
+        farmEconomicsTitle: 'Direct Farmer-to-Consumer Model:',
+        farmEconomicsDesc: 'Enjoy fresh produce straight from farms with 18% – 25% savings by skipping mandi middlemen.',
+        runSmartMatchBtn: 'Create Requirement & Auto-Match Farmers',
+        availableLotsTitle: 'Fresh Harvests Directly From Farmers',
+        viewAllLots: 'View All Harvests',
+        browseTitle: 'Browse Direct Farm Listings',
+        procureViaSmartMatch: 'Order via Smart Match',
+        trackOrdersTitle: 'Track Deliveries & Orders',
         totalLots: 'Total',
         quantityLabel: 'Quantity',
-        destinationLabel: 'Destination',
-        deliveryLabel: 'Delivery',
-        totalProcurementCost: 'Total Procurement Cost',
-        middlemenSavings: 'Realized Middlemen Savings',
-        buyerProfileTitle: 'Buyer Profile',
-        entityLabel: 'Entity',
-        buyerEntityValue: 'Kolkata Wholesale Mandi Aggregator',
-        buyerLocationValue: 'Posta Mandi, Kolkata',
-        buyerStatusValue: 'Verified Wholesale Buyer ✓',
+        destinationLabel: 'Delivery Address',
+        deliveryLabel: 'Delivery Status',
+        totalProcurementCost: 'Total Order Cost',
+        middlemenSavings: 'Middlemen Markup Saved',
+        buyerProfileTitle: 'Consumer Profile',
+        entityLabel: 'Account Holder',
+        buyerEntityValue: 'Individual Household Consumer',
+        buyerLocationValue: 'Salt Lake, Kolkata',
+        buyerStatusValue: 'Verified Direct Consumer ✓',
         browseNav: 'Browse'
     },
     BN: {
         appTitle: 'ফার্ম২ফ্লো',
         farmerRole: 'কৃষক',
-        buyerRole: 'ক্রেতা',
+        buyerRole: 'ভোক্তা / ক্রেতা',
         tagline: 'ক্ষেত থেকে সরাসরি বাজারে, স্মার্ট উপায়ে',
         offlineDraft: 'অফলাইন ড্রাফট মোড • ডেটা সংরক্ষিত হচ্ছে',
         onlineSync: 'পিডব্লিউএ অনলাইন • সরাসরি সিঙ্ক সক্রিয়',
@@ -3109,13 +3407,13 @@ const translations = {
         submitting: 'তালিকাভুক্ত করা হচ্ছে...',
         listSuccess: 'ফসল সফলভাবে তালিকাভুক্ত হয়েছে এবং ই-নাম পোর্টালের সাথে সিঙ্ক হয়েছে!',
         voiceAutofillPrompt: 'শুনছি... ফসলের নাম, পরিমাণ বা দর বলুন (যেমন: "৫০০ কেজি ৩২ টাকা")',
-        // Buyer Portal Translations (BN)
-        buyerTitle: 'পাইকারি ক্রয় ও সংগ্ৰহ',
-        buyerSubtitle: 'হুগলি ও বাংলার যাচাইকৃত কৃষকদের থেকে সরাসরি ফসল কিনুন।',
-        verifiedAggregator: 'যাচাইকৃত সংগ্রাহক',
-        farmEconomicsTitle: 'সরাসরি কৃষক-ক্রেতা সাশ্রয় অর্থনীতি:',
-        farmEconomicsDesc: 'ঐতিহ্যবাহী বহুস্তরের দালাল মণ্ডির তুলনায় গড়ে ১৮% – ২৫% সাশ্রয়।',
-        runSmartMatchBtn: 'চাহিদা তৈরি করুন ও স্মার্ট ম্যাচ চালান',
+        // Consumer Portal Translations (BN)
+        buyerTitle: 'সরাসরি কৃষক থেকে ভোক্তা',
+        buyerSubtitle: 'যাচাইকৃত কৃষকদের থেকে সরাসরি তাজা ফসল কিনুন।',
+        verifiedAggregator: 'যাচাইকৃত ভোক্তা',
+        farmEconomicsTitle: 'সরাসরি কৃষক-ভোক্তা সাশ্রয় অর্থনীতি:',
+        farmEconomicsDesc: 'ঐতিহ্যবাহী মধ্যস্বত্বভোগী বা দালাল ছাড়া সরাসরি ১৮% – ২৫% সাশ্রয়।',
+        runSmartMatchBtn: 'চাহিদা তৈরি করুন ও কৃষক ম্যাচ চালান',
         availableLotsTitle: 'সরাসরি খামারের উপলব্ধ ফসলের লট',
         viewAllLots: 'সব দেখুন',
         browseTitle: 'সকল খামার তালিকা ব্রাউজ করুন',
@@ -3123,22 +3421,22 @@ const translations = {
         trackOrdersTitle: 'চালান ও অর্ডার ট্র্যাক করুন',
         totalLots: 'মোট',
         quantityLabel: 'পরিমাণ',
-        destinationLabel: 'গন্তব্য',
+        destinationLabel: 'ডেলিভারি ঠিকানা',
         deliveryLabel: 'ডেলিভারি',
         totalProcurementCost: 'মোট ক্রয় ব্যয়',
         middlemenSavings: 'অর্জিত মধ্যস্বত্বভোগী সাশ্রয়',
-        buyerProfileTitle: 'ক্রেতা প্রোফাইল',
-        entityLabel: 'প্রতিষ্ঠান',
-        buyerEntityValue: 'কলকাতা পাইকারি মান্ডি সংগ্রাহক',
-        buyerLocationValue: 'পোস্তা মান্ডি, কলকাতা',
-        buyerStatusValue: 'যাচাইকৃত পাইকারি ক্রেতা ✓',
+        buyerProfileTitle: 'ভোক্তা প্রোফাইল',
+        entityLabel: 'গ্রাহক নাম',
+        buyerEntityValue: 'ব্যক্তিগত ভোক্তা / পরিবার',
+        buyerLocationValue: 'সল্টলেক, কলকাতা',
+        buyerStatusValue: 'যাচাইকৃত সরাসরি ভোক্তা ✓',
         browseNav: 'ব্রাউজ'
     },
     HI: {
         appTitle: 'फार्म२फ्लो',
         farmerRole: 'किसान',
-        buyerRole: 'खरीदार',
-        tagline: 'खेत से सीधे मंडी तक, स्मार्ट समाधान',
+        buyerRole: 'उपभोक्ता',
+        tagline: 'खेत से सीधे आपके घर, स्मार्ट समाधान',
         offlineDraft: 'ऑफलाइन ड्राफ्ट मोड • डेटा कतारबद्ध है',
         onlineSync: 'पीडब्लूए ऑनलाइन • सीधा सिंक सक्रिय',
         goOnline: 'ऑनलाइन जाएं',
@@ -3209,29 +3507,29 @@ const translations = {
         submitting: 'दर्ज किया जा रहा है...',
         listSuccess: 'फसल सफलतापूर्वक दर्ज हो गई है और ई-नाम पोर्टल से सिंक हो चुकी है!',
         voiceAutofillPrompt: 'सुन रहे हैं... फसल का नाम, मात्रा या भाव बोलें (जैसे: "५०० किलो ३२ रुपये")',
-        // Buyer Portal Translations (HI)
-        buyerTitle: 'थोक खरीद एवं संग्रह',
-        buyerSubtitle: 'हुगली एवं बंगाल के सत्यापित किसानों से सीधे फसल खरीदें।',
-        verifiedAggregator: 'सत्यापित खरीदार / संग्रहकर्ता',
-        farmEconomicsTitle: 'सीधा किसान-खरीदार बचत मॉडल:',
-        farmEconomicsDesc: 'पारंपरिक बिचौलिया मंडियों की तुलना में औसतन १८% – २५% की शुद्ध बचत।',
-        runSmartMatchBtn: 'आवश्यकता दर्ज करें व स्मार्ट मैच चलाएं',
-        availableLotsTitle: 'उपलब्ध प्रत्यक्ष कृषि लॉट',
-        viewAllLots: 'सभी देखें',
+        // Consumer Portal Translations (HI)
+        buyerTitle: 'सीधी किसान-उपभोक्ता खरीद',
+        buyerSubtitle: 'सत्यापित किसानों से सीधे ताजी फसल घर मंगाएं।',
+        verifiedAggregator: 'सत्यापित उपभोक्ता',
+        farmEconomicsTitle: 'सीधा किसान-उपभोक्ता बचत मॉडल:',
+        farmEconomicsDesc: 'बिचौलियों के बिना सीधे खेत से ताजी उपज में १८% – २५% की शुद्ध बचत।',
+        runSmartMatchBtn: 'आवश्यकता दर्ज करें व किसान मैच चलाएं',
+        availableLotsTitle: 'किसानों द्वारा सीधे उपलब्ध ताजी फसलें',
+        viewAllLots: 'सभी फसलें देखें',
         browseTitle: 'सभी कृषि लॉट सूची देखें',
-        procureViaSmartMatch: 'स्मार्ट मैच द्वारा खरीदें',
+        procureViaSmartMatch: 'स्मार्ट मैच द्वारा ऑर्डर करें',
         trackOrdersTitle: 'डिलीवरी एवं ऑर्डर ट्रैक करें',
         totalLots: 'कुल',
         quantityLabel: 'मात्रा',
-        destinationLabel: 'गंतव्य',
-        deliveryLabel: 'डिलीवरी',
-        totalProcurementCost: 'कुल खरीद लागत',
-        middlemenSavings: 'प्राप्त बिचौलिया बचत',
-        buyerProfileTitle: 'खरीदार प्रोफाइल',
-        entityLabel: 'संस्था',
-        buyerEntityValue: 'कोलकाता थोक मंडी एग्रीगेटर',
-        buyerLocationValue: 'पोस्ता मंडी, कोलकाता',
-        buyerStatusValue: 'सत्यापित थोक खरीदार ✓',
+        destinationLabel: 'डिलीवरी का पता',
+        deliveryLabel: 'डिलीवरी स्थिति',
+        totalProcurementCost: 'कुल ऑर्डर लागत',
+        middlemenSavings: 'बचत (बिचौलिया कमीशन मुक्त)',
+        buyerProfileTitle: 'उपभोक्ता प्रोफाइल',
+        entityLabel: 'ग्राहक का नाम',
+        buyerEntityValue: 'व्यक्तिगत घरेलू उपभोक्ता',
+        buyerLocationValue: 'सॉल्ट लेक, कोलकाता',
+        buyerStatusValue: 'सत्यापित उपभोक्ता ग्राहक ✓',
         browseNav: 'ब्राउज़'
     }
 };
@@ -3242,6 +3540,8 @@ const translations = {
 __turbopack_context__.s([
     "createOrderFromMatch",
     ()=>createOrderFromMatch,
+    "deleteProduce",
+    ()=>deleteProduce,
     "findSmartMatches",
     ()=>findSmartMatches,
     "getDemandForecast",
@@ -3287,6 +3587,13 @@ const saveProduce = (newProduce)=>{
     if ("TURBOPACK compile-time falsy", 0) //TURBOPACK unreachable
     ;
     return created;
+};
+const deleteProduce = (produceId)=>{
+    const current = getStoredProduce();
+    const updated = current.filter((p)=>p.id !== produceId);
+    if ("TURBOPACK compile-time falsy", 0) //TURBOPACK unreachable
+    ;
+    return updated;
 };
 const getDemandForecast = (cropName)=>{
     return __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$src$2f$data$2f$mockData$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["mockForecasts"][cropName] || {
@@ -3371,13 +3678,13 @@ const findSmartMatches = (cropName, requiredKg)=>{
         savingsVsMiddlemenPct: 18
     };
 };
-const createOrderFromMatch = (matchResult, buyerName = 'Kolkata Wholesale Mandi')=>{
+const createOrderFromMatch = (matchResult, buyerName = 'Kolkata Wholesale Mandi', paymentMethod = 'Cash on Delivery', destination = 'Salt Lake, Kolkata')=>{
     const newOrder = {
         id: `ord-${Date.now()}`,
         orderNumber: `FF-${Math.floor(1000 + Math.random() * 9000)}`,
         buyerId: 'b-201',
         buyerName,
-        destination: 'Posta Mandi, Kolkata',
+        destination,
         items: matchResult.suppliers.map((s)=>({
                 produceId: s.produceId,
                 farmerName: s.farmerName,
@@ -3392,7 +3699,9 @@ const createOrderFromMatch = (matchResult, buyerName = 'Kolkata Wholesale Mandi'
         status: 'Confirmed',
         expectedDelivery: 'Tomorrow, 2:30 PM',
         createdAt: new Date().toISOString(),
-        routeId: 'route-opt-101'
+        routeId: 'route-opt-101',
+        paymentMethod,
+        paymentStatus: paymentMethod === 'Cash on Delivery' ? 'Pending Cash on Delivery' : 'Paid'
     };
     if ("TURBOPACK compile-time falsy", 0) //TURBOPACK unreachable
     ;

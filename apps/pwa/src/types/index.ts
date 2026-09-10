@@ -16,7 +16,7 @@ export interface Produce {
   farmerLocation: string;
   cropName: string;
   variety: string;
-  grade: 'Grade A' | 'Grade B' | 'Standard';
+  grade: 'Grade A' | 'Grade B' | 'Standard' | 'Export Quality';
   quantityKg: number;
   expectedPricePerKg: number;
   marketSuggestedPriceMin: number;
@@ -88,6 +88,8 @@ export interface Order {
   expectedDelivery: string;
   createdAt: string;
   routeId: string;
+  paymentMethod?: 'Cash on Delivery' | 'Card Payment' | 'Online (UPI/QR)';
+  paymentStatus?: 'Paid' | 'Pending Cash on Delivery';
 }
 
 export interface DemandForecast {

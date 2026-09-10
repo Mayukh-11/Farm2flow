@@ -37,9 +37,18 @@ export default function LoginPage() {
     setError('');
 
     setTimeout(() => {
+      let profileName = selectedRole === 'buyer' ? 'Sourav Mukherjee' : 'Ramesh Ghosh';
+      let profileLocation = selectedRole === 'buyer' ? 'Salt Lake, Kolkata' : 'Hooghly (Singur)';
+      let profileAddress = selectedRole === 'buyer' 
+        ? 'AD-Block, Sector 1, Salt Lake, Kolkata - 700064' 
+        : 'Singur Vegetable Cluster, Hooghly, WB';
+
       const userSession = {
-        identifier,
-        role: selectedRole,
+        identifier: identifier || (selectedRole === 'buyer' ? 'sourav.consumer@farm2flow.in' : 'ramesh.farmer@farm2flow.in'),
+        name: profileName,
+        location: profileLocation,
+        address: profileAddress,
+        role: selectedRole === 'buyer' ? 'consumer' : selectedRole,
         token: `f2f-token-${selectedRole}-${Date.now()}`
       };
       if (typeof window !== 'undefined') {

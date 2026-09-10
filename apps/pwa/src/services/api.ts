@@ -32,6 +32,8 @@ export const saveProduce = (newProduce: Omit<Produce, 'id' | 'createdAt'>): Prod
   const updated = [created, ...current];
   if (typeof window !== 'undefined') {
     localStorage.setItem(STORAGE_KEYS.PRODUCE, JSON.stringify(updated));
+    // Broadcast real-time event across tabs/components
+    window.dispatchEvent(new CustomEvent('farm2flow_produce_updated', { detail: { newProduce: created, produceList: updated } }));
     // If offline, flag for sync
     if (!navigator.onLine) {
       const syncQueue = JSON.parse(localStorage.getItem(STORAGE_KEYS.PENDING_SYNC) || '[]');
@@ -40,6 +42,23 @@ export const saveProduce = (newProduce: Omit<Produce, 'id' | 'createdAt'>): Prod
     }
   }
   return created;
+};
+
+export const deleteProduce = (produceId: string): Produce[] => {
+  const current = getStoredProduce();
+  const updated = current.filter(p => p.id !== produceId);
+  if (typeof window !== 'undefined') {
+    localStorage.setItem(STORAGE_KEYS.PRODUCE, JSON.stringify(updated));
+    // Broadcast real-time event across tabs/components
+    window.dispatchEvent(new CustomEvent('farm2flow_produce_updated', { detail: { deletedProduceId: produceId, produceList: updated } }));
+    // If offline, flag for sync
+    if (!navigator.onLine) {
+      const syncQueue = JSON.parse(localStorage.getItem(STORAGE_KEYS.PENDING_SYNC) || '[]');
+      syncQueue.push({ type: 'DELETE_PRODUCE', payload: { id: produceId }, timestamp: Date.now() });
+      localStorage.setItem(STORAGE_KEYS.PENDING_SYNC, JSON.stringify(syncQueue));
+    }
+  }
+  return updated;
 };
 
 export const getDemandForecast = (cropName: string): DemandForecast => {
@@ -137,13 +156,18 @@ export const findSmartMatches = (cropName: string, requiredKg: number): SmartMat
   };
 };
 
-export const createOrderFromMatch = (matchResult: SmartMatchResult, buyerName: string = 'Kolkata Wholesale Mandi'): Order => {
+export const createOrderFromMatch = (
+  matchResult: SmartMatchResult, 
+  buyerName: string = 'Kolkata Wholesale Mandi',
+  paymentMethod: 'Cash on Delivery' | 'Card Payment' | 'Online (UPI/QR)' = 'Cash on Delivery',
+  destination: string = 'Salt Lake, Kolkata'
+): Order => {
   const newOrder: Order = {
     id: `ord-${Date.now()}`,
     orderNumber: `FF-${Math.floor(1000 + Math.random() * 9000)}`,
     buyerId: 'b-201',
     buyerName,
-    destination: 'Posta Mandi, Kolkata',
+    destination,
     items: matchResult.suppliers.map(s => ({
       produceId: s.produceId,
       farmerName: s.farmerName,
@@ -158,7 +182,9 @@ export const createOrderFromMatch = (matchResult: SmartMatchResult, buyerName: s
     status: 'Confirmed',
     expectedDelivery: 'Tomorrow, 2:30 PM',
     createdAt: new Date().toISOString(),
-    routeId: 'route-opt-101'
+    routeId: 'route-opt-101',
+    paymentMethod,
+    paymentStatus: paymentMethod === 'Cash on Delivery' ? 'Pending Cash on Delivery' : 'Paid'
   };
 
   if (typeof window !== 'undefined') {

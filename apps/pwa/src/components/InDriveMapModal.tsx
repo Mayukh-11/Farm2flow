@@ -27,11 +27,11 @@ const POPULAR_LOCATIONS: Record<'farmer' | 'buyer', LocationData[]> = {
     { name: 'Midnapore Potato Center', address: 'Ghatal Mandi Depot, Paschim Medinipur, WB', lat: 22.6681, lng: 87.7214 }
   ],
   buyer: [
-    { name: 'Posta Mandi, Kolkata', address: 'Posta Wholesale Market, Strand Road, Kolkata - 700007', lat: 22.5852, lng: 88.3563 },
-    { name: 'Koley Market, Sealdah', address: 'Koley Market Complex, Sealdah, Kolkata - 700014', lat: 22.5697, lng: 88.3712 },
-    { name: 'Mechua Fruit & Veg Mandi', address: 'Mechua Bazaar, Central Avenue, Kolkata - 700073', lat: 22.5815, lng: 88.3610 },
-    { name: 'Howrah Wholesale Hub', address: 'Fish & Produce Yard, Howrah Station Road, Howrah', lat: 22.5892, lng: 88.3415 },
-    { name: 'Salt Lake Sector V Depot', address: 'Central Procurement Hub, Sector V, Bidhannagar', lat: 22.5785, lng: 88.4325 }
+    { name: 'Salt Lake (Sector 1), Kolkata', address: 'AD-Block, Sector 1, Salt Lake, Kolkata - 700064', lat: 22.5862, lng: 88.4091 },
+    { name: 'New Town (Action Area 1)', address: 'Tower 4, Uniworld City, New Town, Kolkata - 700156', lat: 22.5804, lng: 88.4625 },
+    { name: 'Ballygunge, South Kolkata', address: '42/1 Dover Road, Ballygunge, Kolkata - 700019', lat: 22.5280, lng: 88.3653 },
+    { name: 'Jadavpur, Kolkata', address: 'Prince Anwar Shah Road, Jadavpur, Kolkata - 700032', lat: 22.4988, lng: 88.3715 },
+    { name: 'Dum Dum Park, North Kolkata', address: 'Tank No. 3, Dum Dum Park, Kolkata - 700055', lat: 22.6072, lng: 88.4065 }
   ]
 };
 

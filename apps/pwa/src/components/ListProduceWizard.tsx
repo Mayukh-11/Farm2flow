@@ -175,38 +175,55 @@ export const ListProduceWizard: React.FC<ListProduceWizardProps> = ({
   if (!isOpen) return null;
 
   const cropOptions = [
-    { name: 'Tomato', icon: '🍅', variety: 'Hybrid Red', suggestedPrice: '₹28–32/kg' },
-    { name: 'Potato', icon: '🥔', variety: 'Jyoti', suggestedPrice: '₹16–20/kg' },
+    { name: 'Tomato', icon: '🍅', variety: 'Hybrid Red Flavour', suggestedPrice: '₹28–32/kg' },
+    { name: 'Potato', icon: '🥔', variety: 'Jyoti Golden', suggestedPrice: '₹16–20/kg' },
     { name: 'Onion', icon: '🧅', variety: 'Nashik Red', suggestedPrice: '₹24–28/kg' },
-    { name: 'Rice', icon: '🌾', variety: 'Minikit', suggestedPrice: '₹38–44/kg' }
+    { name: 'Rice', icon: '🍚', variety: 'Gobindobhog Aromatic', suggestedPrice: '₹70–80/kg' },
+    { name: 'Wheat', icon: '🌾', variety: 'Sharbati Gold', suggestedPrice: '₹26–30/kg' },
+    { name: 'Chilli', icon: '🌶️', variety: 'Bullet Green Spicy', suggestedPrice: '₹44–50/kg' },
+    { name: 'Cauliflower', icon: '🥦', variety: 'Snowball White', suggestedPrice: '₹20–25/kg' },
+    { name: 'Cabbage', icon: '🥬', variety: 'Green Globe Crisp', suggestedPrice: '₹12–16/kg' },
+    { name: 'Carrot', icon: '🥕', variety: 'Kuroda Sweet Orange', suggestedPrice: '₹28–35/kg' },
+    { name: 'Brinjal', icon: '🍆', variety: 'Muktakeshi Purple', suggestedPrice: '₹24–30/kg' }
   ];
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+
+    let activeFarmerName = 'Ramesh Ghosh';
+    let activeFarmerLocation = 'Hooghly (Singur)';
+    if (typeof window !== 'undefined') {
+      try {
+        const session = JSON.parse(localStorage.getItem('farm2flow_user_session') || '{}');
+        if (session.name) activeFarmerName = session.name;
+        if (session.location) activeFarmerLocation = session.location;
+      } catch (err) {}
+    }
+
     setTimeout(() => {
       const created: Produce = {
         id: `prod-${Date.now().toString().slice(-4)}`,
-        farmerId: 'f-101',
-        farmerName: 'Farmer A (Ramesh Ghosh)',
-        farmerLocation: 'Hooghly (32 km)',
-        cropName: selectedCrop,
-        variety: cropOptions.find(c => c.name.toLowerCase() === selectedCrop.toLowerCase())?.variety || 'Hybrid',
+        farmerId: `f-${Date.now().toString().slice(-3)}`,
+        farmerName: activeFarmerName,
+        farmerLocation: activeFarmerLocation,
+        cropName: selectedCrop.trim(),
+        variety: cropOptions.find(c => c.name.toLowerCase() === selectedCrop.toLowerCase())?.variety || 'Farm Fresh',
         grade,
         quantityKg,
         expectedPricePerKg: expectedPrice,
-        marketSuggestedPriceMin: selectedCrop === 'Tomato' ? 28 : 16,
-        marketSuggestedPriceMax: selectedCrop === 'Tomato' ? 32 : 20,
+        marketSuggestedPriceMin: Math.max(10, Math.round(expectedPrice * 0.9)),
+        marketSuggestedPriceMax: Math.round(expectedPrice * 1.15),
         harvestDate,
         demandStatus: 'High',
-        demandForecastPct: 18,
+        demandForecastPct: 20,
         status: 'Available',
         fpoVerified: true,
         createdAt: new Date().toISOString()
       };
 
       setIsSubmitting(false);
-      setSuccessMsg('Produce listed successfully. Saved locally and synced to e-NAM!');
+      setSuccessMsg('Produce listed successfully! Synced real-time to Pan-India map & buyer feeds.');
       setTimeout(() => {
         onSuccess(created);
         setSuccessMsg('');
@@ -311,7 +328,7 @@ export const ListProduceWizard: React.FC<ListProduceWizardProps> = ({
                 </div>
 
                 {/* Popular Crop Cards */}
-                <div className="grid grid-cols-2 gap-2.5">
+                <div className="grid grid-cols-2 gap-2.5 max-h-[220px] overflow-y-auto pr-1">
                   {cropOptions.map(crop => (
                     <button
                       key={crop.name}

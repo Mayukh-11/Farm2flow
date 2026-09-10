@@ -1,44 +1,86 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { SmartMatchResult, Order } from '@/types';
-import { findSmartMatches, createOrderFromMatch } from '@/services/api';
+import { findSmartMatches, createOrderFromMatch, getStoredProduce } from '@/services/api';
 
 interface BuyerSmartMatchModalProps {
   isOpen: boolean;
   onClose: () => void;
   onOrderCreated: (order: Order) => void;
+  buyerName?: string;
+  buyerDestination?: string;
 }
+
+type PaymentMethodType = 'cash' | 'card' | 'online';
 
 export const BuyerSmartMatchModal: React.FC<BuyerSmartMatchModalProps> = ({
   isOpen,
   onClose,
-  onOrderCreated
+  onOrderCreated,
+  buyerName = 'Sourav Mukherjee',
+  buyerDestination = 'Salt Lake, Kolkata'
 }) => {
-  const [crop, setCrop] = React.useState('Tomato');
-  const [requiredKg, setRequiredKg] = React.useState(50);
-  const [matchResult, setMatchResult] = React.useState<SmartMatchResult | null>(null);
-  const [isSearching, setIsSearching] = React.useState(false);
-  const [isCreatingOrder, setIsCreatingOrder] = React.useState(false);
+  const [crop, setCrop] = useState('Tomato');
+  const [requiredKg, setRequiredKg] = useState(50);
+  const [matchResult, setMatchResult] = useState<SmartMatchResult | null>(null);
+  const [isSearching, setIsSearching] = useState(false);
+  
+  // Checkout & Payment flow states
+  const [showPaymentStep, setShowPaymentStep] = useState(false);
+  const [selectedPayment, setSelectedPayment] = useState<PaymentMethodType>('cash');
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
+  const [isOnlinePaid, setIsOnlinePaid] = useState(false);
+  const [availableCropsList, setAvailableCropsList] = useState<string[]>([]);
+
+  useEffect(() => {
+    // Dynamic available crops from current store
+    const produce = getStoredProduce();
+    const uniqueCrops = Array.from(new Set(produce.map(p => p.cropName)));
+    if (uniqueCrops.length > 0) {
+      setAvailableCropsList(uniqueCrops);
+    } else {
+      setAvailableCropsList(['Tomato', 'Potato', 'Onion', 'Rice', 'Wheat', 'Chilli', 'Cauliflower', 'Cabbage', 'Carrot']);
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
   const handleSearchMatch = () => {
     setIsSearching(true);
+    setShowPaymentStep(false);
+    setIsOnlinePaid(false);
     setTimeout(() => {
       const res = findSmartMatches(crop, requiredKg);
       setMatchResult(res);
       setIsSearching(false);
-    }, 500);
+    }, 400);
   };
 
-  const handleCreateOrder = () => {
+  const handleProceedToBuy = () => {
     if (!matchResult) return;
-    setIsCreatingOrder(true);
+    setShowPaymentStep(true);
+  };
+
+  const handleFinalizeOrder = (method: PaymentMethodType) => {
+    if (!matchResult) return;
+    setIsProcessingPayment(true);
+
+    const paymentLabel = 
+      method === 'cash' ? 'Cash on Delivery' :
+      method === 'card' ? 'Card Payment' : 'Online (UPI/QR)';
+
     setTimeout(() => {
-      const createdOrder = createOrderFromMatch(matchResult);
-      setIsCreatingOrder(false);
+      const createdOrder = createOrderFromMatch(
+        matchResult,
+        buyerName,
+        paymentLabel,
+        buyerDestination
+      );
+      setIsProcessingPayment(false);
+      setShowPaymentStep(false);
+      setIsOnlinePaid(false);
       onOrderCreated(createdOrder);
       onClose();
-    }, 600);
+    }, method === 'online' ? 700 : 500);
   };
 
   return (
@@ -48,26 +90,32 @@ export const BuyerSmartMatchModal: React.FC<BuyerSmartMatchModalProps> = ({
         {/* Header */}
         <div className="flex items-center justify-between border-b border-outline-variant pb-3">
           <div>
-            <h3 className="text-headline-sm font-bold text-on-surface">Buyer Smart Matching Engine</h3>
-            <p className="text-body-sm text-[12px] text-on-surface-variant">Automated multi-supplier crop aggregation</p>
+            <h3 className="text-headline-sm font-bold text-on-surface">Consumer Direct Farm Matching</h3>
+            <p className="text-body-sm text-[12px] text-on-surface-variant">Connect directly with verified local & national farmers</p>
           </div>
-          <button onClick={onClose} className="w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high">
+          <button 
+            onClick={onClose} 
+            className="w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors"
+          >
             <span className="material-symbols-outlined text-[20px]">close</span>
           </button>
         </div>
 
-        {/* Input Requirements Form */}
+        {/* Step 1: Input Requirements Form */}
         <div className="bg-surface-container-lowest p-3.5 rounded-xl border border-outline-variant flex flex-col gap-3">
           <div>
-            <label className="text-body-sm text-[12px] text-on-surface-variant">Crop Required</label>
+            <label className="text-body-sm text-[12px] text-on-surface-variant font-medium">Crop Required</label>
             <select
               value={crop}
-              onChange={e => setCrop(e.target.value)}
-              className="w-full mt-1 px-3 py-2 bg-surface-container-low border border-outline-variant rounded-lg font-bold text-on-surface"
+              onChange={e => {
+                setCrop(e.target.value);
+                setShowPaymentStep(false);
+              }}
+              className="w-full mt-1 px-3 py-2 bg-surface-container-low border border-outline-variant rounded-lg font-bold text-on-surface focus:outline-primary"
             >
-              <option value="Tomato">Tomato (Grade A)</option>
-              <option value="Potato">Potato (Jyoti)</option>
-              <option value="Onion">Onion (Nashik)</option>
+              {availableCropsList.map(c => (
+                <option key={c} value={c}>{c}</option>
+              ))}
             </select>
           </div>
 
@@ -80,7 +128,10 @@ export const BuyerSmartMatchModal: React.FC<BuyerSmartMatchModalProps> = ({
                   min="2"
                   max="5000"
                   value={requiredKg}
-                  onChange={e => setRequiredKg(Math.max(2, Number(e.target.value)))}
+                  onChange={e => {
+                    setRequiredKg(Math.max(2, Number(e.target.value)));
+                    setShowPaymentStep(false);
+                  }}
                   className="w-20 px-2 py-1 bg-surface-container border border-outline-variant rounded-lg font-extrabold text-primary text-right text-[14px]"
                 />
                 <span className="font-bold text-primary">kg</span>
@@ -92,7 +143,10 @@ export const BuyerSmartMatchModal: React.FC<BuyerSmartMatchModalProps> = ({
               max="5000"
               step="1"
               value={requiredKg}
-              onChange={e => setRequiredKg(Number(e.target.value))}
+              onChange={e => {
+                setRequiredKg(Number(e.target.value));
+                setShowPaymentStep(false);
+              }}
               className="w-full mt-2 h-2 bg-surface-container-high rounded-lg appearance-none cursor-pointer accent-primary"
             />
             <div className="flex justify-between text-[10px] text-on-surface-variant font-bold mt-1">
@@ -106,13 +160,14 @@ export const BuyerSmartMatchModal: React.FC<BuyerSmartMatchModalProps> = ({
           <button
             onClick={handleSearchMatch}
             disabled={isSearching}
-            className="w-full py-2.5 bg-primary-container text-on-primary rounded-xl text-label-md font-bold hover:bg-primary transition-colors flex items-center justify-center gap-2"
+            className="w-full py-2.5 bg-primary-container text-on-primary rounded-xl text-label-md font-bold hover:bg-primary transition-colors flex items-center justify-center gap-2 shadow-xs active:scale-98"
           >
-            {isSearching ? 'Analyzing Local Mandis...' : 'Run Smart Match'}
+            <span className="material-symbols-outlined text-[18px]">search</span>
+            <span>{isSearching ? 'Analyzing Local Mandis...' : 'Run Smart Match'}</span>
           </button>
         </div>
 
-        {/* Match Output Results */}
+        {/* Step 2: Match Output Results */}
         {matchResult && (
           <div className="flex flex-col gap-3 animate-in fade-in duration-200">
             {/* Match Header Badge */}
@@ -129,22 +184,28 @@ export const BuyerSmartMatchModal: React.FC<BuyerSmartMatchModalProps> = ({
             {/* Fulfilling Farmers Breakdown */}
             <div className="flex flex-col gap-2">
               <p className="text-label-sm font-bold text-on-surface-variant uppercase tracking-wider">Matched Supplier Combination:</p>
-              {matchResult.suppliers.map((s, idx) => (
-                <div key={idx} className="p-3 bg-surface-container-lowest border border-outline-variant rounded-xl flex items-center justify-between">
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-full bg-primary-fixed text-on-primary-fixed font-bold text-[12px] flex items-center justify-center">
-                      {idx + 1}
+              {matchResult.suppliers.length > 0 ? (
+                matchResult.suppliers.map((s, idx) => (
+                  <div key={idx} className="p-3 bg-surface-container-lowest border border-outline-variant rounded-xl flex items-center justify-between">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-8 h-8 rounded-full bg-primary-fixed text-on-primary-fixed font-bold text-[12px] flex items-center justify-center">
+                        {idx + 1}
+                      </div>
+                      <div>
+                        <p className="text-label-md font-bold text-on-surface leading-tight">{s.farmerName}</p>
+                        <p className="text-body-sm text-[11px] text-on-surface-variant">{s.farmerLocation} • ₹{s.pricePerKg}/kg</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-label-md font-bold text-on-surface leading-tight">{s.farmerName}</p>
-                      <p className="text-body-sm text-[11px] text-on-surface-variant">{s.farmerLocation} • ₹{s.pricePerKg}/kg</p>
-                    </div>
+                    <span className="text-label-md font-extrabold text-primary-container">
+                      {s.matchedKg} kg
+                    </span>
                   </div>
-                  <span className="text-label-md font-extrabold text-primary-container">
-                    {s.matchedKg} kg
-                  </span>
+                ))
+              ) : (
+                <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-[12px] text-amber-900 font-medium">
+                  No direct matching lots found for this specific quantity right now. Try adjusting the requested kilograms.
                 </div>
-              ))}
+              )}
             </div>
 
             {/* Summary metrics */}
@@ -159,14 +220,264 @@ export const BuyerSmartMatchModal: React.FC<BuyerSmartMatchModalProps> = ({
               </div>
             </div>
 
-            {/* Action CTA */}
-            <button
-              onClick={handleCreateOrder}
-              disabled={isCreatingOrder}
-              className="w-full py-3.5 bg-primary-container text-on-primary rounded-xl text-label-md font-extrabold hover:bg-primary transition-all shadow-md active:scale-95 flex items-center justify-center gap-2"
-            >
-              {isCreatingOrder ? 'Creating Direct Order...' : 'Create Order & Dispatch Logistics'}
-            </button>
+            {/* Step 3: Payment Section / Buy Now */}
+            {!showPaymentStep ? (
+              <button
+                onClick={handleProceedToBuy}
+                disabled={matchResult.fulfilledKg === 0}
+                className="w-full py-3.5 bg-primary-container text-on-primary rounded-xl text-label-md font-extrabold hover:bg-primary transition-all shadow-md active:scale-98 flex items-center justify-center gap-2 disabled:opacity-50 disabled:pointer-events-none"
+              >
+                <span className="material-symbols-outlined text-[20px]">shopping_cart_checkout</span>
+                <span>Buy Now • ₹{matchResult.estimatedTotalCost.toLocaleString()}</span>
+              </button>
+            ) : (
+              /* Payment Options Container */
+              <div className="bg-surface-container-lowest p-4 rounded-xl border-2 border-primary/40 flex flex-col gap-3 shadow-md animate-in slide-in-from-bottom-2 duration-200">
+                <div className="flex items-center justify-between border-b border-outline-variant pb-2">
+                  <span className="font-extrabold text-[14px] text-on-surface flex items-center gap-1.5">
+                    <span className="material-symbols-outlined text-[18px] text-primary">payments</span>
+                    <span>Select Payment Option</span>
+                  </span>
+                  <span className="text-[11px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full">
+                    Total: ₹{matchResult.estimatedTotalCost.toLocaleString()}
+                  </span>
+                </div>
+
+                {/* 3 Payment Options: Cash, Card, Online */}
+                <div className="grid grid-cols-3 gap-2 text-[12px]">
+                  {/* Cash Option */}
+                  <button
+                    onClick={() => {
+                      setSelectedPayment('cash');
+                      setIsOnlinePaid(false);
+                    }}
+                    className={`p-2.5 rounded-xl border flex flex-col items-center justify-center gap-1 transition-all ${
+                      selectedPayment === 'cash'
+                        ? 'border-primary bg-primary/10 text-primary font-black shadow-xs ring-2 ring-primary/20'
+                        : 'border-outline-variant bg-surface hover:bg-surface-container-high text-on-surface-variant font-medium'
+                    }`}
+                  >
+                    <span className="material-symbols-outlined text-[24px]">payments</span>
+                    <span>Cash</span>
+                    <span className="text-[9px] opacity-80">(Pay on Delivery)</span>
+                  </button>
+
+                  {/* Card Option */}
+                  <button
+                    onClick={() => {
+                      setSelectedPayment('card');
+                      setIsOnlinePaid(false);
+                    }}
+                    className={`p-2.5 rounded-xl border flex flex-col items-center justify-center gap-1 transition-all ${
+                      selectedPayment === 'card'
+                        ? 'border-primary bg-primary/10 text-primary font-black shadow-xs ring-2 ring-primary/20'
+                        : 'border-outline-variant bg-surface hover:bg-surface-container-high text-on-surface-variant font-medium'
+                    }`}
+                  >
+                    <span className="material-symbols-outlined text-[24px]">credit_card</span>
+                    <span>Card</span>
+                    <span className="text-[9px] opacity-80">(Debit / Credit)</span>
+                  </button>
+
+                  {/* Online UPI / Scanner Option */}
+                  <button
+                    onClick={() => {
+                      setSelectedPayment('online');
+                      setIsOnlinePaid(false);
+                    }}
+                    className={`p-2.5 rounded-xl border flex flex-col items-center justify-center gap-1 transition-all ${
+                      selectedPayment === 'online'
+                        ? 'border-primary bg-primary/10 text-primary font-black shadow-xs ring-2 ring-primary/20'
+                        : 'border-outline-variant bg-surface hover:bg-surface-container-high text-on-surface-variant font-medium'
+                    }`}
+                  >
+                    <span className="material-symbols-outlined text-[24px]">qr_code_scanner</span>
+                    <span>Online</span>
+                    <span className="text-[9px] opacity-80">(UPI / QR Scanner)</span>
+                  </button>
+                </div>
+
+                {/* Cash Flow */}
+                {selectedPayment === 'cash' && (
+                  <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3 flex flex-col gap-2 text-[12px] animate-in fade-in duration-200">
+                    <div className="flex items-center gap-2 text-emerald-900 font-bold">
+                      <span className="material-symbols-outlined text-[18px]">check_circle</span>
+                      <span>Cash on Delivery Verified</span>
+                    </div>
+                    <p className="text-emerald-800 text-[11px]">
+                      Your order will be placed immediately. Hand over cash of <strong>₹{matchResult.estimatedTotalCost.toLocaleString()}</strong> to the verified farm delivery partner upon receipt at {buyerDestination}.
+                    </p>
+                    <button
+                      onClick={() => handleFinalizeOrder('cash')}
+                      disabled={isProcessingPayment}
+                      className="w-full mt-1 py-3 bg-primary text-white rounded-xl font-black text-[13px] hover:bg-primary/90 transition-all shadow-md active:scale-98 flex items-center justify-center gap-1.5"
+                    >
+                      <span className="material-symbols-outlined text-[18px]">shopping_bag</span>
+                      <span>{isProcessingPayment ? 'Placing Order...' : 'Place Cash Order Now'}</span>
+                    </button>
+                  </div>
+                )}
+
+                {/* Card Flow */}
+                {selectedPayment === 'card' && (
+                  <div className="bg-blue-50 border border-blue-200 rounded-xl p-3 flex flex-col gap-2.5 text-[12px] animate-in fade-in duration-200">
+                    <div className="flex items-center gap-2 text-blue-900 font-bold">
+                      <span className="material-symbols-outlined text-[18px]">credit_card</span>
+                      <span>Instant Card Checkout</span>
+                    </div>
+                    <div className="space-y-1.5">
+                      <input
+                        type="text"
+                        placeholder="Card Number (XXXX XXXX XXXX XXXX)"
+                        defaultValue="4111 2233 4455 9988"
+                        className="w-full px-3 py-1.5 bg-white border border-blue-200 rounded-lg text-[12px] font-mono"
+                      />
+                      <div className="grid grid-cols-2 gap-2">
+                        <input
+                          type="text"
+                          placeholder="MM/YY"
+                          defaultValue="12/28"
+                          className="px-3 py-1.5 bg-white border border-blue-200 rounded-lg text-[12px] text-center"
+                        />
+                        <input
+                          type="password"
+                          placeholder="CVV"
+                          defaultValue="786"
+                          maxLength={3}
+                          className="px-3 py-1.5 bg-white border border-blue-200 rounded-lg text-[12px] text-center"
+                        />
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => handleFinalizeOrder('card')}
+                      disabled={isProcessingPayment}
+                      className="w-full py-3 bg-blue-700 text-white rounded-xl font-black text-[13px] hover:bg-blue-800 transition-all shadow-md active:scale-98 flex items-center justify-center gap-1.5"
+                    >
+                      <span className="material-symbols-outlined text-[18px]">lock</span>
+                      <span>{isProcessingPayment ? 'Authorizing Card...' : `Pay ₹${matchResult.estimatedTotalCost.toLocaleString()} & Place Order`}</span>
+                    </button>
+                  </div>
+                )}
+
+                {/* Online Flow with Live Scanner */}
+                {selectedPayment === 'online' && (
+                  <div className="bg-slate-900 text-white border border-slate-700 rounded-xl p-3.5 flex flex-col items-center gap-3 text-[12px] animate-in fade-in duration-200">
+                    <div className="flex items-center justify-between w-full border-b border-slate-700 pb-2">
+                      <div className="flex items-center gap-1.5 text-emerald-400 font-bold">
+                        <span className="material-symbols-outlined text-[18px]">qr_code_scanner</span>
+                        <span>Scan & Pay via any UPI App</span>
+                      </div>
+                      <span className="text-[10px] bg-slate-800 px-2 py-0.5 rounded text-slate-300 font-mono">
+                        GPay • PhonePe • Paytm
+                      </span>
+                    </div>
+
+                    {/* QR Code Scanner Display */}
+                    <div className="bg-white p-3 rounded-2xl shadow-xl flex flex-col items-center gap-2 border-2 border-emerald-500/50">
+                      <div className="w-40 h-40 bg-white relative flex items-center justify-center">
+                        {/* Real dynamic SVG QR graphic representation */}
+                        <svg className="w-36 h-36" viewBox="0 0 100 100" fill="currentColor">
+                          {/* Corner Markers */}
+                          <rect x="5" y="5" width="28" height="28" fill="#111827" rx="3" />
+                          <rect x="9" y="9" width="20" height="20" fill="white" rx="1" />
+                          <rect x="13" y="13" width="12" height="12" fill="#047857" rx="1" />
+
+                          <rect x="67" y="5" width="28" height="28" fill="#111827" rx="3" />
+                          <rect x="71" y="9" width="20" height="20" fill="white" rx="1" />
+                          <rect x="75" y="13" width="12" height="12" fill="#047857" rx="1" />
+
+                          <rect x="5" y="67" width="28" height="28" fill="#111827" rx="3" />
+                          <rect x="9" y="71" width="20" height="20" fill="white" rx="1" />
+                          <rect x="13" y="75" width="12" height="12" fill="#047857" rx="1" />
+
+                          {/* Data Pattern Dots */}
+                          <rect x="38" y="10" width="5" height="5" fill="#111827" />
+                          <rect x="48" y="10" width="5" height="5" fill="#111827" />
+                          <rect x="58" y="10" width="5" height="5" fill="#111827" />
+                          <rect x="38" y="20" width="5" height="5" fill="#111827" />
+                          <rect x="48" y="25" width="5" height="5" fill="#111827" />
+                          <rect x="58" y="20" width="5" height="5" fill="#111827" />
+
+                          <rect x="10" y="38" width="5" height="5" fill="#111827" />
+                          <rect x="20" y="38" width="5" height="5" fill="#111827" />
+                          <rect x="30" y="45" width="5" height="5" fill="#111827" />
+                          <rect x="40" y="38" width="5" height="5" fill="#111827" />
+                          <rect x="50" y="45" width="5" height="5" fill="#111827" />
+                          <rect x="60" y="38" width="5" height="5" fill="#111827" />
+                          <rect x="70" y="45" width="5" height="5" fill="#111827" />
+                          <rect x="80" y="38" width="5" height="5" fill="#111827" />
+
+                          <rect x="38" y="55" width="5" height="5" fill="#111827" />
+                          <rect x="48" y="55" width="5" height="5" fill="#111827" />
+                          <rect x="58" y="55" width="5" height="5" fill="#111827" />
+
+                          <rect x="38" y="67" width="5" height="5" fill="#111827" />
+                          <rect x="48" y="75" width="5" height="5" fill="#111827" />
+                          <rect x="58" y="67" width="5" height="5" fill="#111827" />
+                          <rect x="67" y="67" width="5" height="5" fill="#111827" />
+                          <rect x="75" y="75" width="5" height="5" fill="#111827" />
+                          <rect x="85" y="67" width="5" height="5" fill="#111827" />
+                          <rect x="75" y="85" width="5" height="5" fill="#111827" />
+                          <rect x="85" y="85" width="5" height="5" fill="#111827" />
+
+                          {/* Center Brand Badge */}
+                          <circle cx="50" cy="50" r="10" fill="#047857" />
+                          <text x="50" y="54" fontSize="10" fontWeight="bold" fill="white" textAnchor="middle">₹</text>
+                        </svg>
+
+                        {/* Pulsing scanning beam line */}
+                        <div className="absolute inset-x-2 h-0.5 bg-emerald-500 shadow-[0_0_8px_#10b981] animate-pulse pointer-events-none" />
+                      </div>
+                      <span className="text-[10px] text-slate-800 font-extrabold tracking-wider uppercase">
+                        UPI ID: farm2flow@icici
+                      </span>
+                    </div>
+
+                    <div className="text-center space-y-0.5">
+                      <p className="font-extrabold text-[13px] text-white">
+                        Scan & Pay ₹{matchResult.estimatedTotalCost.toLocaleString()}
+                      </p>
+                      <p className="text-[11px] text-slate-400">
+                        Scan with your mobile camera or any UPI app.
+                      </p>
+                    </div>
+
+                    {/* Simulation button for verifying scan payment */}
+                    {!isOnlinePaid ? (
+                      <button
+                        onClick={() => {
+                          setIsProcessingPayment(true);
+                          setTimeout(() => {
+                            setIsProcessingPayment(false);
+                            setIsOnlinePaid(true);
+                          }, 900);
+                        }}
+                        disabled={isProcessingPayment}
+                        className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold text-[12px] flex items-center justify-center gap-1.5 transition-all shadow-md active:scale-98"
+                      >
+                        <span className="material-symbols-outlined text-[16px]">qr_code</span>
+                        <span>{isProcessingPayment ? 'Verifying UPI Scanner...' : 'Simulate Scan / Approve UPI Payment'}</span>
+                      </button>
+                    ) : (
+                      <div className="w-full space-y-2 animate-in zoom-in duration-200">
+                        <div className="bg-emerald-950 border border-emerald-500/80 rounded-xl p-2.5 flex items-center justify-center gap-2 text-emerald-300 font-bold text-[12px]">
+                          <span className="material-symbols-outlined text-[20px] text-emerald-400 animate-bounce">verified</span>
+                          <span>UPI Payment Verified Successfully!</span>
+                        </div>
+                        <button
+                          onClick={() => handleFinalizeOrder('online')}
+                          disabled={isProcessingPayment}
+                          className="w-full py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-xl text-[13px] transition-all shadow-lg active:scale-98 flex items-center justify-center gap-1.5"
+                        >
+                          <span className="material-symbols-outlined text-[18px]">check_circle</span>
+                          <span>Finalize & Place Order</span>
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         )}
       </div>
