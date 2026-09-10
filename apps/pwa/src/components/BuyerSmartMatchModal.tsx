@@ -2,12 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { SmartMatchResult, Order } from '@/types';
 import { findSmartMatches, createOrderFromMatch, getStoredProduce } from '@/services/api';
 
+import { getAllCatalogCrops } from '@/data/cropCatalog';
+import { PanIndiaSeller } from '@/data/panIndiaSellers';
+
 interface BuyerSmartMatchModalProps {
   isOpen: boolean;
   onClose: () => void;
   onOrderCreated: (order: Order) => void;
   buyerName?: string;
   buyerDestination?: string;
+  initialCrop?: string;
+  selectedSeller?: PanIndiaSeller | null;
 }
 
 type PaymentMethodType = 'cash' | 'card' | 'online';
@@ -17,10 +22,12 @@ export const BuyerSmartMatchModal: React.FC<BuyerSmartMatchModalProps> = ({
   onClose,
   onOrderCreated,
   buyerName = 'Sourav Mukherjee',
-  buyerDestination = 'Salt Lake, Kolkata'
+  buyerDestination = 'Salt Lake, Kolkata',
+  initialCrop = 'Tomato',
+  selectedSeller = null
 }) => {
-  const [crop, setCrop] = useState('Tomato');
-  const [requiredKg, setRequiredKg] = useState(50);
+  const [crop, setCrop] = useState(initialCrop || 'Tomato');
+  const [requiredKg, setRequiredKg] = useState(selectedSeller ? Math.min(selectedSeller.quantityKg, 200) : 50);
   const [matchResult, setMatchResult] = useState<SmartMatchResult | null>(null);
   const [isSearching, setIsSearching] = useState(false);
   
@@ -32,15 +39,31 @@ export const BuyerSmartMatchModal: React.FC<BuyerSmartMatchModalProps> = ({
   const [availableCropsList, setAvailableCropsList] = useState<string[]>([]);
 
   useEffect(() => {
-    // Dynamic available crops from current store
+    // Dynamic available crops from current catalog and stored produce
     const produce = getStoredProduce();
-    const uniqueCrops = Array.from(new Set(produce.map(p => p.cropName)));
-    if (uniqueCrops.length > 0) {
-      setAvailableCropsList(uniqueCrops);
-    } else {
-      setAvailableCropsList(['Tomato', 'Potato', 'Onion', 'Rice', 'Wheat', 'Chilli', 'Cauliflower', 'Cabbage', 'Carrot']);
-    }
+    const catalog = getAllCatalogCrops();
+    const set = new Set<string>();
+    
+    // Add produce items
+    produce.forEach(p => set.add(p.cropName));
+    // Add all catalog crops
+    catalog.forEach(c => set.add(c.name));
+    
+    const uniqueCrops = Array.from(set);
+    setAvailableCropsList(uniqueCrops.length > 0 ? uniqueCrops : ['Tomato', 'Potato', 'Onion', 'Rice', 'Wheat']);
   }, [isOpen]);
+
+  // Sync when initialCrop or selectedSeller updates
+  useEffect(() => {
+    if (selectedSeller) {
+      setCrop(selectedSeller.crop);
+      setRequiredKg(Math.min(selectedSeller.quantityKg, 500));
+    } else if (initialCrop) {
+      setCrop(initialCrop);
+    }
+    setShowPaymentStep(false);
+    setMatchResult(null);
+  }, [initialCrop, selectedSeller, isOpen]);
 
   if (!isOpen) return null;
 
@@ -49,8 +72,38 @@ export const BuyerSmartMatchModal: React.FC<BuyerSmartMatchModalProps> = ({
     setShowPaymentStep(false);
     setIsOnlinePaid(false);
     setTimeout(() => {
-      const res = findSmartMatches(crop, requiredKg);
-      setMatchResult(res);
+      // If a specific seller was chosen directly from the Map, prioritize matching with them
+      if (selectedSeller && selectedSeller.crop.toLowerCase() === crop.toLowerCase()) {
+        const matchedKg = Math.min(selectedSeller.quantityKg, requiredKg);
+        const totalCost = matchedKg * selectedSeller.pricePerKg;
+        const result: SmartMatchResult = {
+          requirementId: `req-${Date.now()}`,
+          cropName: selectedSeller.crop,
+          requestedKg: requiredKg,
+          fulfilledKg: matchedKg,
+          overallMatchPct: 98,
+          suppliers: [
+            {
+              produceId: selectedSeller.id,
+              farmerName: selectedSeller.name,
+              farmerLocation: `${selectedSeller.location}, ${selectedSeller.state}`,
+              availableKg: selectedSeller.quantityKg,
+              matchedKg,
+              grade: (selectedSeller.grade as any) || 'Grade A',
+              pricePerKg: selectedSeller.pricePerKg,
+              distanceKm: Math.round(selectedSeller.transitDaysToKolkata * 250),
+              matchPercentage: 99,
+              verified: selectedSeller.verified
+            }
+          ],
+          estimatedTotalCost: totalCost,
+          savingsVsMiddlemenPct: 22
+        };
+        setMatchResult(result);
+      } else {
+        const res = findSmartMatches(crop, requiredKg);
+        setMatchResult(res);
+      }
       setIsSearching(false);
     }, 400);
   };
@@ -103,8 +156,55 @@ export const BuyerSmartMatchModal: React.FC<BuyerSmartMatchModalProps> = ({
 
         {/* Step 1: Input Requirements Form */}
         <div className="bg-surface-container-lowest p-3.5 rounded-xl border border-outline-variant flex flex-col gap-3">
+          
+          {/* Selected Seller Profile Preview (when opened from Map or direct seller) */}
+          {selectedSeller && (
+            <div className="bg-emerald-50/90 border border-emerald-300 p-3 rounded-xl flex flex-col gap-1.5 animate-in fade-in duration-200">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] uppercase font-black tracking-wider text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full">
+                  Selected Supplier from Map
+                </span>
+                <span className="text-[11px] font-extrabold text-emerald-900">
+                  {selectedSeller.grade}
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-9 h-9 rounded-full bg-emerald-200 text-emerald-950 font-black text-[13px] flex items-center justify-center shrink-0">
+                  {selectedSeller.name.slice(0, 2).toUpperCase()}
+                </div>
+                <div>
+                  <h4 className="font-extrabold text-emerald-950 text-[14px] leading-tight">
+                    {selectedSeller.name}
+                  </h4>
+                  <p className="text-[11px] text-emerald-800 font-medium">
+                    {selectedSeller.location}, {selectedSeller.state} • {selectedSeller.fpoOrCoop}
+                  </p>
+                </div>
+              </div>
+              <div className="grid grid-cols-3 gap-1.5 pt-1 text-[10px] font-bold text-emerald-900 border-t border-emerald-200">
+                <div className="bg-white/80 p-1.5 rounded-lg text-center">
+                  <span className="block text-slate-500 font-normal">Direct Rate</span>
+                  <span className="text-emerald-800 font-extrabold text-[12px]">₹{selectedSeller.pricePerKg}/kg</span>
+                </div>
+                <div className="bg-white/80 p-1.5 rounded-lg text-center">
+                  <span className="block text-slate-500 font-normal">Available</span>
+                  <span className="font-extrabold text-[12px]">{selectedSeller.quantityKg.toLocaleString()} kg</span>
+                </div>
+                <div className="bg-white/80 p-1.5 rounded-lg text-center">
+                  <span className="block text-slate-500 font-normal">Transit</span>
+                  <span className="font-extrabold text-[12px]">~{selectedSeller.transitDaysToKolkata} Days</span>
+                </div>
+              </div>
+            </div>
+          )}
+
           <div>
-            <label className="text-body-sm text-[12px] text-on-surface-variant font-medium">Crop Required</label>
+            <div className="flex items-center justify-between">
+              <label className="text-body-sm text-[12px] text-on-surface-variant font-medium">Crop Required</label>
+              {selectedSeller && (
+                <span className="text-[11px] font-bold text-emerald-700">Preselected from Map</span>
+              )}
+            </div>
             <select
               value={crop}
               onChange={e => {

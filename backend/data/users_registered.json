@@ -1,0 +1,28 @@
+{
+  "usr-16d4dd": {
+    "id": "usr-16d4dd",
+    "name": "Amit Sen",
+    "address": "74 Park Circus, Kolkata",
+    "location": "74 Park Circus",
+    "dob": "1992-05-14",
+    "phone": "9831122334",
+    "role": "buyer",
+    "email": "amit.sen@example.com",
+    "password": "secure123",
+    "created_at": "2026-09-10T14:56:44.191703",
+    "verified": true
+  },
+  "usr-39c19f": {
+    "id": "usr-39c19f",
+    "name": "Aneek Ghosh",
+    "address": "Debalpur, ward no- 05",
+    "location": "Debalpur",
+    "dob": "2026-09-10",
+    "phone": "+918609245754",
+    "role": "farmer",
+    "email": "+918609245754@farm2flow.in",
+    "password": "1234",
+    "created_at": "2026-09-10T14:58:10.264864",
+    "verified": true
+  }
+}

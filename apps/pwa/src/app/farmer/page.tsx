@@ -6,6 +6,7 @@ import { getStoredProduce, getDemandForecast, getPriceEstimate, getOrders, saveP
 import { Produce, Order } from '@/types';
 import { PredefinedHelpModal } from '@/components/PredefinedHelpModal';
 import { ListProduceWizard } from '@/components/ListProduceWizard';
+import { CropMarketExplorer } from '@/components/CropMarketExplorer';
 import { translations, Language } from '@/data/translations';
 
 export default function FarmerPage() {
@@ -237,41 +238,14 @@ export default function FarmerPage() {
           )}
 
           {farmerTab === 'market' && (
-            <div className="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant flex flex-col gap-3">
-              <h3 className="text-[16px] font-bold text-on-surface">{t.marketIntel}</h3>
-              <div className="grid grid-cols-2 gap-2 text-[12px]">
-                <div className="bg-surface-container-low p-3 rounded-lg border border-outline-variant">
-                  <p className="text-on-surface-variant">{t.currentMandiDemand}</p>
-                  <p className="font-bold text-on-surface text-[14px]">{forecast.currentDemandTonnes} tonnes/week</p>
-                </div>
-                <div className="bg-surface-container-low p-3 rounded-lg border border-outline-variant">
-                  <p className="text-on-surface-variant">{t.forecastDemand}</p>
-                  <p className="font-bold text-primary text-[14px]">{forecast.forecastDemandTonnes} tonnes/week</p>
-                </div>
-              </div>
-
-              <div className="p-3.5 bg-emerald-50 border border-emerald-200 rounded-xl text-[12px]">
-                <p className="font-bold text-emerald-900">{t.directPriceRealization}</p>
-                <p className="text-emerald-800 mt-1">{t.directPriceDesc}</p>
-              </div>
-
-              <div className="bg-surface-container-low p-3 rounded-xl border border-outline-variant flex flex-col gap-2">
-                <span className="font-bold text-[13px] text-on-surface">{t.cropSelection}</span>
-                <div className="flex gap-2 overflow-x-auto no-scrollbar py-1">
-                  {['Tomato', 'Potato', 'Onion', 'Rice', 'Wheat', 'Chilli', 'Cauliflower', 'Cabbage', 'Carrot', 'Apple'].map(c => (
-                    <button
-                      key={c}
-                      onClick={() => setSelectedCrop(c)}
-                      className={`px-3 py-1.5 rounded-lg text-[12px] font-bold whitespace-nowrap transition-all ${
-                        selectedCrop === c ? 'bg-primary-container text-on-primary shadow-xs' : 'bg-surface-container-high text-on-surface-variant hover:bg-surface-container-highest'
-                      }`}
-                    >
-                      {c}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
+            <CropMarketExplorer
+              selectedCrop={selectedCrop}
+              onSelectCrop={(crop) => setSelectedCrop(crop)}
+              onListProduceClick={(crop) => {
+                setSelectedCrop(crop);
+                setIsListWizardOpen(true);
+              }}
+            />
           )}
 
           {farmerTab === 'sell' && (
@@ -353,9 +327,18 @@ export default function FarmerPage() {
               <p><strong>Address:</strong> {farmerAddress}</p>
               <p><strong>{t.verification}:</strong> NABARD / e-NAM Verified ✓</p>
               <div className="pt-2 border-t border-outline-variant">
-                <Link href="/" className="text-secondary font-bold hover:underline block py-1">
+                <button 
+                  type="button"
+                  onClick={() => {
+                    if (typeof window !== 'undefined') {
+                      localStorage.removeItem('farm2flow_user_session');
+                      window.location.href = '/login';
+                    }
+                  }} 
+                  className="text-secondary font-bold hover:underline block py-1 text-left w-full cursor-pointer"
+                >
                   {t.signOut}
-                </Link>
+                </button>
               </div>
             </div>
           )}

@@ -1,7 +1,4 @@
-"""
-Standalone lightweight HTTP Server for Farm2Flow Core API
-Emulates the exact endpoints from backend/app/main.py using Python's standard library (no pip dependencies required)
-"""
+import os
 import http.server
 import socketserver
 import json
@@ -10,6 +7,29 @@ import datetime
 import uuid
 
 PORT = 8000
+
+# Dedicated Persistent Database File for Registered Accounts
+DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
+os.makedirs(DATA_DIR, exist_ok=True)
+USERS_DB_FILE = os.path.join(DATA_DIR, "users_registered.json")
+
+def load_registered_users():
+    if os.path.exists(USERS_DB_FILE):
+        try:
+            with open(USERS_DB_FILE, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception:
+            return {}
+    return {}
+
+def save_registered_users(users_dict):
+    try:
+        with open(USERS_DB_FILE, "w", encoding="utf-8") as f:
+            json.dump(users_dict, f, indent=2)
+    except Exception as e:
+        print(f"Error saving users DB: {e}")
+
+REGISTERED_USERS_DB = load_registered_users()
 
 # ==================== DETERMINISTIC DEMO DATABASE ====================
 
@@ -20,27 +40,83 @@ USERS_DB = {
         "email": "farmer@farm2flow.in",
         "phone": "+91 98310 44210",
         "role": "farmer",
-        "location": "Hooghly, West Bengal",
+        "location": "Hooghly (Singur)",
+        "address": "Singur Vegetable Cluster, Hooghly, WB",
+        "dob": "1982-05-14",
+        "password": "demo1234",
         "verified": True,
-        "fpo_name": "Hooghly Agri Producers Cooperative"
+        "fpo_name": "Singur Vegetable Cluster FPO"
     },
-    "fpo@farm2flow.in": {
-        "id": "fpo-301",
-        "name": "Hooghly FPO Hub (Singur)",
-        "email": "fpo@farm2flow.in",
-        "phone": "+91 98312 99430",
-        "role": "fpo",
-        "location": "Singur, Hooghly",
-        "verified": True,
-        "fpo_name": "NABARD Hooghly Farmers Producer Organization"
+    "subhash.farmer@farm2flow.in": {
+        "id": "f-102",
+        "name": "Subhash Mondal",
+        "email": "subhash.farmer@farm2flow.in",
+        "phone": "+91 98321 55678",
+        "role": "farmer",
+        "location": "Burdwan (Shaktigarh)",
+        "address": "Paddy & Cereal Mandi Yard, Purba Bardhaman, WB",
+        "dob": "1978-11-20",
+        "password": "demo1234",
+        "verified": True
+    },
+    "animesh.farmer@farm2flow.in": {
+        "id": "f-103",
+        "name": "Animesh Biswas",
+        "email": "animesh.farmer@farm2flow.in",
+        "phone": "+91 98333 77890",
+        "role": "farmer",
+        "location": "Nadia (Ranaghat)",
+        "address": "Ranaghat Agro Hub, Nadia, WB",
+        "dob": "1985-03-10",
+        "password": "demo1234",
+        "verified": True
     },
     "buyer@farm2flow.in": {
         "id": "b-201",
-        "name": "Kolkata Wholesale Mandi Aggregator",
+        "name": "Sourav Mukherjee",
         "email": "buyer@farm2flow.in",
         "phone": "+91 98300 12345",
         "role": "buyer",
-        "location": "Posta, Kolkata",
+        "location": "Salt Lake (Sector 1), Kolkata",
+        "address": "AD-Block, Sector 1, Salt Lake, Kolkata - 700064",
+        "dob": "1988-08-22",
+        "password": "demo1234",
+        "verified": True
+    },
+    "sourav.consumer@farm2flow.in": {
+        "id": "b-201",
+        "name": "Sourav Mukherjee",
+        "email": "sourav.consumer@farm2flow.in",
+        "phone": "+91 98300 12345",
+        "role": "buyer",
+        "location": "Salt Lake (Sector 1), Kolkata",
+        "address": "AD-Block, Sector 1, Salt Lake, Kolkata - 700064",
+        "dob": "1988-08-22",
+        "password": "demo1234",
+        "verified": True
+    },
+    "priyanka.consumer@farm2flow.in": {
+        "id": "b-202",
+        "name": "Priyanka Sen",
+        "email": "priyanka.consumer@farm2flow.in",
+        "phone": "+91 98344 66789",
+        "role": "buyer",
+        "location": "New Town (Action Area 1), Kolkata",
+        "address": "Tower 4, Uniworld City, New Town, Kolkata - 700156",
+        "dob": "1992-01-18",
+        "password": "demo1234",
+        "verified": True
+    },
+    "debojyoti.consumer@farm2flow.in": {
+        "id": "b-203",
+        "name": "Debojyoti Banerjee",
+        "email": "debojyoti.consumer@farm2flow.in",
+        "phone": "+91 98355 88990",
+        "role": "buyer",
+        "location": "Ballygunge, South Kolkata",
+        "address": "42/1 Dover Road, Ballygunge, Kolkata - 700019",
+        "dob": "1980-09-05",
+        "password": "demo1234",
         "verified": True
     },
     "admin@farm2flow.in": {
@@ -50,6 +126,9 @@ USERS_DB = {
         "phone": "+91 98309 00001",
         "role": "admin",
         "location": "Department of Agriculture, West Bengal",
+        "address": "Khadya Bhavan, Kolkata",
+        "dob": "1972-04-12",
+        "password": "demo1234",
         "verified": True
     }
 }
@@ -367,6 +446,9 @@ class Farm2FlowHandler(http.server.BaseHTTPRequestHandler):
             })
         elif path == "/api/admin/audit-logs":
             self._send_json(AUDIT_LOGS_DB)
+        elif path == "/api/users":
+            safe_users = [{k: v for k, v in u.items() if k != "password"} for u in REGISTERED_USERS_DB.values()]
+            self._send_json(safe_users)
         else:
             self._send_json({"detail": "Not Found"}, status=404)
 
@@ -380,22 +462,81 @@ class Farm2FlowHandler(http.server.BaseHTTPRequestHandler):
         except Exception:
             req_data = {}
 
-        if path == "/api/auth/login":
-            identifier = req_data.get("identifier", "").lower()
-            role = req_data.get("role", "farmer")
-            user = USERS_DB.get(identifier)
-            if not user:
-                user = {
+        if path == "/api/auth/register":
+            name = req_data.get("name", "").strip()
+            address = req_data.get("address", "").strip()
+            dob = req_data.get("dob", "").strip()
+            phone = req_data.get("phone", "").strip()
+            role = req_data.get("role", "buyer").strip().lower()  # 'farmer' or 'buyer'
+            email = req_data.get("email", "").strip()
+            password = req_data.get("password", "").strip()
+
+            if not name or not address or not phone or not password:
+                self._send_json({"error": "Missing required fields: Name, Address, Phone, Password"}, status=400)
+                return
+
+            new_user_id = f"usr-{uuid.uuid4().hex[:6]}"
+            new_user = {
+                "id": new_user_id,
+                "name": name,
+                "address": address,
+                "location": address.split(",")[-2].strip() if "," in address else address,
+                "dob": dob,
+                "phone": phone,
+                "role": role,
+                "email": email or f"{phone}@farm2flow.in",
+                "password": password,
+                "created_at": datetime.datetime.now().isoformat(),
+                "verified": True
+            }
+
+            # Save in real-time persistent dictionary and file
+            REGISTERED_USERS_DB[new_user_id] = new_user
+            save_registered_users(REGISTERED_USERS_DB)
+
+            token = f"f2f-token-{role}-{new_user_id}"
+            user_safe = {k: v for k, v in new_user.items() if k != "password"}
+            self._send_json({"message": "Account created successfully", "access_token": token, "user": user_safe}, status=201)
+
+        elif path == "/api/auth/login":
+            identifier = req_data.get("identifier", "").strip().lower()
+            password = req_data.get("password", "").strip()
+            role = req_data.get("role", "farmer").lower()
+
+            # Search in registered persistent database first
+            user_match = None
+            for uid, u in REGISTERED_USERS_DB.items():
+                if (u.get("email", "").lower() == identifier or u.get("phone", "").replace(" ", "") == identifier.replace(" ", "")):
+                    if password and u.get("password") == password:
+                        user_match = u
+                        break
+                    elif not password:
+                        user_match = u
+                        break
+
+            # Search in deterministic built-in demo profiles
+            if not user_match:
+                for k, u in USERS_DB.items():
+                    if (k.lower() == identifier or u.get("email", "").lower() == identifier or u.get("phone", "").replace(" ", "") == identifier.replace(" ", "")):
+                        user_match = u
+                        break
+
+            # Fallback creation if not found
+            if not user_match:
+                user_match = {
                     "id": f"usr-{uuid.uuid4().hex[:6]}",
-                    "name": identifier.split("@")[0].capitalize() if "@" in identifier else "Demo User",
-                    "email": identifier,
-                    "phone": "+91 98300 00000",
+                    "name": identifier.split("@")[0].capitalize() if "@" in identifier else "Verified User",
+                    "email": identifier if "@" in identifier else "",
+                    "phone": identifier if not "@" in identifier else "+91 98300 00000",
                     "role": role,
-                    "location": "Hooghly, West Bengal",
+                    "location": "Kolkata, West Bengal" if role == "buyer" else "Hooghly, West Bengal",
+                    "address": "Kolkata Hub, West Bengal" if role == "buyer" else "Hooghly Agro Hub, WB",
                     "verified": True
                 }
-            token = f"f2f-token-{user['role']}-{user['id']}"
-            self._send_json({"access_token": token, "token_type": "bearer", "user": user})
+
+            token = f"f2f-token-{user_match.get('role', role)}-{user_match.get('id', 'usr-1')}"
+            user_safe = {k: v for k, v in user_match.items() if k != "password"}
+            self._send_json({"access_token": token, "token_type": "bearer", "user": user_safe})
         elif path == "/api/produce":
             new_produce = {
                 "id": f"prod-{len(PRODUCE_DB) + 1:03d}",

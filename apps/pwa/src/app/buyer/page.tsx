@@ -19,6 +19,7 @@ export default function BuyerPage() {
   const [isMapOpen, setIsMapOpen] = useState(false);
   const [isSellerMapOpen, setIsSellerMapOpen] = useState(false);
   const [selectedMapCrop, setSelectedMapCrop] = useState<string>('All Crops');
+  const [selectedSellerForMatch, setSelectedSellerForMatch] = useState<PanIndiaSeller | null>(null);
   const [buyerName, setBuyerName] = useState<string>('Sourav Mukherjee');
   const [buyerLocation, setBuyerLocation] = useState<string>('Salt Lake, Kolkata');
   const [buyerAddress, setBuyerAddress] = useState<string>('AD-Block, Sector 1, Salt Lake, Kolkata - 700064');
@@ -384,9 +385,18 @@ export default function BuyerPage() {
               <p><strong>Address:</strong> {buyerAddress}</p>
               <p><strong>{t.verification}:</strong> {t.buyerStatusValue}</p>
               <div className="pt-2 border-t border-outline-variant">
-                <Link href="/" className="text-secondary font-bold hover:underline block py-1">
+                <button 
+                  type="button"
+                  onClick={() => {
+                    if (typeof window !== 'undefined') {
+                      localStorage.removeItem('farm2flow_user_session');
+                      window.location.href = '/login';
+                    }
+                  }}
+                  className="text-secondary font-bold hover:underline block py-1 text-left w-full cursor-pointer"
+                >
                   {t.signOut}
-                </Link>
+                </button>
               </div>
             </div>
           )}
@@ -430,10 +440,15 @@ export default function BuyerPage() {
         {/* Smart Match Modal */}
         <BuyerSmartMatchModal
           isOpen={isSmartMatchOpen}
-          onClose={() => setIsSmartMatchOpen(false)}
+          onClose={() => {
+            setIsSmartMatchOpen(false);
+            setSelectedSellerForMatch(null);
+          }}
           onOrderCreated={handleOrderCreated}
           buyerName={buyerName}
           buyerDestination={buyerAddress || buyerLocation}
+          initialCrop={selectedMapCrop !== 'All Crops' ? selectedMapCrop : 'Tomato'}
+          selectedSeller={selectedSellerForMatch}
         />
 
         {/* InDrive-style Interactive Location Map */}
@@ -454,6 +469,8 @@ export default function BuyerPage() {
           buyerCityName={buyerLocation}
           initialCrop={selectedMapCrop}
           onSelectSeller={(seller: PanIndiaSeller) => {
+            setSelectedSellerForMatch(seller);
+            setSelectedMapCrop(seller.crop);
             setIsSmartMatchOpen(true);
           }}
         />

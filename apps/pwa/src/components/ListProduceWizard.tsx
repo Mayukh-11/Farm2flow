@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Produce } from '@/types';
+import { getAllCatalogCrops, CatalogCropItem } from '@/data/cropCatalog';
 
 interface ListProduceWizardProps {
   isOpen: boolean;
@@ -172,20 +173,24 @@ export const ListProduceWizard: React.FC<ListProduceWizardProps> = ({
     }
   };
 
-  if (!isOpen) return null;
+  const [wizardCategory, setWizardCategory] = useState<string>('All');
+  const [customCatalogCrops, setCustomCatalogCrops] = useState<CatalogCropItem[]>([]);
 
-  const cropOptions = [
-    { name: 'Tomato', icon: '🍅', variety: 'Hybrid Red Flavour', suggestedPrice: '₹28–32/kg' },
-    { name: 'Potato', icon: '🥔', variety: 'Jyoti Golden', suggestedPrice: '₹16–20/kg' },
-    { name: 'Onion', icon: '🧅', variety: 'Nashik Red', suggestedPrice: '₹24–28/kg' },
-    { name: 'Rice', icon: '🍚', variety: 'Gobindobhog Aromatic', suggestedPrice: '₹70–80/kg' },
-    { name: 'Wheat', icon: '🌾', variety: 'Sharbati Gold', suggestedPrice: '₹26–30/kg' },
-    { name: 'Chilli', icon: '🌶️', variety: 'Bullet Green Spicy', suggestedPrice: '₹44–50/kg' },
-    { name: 'Cauliflower', icon: '🥦', variety: 'Snowball White', suggestedPrice: '₹20–25/kg' },
-    { name: 'Cabbage', icon: '🥬', variety: 'Green Globe Crisp', suggestedPrice: '₹12–16/kg' },
-    { name: 'Carrot', icon: '🥕', variety: 'Kuroda Sweet Orange', suggestedPrice: '₹28–35/kg' },
-    { name: 'Brinjal', icon: '🍆', variety: 'Muktakeshi Purple', suggestedPrice: '₹24–30/kg' }
-  ];
+  useEffect(() => {
+    setCustomCatalogCrops(getAllCatalogCrops());
+    const handleUpdate = () => {
+      setCustomCatalogCrops(getAllCatalogCrops());
+    };
+    window.addEventListener('farm2flow_catalog_updated', handleUpdate);
+    return () => window.removeEventListener('farm2flow_catalog_updated', handleUpdate);
+  }, []);
+
+  const filteredWizardCrops = useMemo(() => {
+    if (wizardCategory === 'All') return customCatalogCrops;
+    return customCatalogCrops.filter(c => c.category === wizardCategory);
+  }, [customCatalogCrops, wizardCategory]);
+
+  if (!isOpen) return null;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -208,7 +213,7 @@ export const ListProduceWizard: React.FC<ListProduceWizardProps> = ({
         farmerName: activeFarmerName,
         farmerLocation: activeFarmerLocation,
         cropName: selectedCrop.trim(),
-        variety: cropOptions.find(c => c.name.toLowerCase() === selectedCrop.toLowerCase())?.variety || 'Farm Fresh',
+        variety: customCatalogCrops.find(c => c.name.toLowerCase() === selectedCrop.toLowerCase())?.variety || 'Farm Fresh',
         grade,
         quantityKg,
         expectedPricePerKg: expectedPrice,
@@ -327,22 +332,49 @@ export const ListProduceWizard: React.FC<ListProduceWizardProps> = ({
                   <div className="h-px bg-outline-variant flex-1"></div>
                 </div>
 
-                {/* Popular Crop Cards */}
-                <div className="grid grid-cols-2 gap-2.5 max-h-[220px] overflow-y-auto pr-1">
-                  {cropOptions.map(crop => (
+                {/* Category Filter for Wizard */}
+                <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5 text-[11px] font-bold">
+                  {['All', 'Vegetables', 'Fruits', 'Grains', 'Spices', 'Leafy Greens'].map(cat => (
+                    <button
+                      key={cat}
+                      type="button"
+                      onClick={() => setWizardCategory(cat)}
+                      className={`px-2.5 py-1 rounded-full whitespace-nowrap transition-all ${
+                        wizardCategory === cat
+                          ? 'bg-primary-container text-on-primary shadow-xs font-black'
+                          : 'bg-surface-container-high text-on-surface-variant hover:text-on-surface'
+                      }`}
+                    >
+                      {cat}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Popular & Expanded Crop Cards */}
+                <div className="grid grid-cols-2 gap-2 max-h-[220px] overflow-y-auto no-scrollbar pr-0.5">
+                  {filteredWizardCrops.map(crop => (
                     <button
                       key={crop.name}
                       type="button"
-                      onClick={() => setSelectedCrop(crop.name)}
-                      className={`p-3 rounded-2xl border text-left flex flex-col gap-1 transition-all active:scale-98 ${
+                      onClick={() => {
+                        setSelectedCrop(crop.name);
+                        setExpectedPrice(crop.suggestedPriceMin || 30);
+                      }}
+                      className={`p-2.5 rounded-xl border text-left flex flex-col gap-0.5 transition-all active:scale-98 ${
                         selectedCrop.toLowerCase() === crop.name.toLowerCase()
-                          ? 'border-2 border-primary bg-primary-container/10 ring-1 ring-primary'
+                          ? 'border-2 border-primary bg-primary-container/10 ring-1 ring-primary shadow-xs'
                           : 'border-outline-variant bg-surface-container-lowest hover:bg-surface-container-low'
                       }`}
                     >
-                      <span className="text-2xl">{crop.icon}</span>
-                      <span className="font-extrabold text-[15px] text-on-surface">{crop.name}</span>
-                      <span className="text-[11px] text-on-surface-variant font-medium">{crop.variety}</span>
+                      <div className="flex items-center justify-between">
+                        <span className="text-xl">{crop.icon}</span>
+                        <span className="text-[9px] font-extrabold px-1.5 py-0.2 bg-surface-container-high text-on-surface-variant rounded">
+                          {crop.category || 'Produce'}
+                        </span>
+                      </div>
+                      <span className="font-extrabold text-[13px] text-on-surface leading-tight truncate">{crop.name}</span>
+                      <span className="text-[10px] text-on-surface-variant font-medium truncate">{crop.variety}</span>
+                      <span className="text-[10px] font-black text-primary mt-0.5">₹{crop.suggestedPriceMin}–{crop.suggestedPriceMax}/kg</span>
                     </button>
                   ))}
                 </div>

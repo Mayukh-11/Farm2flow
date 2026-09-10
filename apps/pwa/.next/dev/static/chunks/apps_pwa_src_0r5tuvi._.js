@@ -1580,7 +1580,7 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                     children: "List Produce for Direct Sale"
                                 }, void 0, false, {
                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                    lineNumber: 243,
+                                    lineNumber: 244,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1592,13 +1592,13 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                    lineNumber: 244,
+                                    lineNumber: 245,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                            lineNumber: 242,
+                            lineNumber: 243,
                             columnNumber: 11
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1614,12 +1614,12 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                         children: "mic"
                                     }, void 0, false, {
                                         fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                        lineNumber: 256,
+                                        lineNumber: 257,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0))
                                 }, void 0, false, {
                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                    lineNumber: 248,
+                                    lineNumber: 249,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1630,24 +1630,24 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                         children: "close"
                                     }, void 0, false, {
                                         fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                        lineNumber: 259,
+                                        lineNumber: 260,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0))
                                 }, void 0, false, {
                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                    lineNumber: 258,
+                                    lineNumber: 259,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                            lineNumber: 247,
+                            lineNumber: 248,
                             columnNumber: 11
                         }, ("TURBOPACK compile-time value", void 0))
                     ]
                 }, void 0, true, {
                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                    lineNumber: 241,
+                    lineNumber: 242,
                     columnNumber: 9
                 }, ("TURBOPACK compile-time value", void 0)),
                 voiceNotice && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1655,7 +1655,7 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                     children: voiceNotice
                 }, void 0, false, {
                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                    lineNumber: 266,
+                    lineNumber: 267,
                     columnNumber: 11
                 }, ("TURBOPACK compile-time value", void 0)),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1665,27 +1665,27 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                             className: `h-full transition-all duration-300 ${step >= 1 ? 'bg-primary flex-1' : 'bg-transparent'}`
                         }, void 0, false, {
                             fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                            lineNumber: 273,
+                            lineNumber: 274,
                             columnNumber: 11
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                             className: `h-full transition-all duration-300 ${step >= 2 ? 'bg-primary flex-1' : 'bg-transparent'}`
                         }, void 0, false, {
                             fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                            lineNumber: 274,
+                            lineNumber: 275,
                             columnNumber: 11
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                             className: `h-full transition-all duration-300 ${step >= 3 ? 'bg-primary flex-1' : 'bg-transparent'}`
                         }, void 0, false, {
                             fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                            lineNumber: 275,
+                            lineNumber: 276,
                             columnNumber: 11
                         }, ("TURBOPACK compile-time value", void 0))
                     ]
                 }, void 0, true, {
                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                    lineNumber: 272,
+                    lineNumber: 273,
                     columnNumber: 9
                 }, ("TURBOPACK compile-time value", void 0)),
                 successMsg ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1698,12 +1698,12 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                 children: "check_circle"
                             }, void 0, false, {
                                 fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                lineNumber: 281,
+                                lineNumber: 282,
                                 columnNumber: 15
                             }, ("TURBOPACK compile-time value", void 0))
                         }, void 0, false, {
                             fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                            lineNumber: 280,
+                            lineNumber: 281,
                             columnNumber: 13
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1711,13 +1711,13 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                             children: successMsg
                         }, void 0, false, {
                             fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                            lineNumber: 283,
+                            lineNumber: 284,
                             columnNumber: 13
                         }, ("TURBOPACK compile-time value", void 0))
                     ]
                 }, void 0, true, {
                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                    lineNumber: 279,
+                    lineNumber: 280,
                     columnNumber: 11
                 }, ("TURBOPACK compile-time value", void 0)) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("form", {
                     onSubmit: handleSubmit,
@@ -1734,7 +1734,7 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                             children: "Step 1: Select or Type Crop"
                                         }, void 0, false, {
                                             fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                            lineNumber: 291,
+                                            lineNumber: 292,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1742,13 +1742,13 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                             children: "Voice or Type"
                                         }, void 0, false, {
                                             fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                            lineNumber: 292,
+                                            lineNumber: 293,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                    lineNumber: 290,
+                                    lineNumber: 291,
                                     columnNumber: 17
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1761,7 +1761,7 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                                     children: "Add Custom Crop / Product Name"
                                                 }, void 0, false, {
                                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                                    lineNumber: 298,
+                                                    lineNumber: 299,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1769,13 +1769,13 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                                     children: "Voice Enabled"
                                                 }, void 0, false, {
                                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                                    lineNumber: 299,
+                                                    lineNumber: 300,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                            lineNumber: 297,
+                                            lineNumber: 298,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1786,7 +1786,7 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                                     children: "eco"
                                                 }, void 0, false, {
                                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                                    lineNumber: 303,
+                                                    lineNumber: 304,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -1797,7 +1797,7 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                                     className: "w-full pl-10 pr-12 py-3 bg-white border border-outline-variant rounded-xl text-[14px] font-bold text-on-surface focus:outline-none focus:border-primary shadow-xs"
                                                 }, void 0, false, {
                                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                                    lineNumber: 304,
+                                                    lineNumber: 305,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1810,24 +1810,24 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                                         children: "mic"
                                                     }, void 0, false, {
                                                         fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                                        lineNumber: 319,
+                                                        lineNumber: 320,
                                                         columnNumber: 23
                                                     }, ("TURBOPACK compile-time value", void 0))
                                                 }, void 0, false, {
                                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                                    lineNumber: 311,
+                                                    lineNumber: 312,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                            lineNumber: 302,
+                                            lineNumber: 303,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                    lineNumber: 296,
+                                    lineNumber: 297,
                                     columnNumber: 17
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1837,7 +1837,7 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                             className: "h-px bg-outline-variant flex-1"
                                         }, void 0, false, {
                                             fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                            lineNumber: 325,
+                                            lineNumber: 326,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1845,62 +1845,120 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                             children: "Or Choose Popular Crops"
                                         }, void 0, false, {
                                             fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                            lineNumber: 326,
+                                            lineNumber: 327,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                             className: "h-px bg-outline-variant flex-1"
                                         }, void 0, false, {
                                             fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                            lineNumber: 327,
+                                            lineNumber: 328,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                    lineNumber: 324,
+                                    lineNumber: 325,
                                     columnNumber: 17
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                    className: "grid grid-cols-2 gap-2.5 max-h-[220px] overflow-y-auto pr-1",
-                                    children: cropOptions.map((crop)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                    className: "flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5 text-[11px] font-bold",
+                                    children: [
+                                        'All',
+                                        'Vegetables',
+                                        'Fruits',
+                                        'Grains',
+                                        'Spices',
+                                        'Leafy Greens'
+                                    ].map((cat)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                             type: "button",
-                                            onClick: ()=>setSelectedCrop(crop.name),
-                                            className: `p-3 rounded-2xl border text-left flex flex-col gap-1 transition-all active:scale-98 ${selectedCrop.toLowerCase() === crop.name.toLowerCase() ? 'border-2 border-primary bg-primary-container/10 ring-1 ring-primary' : 'border-outline-variant bg-surface-container-lowest hover:bg-surface-container-low'}`,
+                                            onClick: ()=>setWizardCategory(cat),
+                                            className: `px-2.5 py-1 rounded-full whitespace-nowrap transition-all ${wizardCategory === cat ? 'bg-primary-container text-on-primary shadow-xs font-black' : 'bg-surface-container-high text-on-surface-variant hover:text-on-surface'}`,
+                                            children: cat
+                                        }, cat, false, {
+                                            fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
+                                            lineNumber: 334,
+                                            columnNumber: 21
+                                        }, ("TURBOPACK compile-time value", void 0)))
+                                }, void 0, false, {
+                                    fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
+                                    lineNumber: 332,
+                                    columnNumber: 17
+                                }, ("TURBOPACK compile-time value", void 0)),
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                    className: "grid grid-cols-2 gap-2 max-h-[220px] overflow-y-auto no-scrollbar pr-0.5",
+                                    children: filteredWizardCrops.map((crop)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                            type: "button",
+                                            onClick: ()=>{
+                                                setSelectedCrop(crop.name);
+                                                setExpectedPrice(crop.suggestedPriceMin || 30);
+                                            },
+                                            className: `p-2.5 rounded-xl border text-left flex flex-col gap-0.5 transition-all active:scale-98 ${selectedCrop.toLowerCase() === crop.name.toLowerCase() ? 'border-2 border-primary bg-primary-container/10 ring-1 ring-primary shadow-xs' : 'border-outline-variant bg-surface-container-lowest hover:bg-surface-container-low'}`,
                                             children: [
-                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                    className: "text-2xl",
-                                                    children: crop.icon
-                                                }, void 0, false, {
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                    className: "flex items-center justify-between",
+                                                    children: [
+                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                            className: "text-xl",
+                                                            children: crop.icon
+                                                        }, void 0, false, {
+                                                            fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
+                                                            lineNumber: 366,
+                                                            columnNumber: 25
+                                                        }, ("TURBOPACK compile-time value", void 0)),
+                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                            className: "text-[9px] font-extrabold px-1.5 py-0.2 bg-surface-container-high text-on-surface-variant rounded",
+                                                            children: crop.category || 'Produce'
+                                                        }, void 0, false, {
+                                                            fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
+                                                            lineNumber: 367,
+                                                            columnNumber: 25
+                                                        }, ("TURBOPACK compile-time value", void 0))
+                                                    ]
+                                                }, void 0, true, {
                                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                                    lineNumber: 343,
+                                                    lineNumber: 365,
                                                     columnNumber: 23
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                    className: "font-extrabold text-[15px] text-on-surface",
+                                                    className: "font-extrabold text-[13px] text-on-surface leading-tight truncate",
                                                     children: crop.name
                                                 }, void 0, false, {
                                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                                    lineNumber: 344,
+                                                    lineNumber: 371,
                                                     columnNumber: 23
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                    className: "text-[11px] text-on-surface-variant font-medium",
+                                                    className: "text-[10px] text-on-surface-variant font-medium truncate",
                                                     children: crop.variety
                                                 }, void 0, false, {
                                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                                    lineNumber: 345,
+                                                    lineNumber: 372,
+                                                    columnNumber: 23
+                                                }, ("TURBOPACK compile-time value", void 0)),
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                    className: "text-[10px] font-black text-primary mt-0.5",
+                                                    children: [
+                                                        "₹",
+                                                        crop.suggestedPriceMin,
+                                                        "–",
+                                                        crop.suggestedPriceMax,
+                                                        "/kg"
+                                                    ]
+                                                }, void 0, true, {
+                                                    fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
+                                                    lineNumber: 373,
                                                     columnNumber: 23
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, crop.name, true, {
                                             fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                            lineNumber: 333,
+                                            lineNumber: 352,
                                             columnNumber: 21
                                         }, ("TURBOPACK compile-time value", void 0)))
                                 }, void 0, false, {
                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                    lineNumber: 331,
+                                    lineNumber: 350,
                                     columnNumber: 17
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1918,7 +1976,7 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                             children: "Continue to Quantity"
                                         }, void 0, false, {
                                             fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                            lineNumber: 361,
+                                            lineNumber: 389,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1926,19 +1984,19 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                             children: "arrow_forward"
                                         }, void 0, false, {
                                             fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                            lineNumber: 362,
+                                            lineNumber: 390,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                    lineNumber: 350,
+                                    lineNumber: 378,
                                     columnNumber: 17
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                            lineNumber: 289,
+                            lineNumber: 290,
                             columnNumber: 15
                         }, ("TURBOPACK compile-time value", void 0)),
                         step === 2 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1949,7 +2007,7 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                     children: "Step 2: Harvest Quantity (Kg)"
                                 }, void 0, false, {
                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                    lineNumber: 370,
+                                    lineNumber: 398,
                                     columnNumber: 17
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1963,7 +2021,7 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                                     children: "Available Lot Quantity"
                                                 }, void 0, false, {
                                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                                    lineNumber: 374,
+                                                    lineNumber: 402,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1974,13 +2032,13 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                                    lineNumber: 375,
+                                                    lineNumber: 403,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                            lineNumber: 373,
+                                            lineNumber: 401,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -1993,7 +2051,7 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                             className: "w-full h-2 bg-surface-container-high rounded-lg appearance-none cursor-pointer accent-primary"
                                         }, void 0, false, {
                                             fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                            lineNumber: 377,
+                                            lineNumber: 405,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2003,33 +2061,33 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                                     children: "100 kg"
                                                 }, void 0, false, {
                                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                                    lineNumber: 387,
+                                                    lineNumber: 415,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                     children: "1,000 kg"
                                                 }, void 0, false, {
                                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                                    lineNumber: 388,
+                                                    lineNumber: 416,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                     children: "5,000 kg"
                                                 }, void 0, false, {
                                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                                    lineNumber: 389,
+                                                    lineNumber: 417,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                            lineNumber: 386,
+                                            lineNumber: 414,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                    lineNumber: 372,
+                                    lineNumber: 400,
                                     columnNumber: 17
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2042,7 +2100,7 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                             children: "Back"
                                         }, void 0, false, {
                                             fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                            lineNumber: 394,
+                                            lineNumber: 422,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -2054,7 +2112,7 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                                     children: "Set Quality & Price"
                                                 }, void 0, false, {
                                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                                    lineNumber: 406,
+                                                    lineNumber: 434,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -2062,25 +2120,25 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                                     children: "arrow_forward"
                                                 }, void 0, false, {
                                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                                    lineNumber: 407,
+                                                    lineNumber: 435,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                            lineNumber: 401,
+                                            lineNumber: 429,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                    lineNumber: 393,
+                                    lineNumber: 421,
                                     columnNumber: 17
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                            lineNumber: 369,
+                            lineNumber: 397,
                             columnNumber: 15
                         }, ("TURBOPACK compile-time value", void 0)),
                         step === 3 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2091,7 +2149,7 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                     children: "Step 3: Quality, Price & Date"
                                 }, void 0, false, {
                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                    lineNumber: 416,
+                                    lineNumber: 444,
                                     columnNumber: 17
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2101,7 +2159,7 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                             children: "Quality Grade"
                                         }, void 0, false, {
                                             fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                            lineNumber: 419,
+                                            lineNumber: 447,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2117,18 +2175,18 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                                     children: g
                                                 }, g, false, {
                                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                                    lineNumber: 422,
+                                                    lineNumber: 450,
                                                     columnNumber: 23
                                                 }, ("TURBOPACK compile-time value", void 0)))
                                         }, void 0, false, {
                                             fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                            lineNumber: 420,
+                                            lineNumber: 448,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                    lineNumber: 418,
+                                    lineNumber: 446,
                                     columnNumber: 17
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2138,7 +2196,7 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                             children: "Expected Price per Kg (₹)"
                                         }, void 0, false, {
                                             fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                            lineNumber: 439,
+                                            lineNumber: 467,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2149,7 +2207,7 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                                     children: "₹"
                                                 }, void 0, false, {
                                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                                    lineNumber: 441,
+                                                    lineNumber: 469,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -2160,19 +2218,19 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                                     className: "w-full pl-8 pr-4 py-2.5 bg-surface-container-lowest border border-outline-variant rounded-xl font-bold text-on-surface focus:outline-none focus:border-primary"
                                                 }, void 0, false, {
                                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                                    lineNumber: 442,
+                                                    lineNumber: 470,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                            lineNumber: 440,
+                                            lineNumber: 468,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                    lineNumber: 438,
+                                    lineNumber: 466,
                                     columnNumber: 17
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2182,7 +2240,7 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                             children: "Expected Harvest / Dispatch Date"
                                         }, void 0, false, {
                                             fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                            lineNumber: 453,
+                                            lineNumber: 481,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -2192,13 +2250,13 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                             className: "w-full px-3.5 py-2.5 mt-1 bg-surface-container-lowest border border-outline-variant rounded-xl font-bold text-on-surface focus:outline-none focus:border-primary"
                                         }, void 0, false, {
                                             fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                            lineNumber: 454,
+                                            lineNumber: 482,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                    lineNumber: 452,
+                                    lineNumber: 480,
                                     columnNumber: 17
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2211,7 +2269,7 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                             children: "Back"
                                         }, void 0, false, {
                                             fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                            lineNumber: 463,
+                                            lineNumber: 491,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -2221,36 +2279,36 @@ const ListProduceWizard = ({ isOpen, onClose, onSuccess, initialCrop = 'Tomato',
                                             children: isSubmitting ? 'Listing Produce...' : 'List My Produce'
                                         }, void 0, false, {
                                             fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                            lineNumber: 470,
+                                            lineNumber: 498,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                                    lineNumber: 462,
+                                    lineNumber: 490,
                                     columnNumber: 17
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                            lineNumber: 415,
+                            lineNumber: 443,
                             columnNumber: 15
                         }, ("TURBOPACK compile-time value", void 0))
                     ]
                 }, void 0, true, {
                     fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-                    lineNumber: 286,
+                    lineNumber: 287,
                     columnNumber: 11
                 }, ("TURBOPACK compile-time value", void 0))
             ]
         }, void 0, true, {
             fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-            lineNumber: 238,
+            lineNumber: 239,
             columnNumber: 7
         }, ("TURBOPACK compile-time value", void 0))
     }, void 0, false, {
         fileName: "[project]/apps/pwa/src/components/ListProduceWizard.tsx",
-        lineNumber: 237,
+        lineNumber: 238,
         columnNumber: 5
     }, ("TURBOPACK compile-time value", void 0));
 };

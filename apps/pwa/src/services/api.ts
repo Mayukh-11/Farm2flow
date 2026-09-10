@@ -5,7 +5,101 @@ import { DemandForecast, PriceEstimate, Produce, SmartMatchResult, LogisticsOpti
 const STORAGE_KEYS = {
   PRODUCE: 'farm2flow_produce_items',
   ORDERS: 'farm2flow_orders',
-  PENDING_SYNC: 'farm2flow_pending_sync'
+  PENDING_SYNC: 'farm2flow_pending_sync',
+  REGISTERED_USERS: 'farm2flow_registered_users_db'
+};
+
+export interface RegisteredAccount {
+  id: string;
+  name: string;
+  address: string;
+  location: string;
+  dob: string;
+  phone: string;
+  role: 'farmer' | 'buyer';
+  email?: string;
+  password?: string;
+  createdAt: string;
+}
+
+export const getRegisteredAccounts = (): RegisteredAccount[] => {
+  if (typeof window === 'undefined') return [];
+  const stored = localStorage.getItem(STORAGE_KEYS.REGISTERED_USERS);
+  if (!stored) return [];
+  try {
+    return JSON.parse(stored);
+  } catch {
+    return [];
+  }
+};
+
+export const syncRegisteredAccountsFromBackend = async (): Promise<RegisteredAccount[]> => {
+  if (typeof window === 'undefined') return [];
+  try {
+    const res = await fetch('http://localhost:8000/api/users', { cache: 'no-store' });
+    if (res.ok) {
+      const serverUsers = await res.json();
+      if (Array.isArray(serverUsers) && serverUsers.length > 0) {
+        const localAccounts = getRegisteredAccounts();
+        const mergedMap = new Map<string, RegisteredAccount>();
+        localAccounts.forEach(u => mergedMap.set(u.phone, u));
+        serverUsers.forEach((u: any) => {
+          mergedMap.set(u.phone, {
+            id: u.id,
+            name: u.name,
+            address: u.address,
+            location: u.location || (u.address.includes(',') ? u.address.split(',').slice(-2, -1)[0].trim() : u.address),
+            dob: u.dob || '1995-01-01',
+            phone: u.phone,
+            role: u.role || 'buyer',
+            email: u.email,
+            createdAt: u.created_at || new Date().toISOString()
+          });
+        });
+        const mergedList = Array.from(mergedMap.values());
+        localStorage.setItem(STORAGE_KEYS.REGISTERED_USERS, JSON.stringify(mergedList));
+        window.dispatchEvent(new CustomEvent('farm2flow_accounts_updated', { detail: { allAccounts: mergedList } }));
+        return mergedList;
+      }
+    }
+  } catch {}
+  return getRegisteredAccounts();
+};
+
+export const registerNewAccount = async (account: {
+  name: string;
+  address: string;
+  dob: string;
+  phone: string;
+  role: 'farmer' | 'buyer';
+  email?: string;
+  password: string;
+}): Promise<RegisteredAccount> => {
+  const newAccount: RegisteredAccount = {
+    ...account,
+    id: `usr-${Date.now().toString().slice(-5)}`,
+    location: account.address.includes(',') ? account.address.split(',').slice(-2, -1)[0].trim() : account.address,
+    createdAt: new Date().toISOString()
+  };
+
+  // 1. Save in local browser storage
+  if (typeof window !== 'undefined') {
+    const existing = getRegisteredAccounts();
+    const updated = [newAccount, ...existing.filter(u => u.phone !== account.phone && (!account.email || u.email !== account.email))];
+    localStorage.setItem(STORAGE_KEYS.REGISTERED_USERS, JSON.stringify(updated));
+    window.dispatchEvent(new CustomEvent('farm2flow_accounts_updated', { detail: { newAccount, allAccounts: updated } }));
+  }
+
+  // 2. Sync in background with backend API server if available
+  try {
+    fetch('http://localhost:8000/api/auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(account)
+    }).catch(() => {});
+  } catch {}
+
+  return newAccount;
 };
 
 export const getStoredProduce = (): Produce[] => {

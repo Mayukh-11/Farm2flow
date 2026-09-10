@@ -254,14 +254,92 @@ function LoginPage() {
     const [isLoading, setIsLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
     const [error, setError] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])('');
     const router = (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"])();
-    // Role-based 1-click Demo Login Accounts (Farmer & Buyer)
-    const handleDemoLogin = (demoRole)=>{
-        setRole(demoRole);
-        if (demoRole === 'farmer') setIdentifier('farmer@farm2flow.in');
-        if (demoRole === 'buyer') setIdentifier('buyer@farm2flow.in');
-        if (demoRole === 'admin') setIdentifier('admin@farm2flow.in');
+    // Real Person Profiles with Home Addresses
+    const DEMO_PROFILES = {
+        buyer: [
+            {
+                id: 'consumer-1',
+                name: 'Sourav Mukherjee',
+                occupation: 'Household Consumer',
+                location: 'Salt Lake (Sector 1), Kolkata',
+                address: 'AD-Block, Sector 1, Salt Lake, Kolkata - 700064',
+                email: 'sourav.consumer@farm2flow.in',
+                icon: '👨‍💼'
+            },
+            {
+                id: 'consumer-2',
+                name: 'Priyanka Sen',
+                occupation: 'Family Consumer',
+                location: 'New Town (Action Area 1), Kolkata',
+                address: 'Tower 4, Uniworld City, New Town, Kolkata - 700156',
+                email: 'priyanka.consumer@farm2flow.in',
+                icon: '👩‍🏫'
+            },
+            {
+                id: 'consumer-3',
+                name: 'Debojyoti Banerjee',
+                occupation: 'Independent Consumer',
+                location: 'Ballygunge, South Kolkata',
+                address: '42/1 Dover Road, Ballygunge, Kolkata - 700019',
+                email: 'debojyoti.consumer@farm2flow.in',
+                icon: '👨‍⚕️'
+            }
+        ],
+        farmer: [
+            {
+                id: 'farmer-1',
+                name: 'Ramesh Ghosh',
+                occupation: 'Vegetable Farmer',
+                location: 'Hooghly (Singur)',
+                address: 'Singur Vegetable Cluster, Hooghly, WB',
+                email: 'ramesh.farmer@farm2flow.in',
+                icon: '🌾'
+            },
+            {
+                id: 'farmer-2',
+                name: 'Subhash Mondal',
+                occupation: 'Paddy Cultivator',
+                location: 'Burdwan (Shaktigarh)',
+                address: 'Paddy & Cereal Mandi Yard, Purba Bardhaman, WB',
+                email: 'subhash.farmer@farm2flow.in',
+                icon: '🚜'
+            },
+            {
+                id: 'farmer-3',
+                name: 'Animesh Biswas',
+                occupation: 'Spices & Chilli Grower',
+                location: 'Nadia (Ranaghat)',
+                address: 'Ranaghat Agro Hub, Nadia, WB',
+                email: 'animesh.farmer@farm2flow.in',
+                icon: '🌱'
+            }
+        ]
+    };
+    const handleProfileLogin = (profile, selectedRole)=>{
+        setRole(selectedRole);
+        setIdentifier(profile.email);
         setPassword('demo1234');
-        executeLogin(demoRole);
+        setIsLoading(true);
+        setError('');
+        setTimeout(()=>{
+            const userSession = {
+                identifier: profile.email,
+                name: profile.name,
+                location: profile.location,
+                address: profile.address,
+                role: selectedRole === 'buyer' ? 'consumer' : 'farmer',
+                token: `f2f-token-${profile.id}-${Date.now()}`
+            };
+            if ("TURBOPACK compile-time truthy", 1) {
+                localStorage.setItem('farm2flow_user_session', JSON.stringify(userSession));
+            }
+            setIsLoading(false);
+            if (selectedRole === 'buyer') {
+                router.push('/buyer');
+            } else {
+                router.push('/farmer');
+            }
+        }, 500);
     };
     const handleSubmit = (e)=>{
         e.preventDefault();
@@ -314,12 +392,12 @@ function LoginPage() {
                                 children: "agriculture"
                             }, void 0, false, {
                                 fileName: "[project]/apps/pwa/src/app/login/page.tsx",
-                                lineNumber: 77,
+                                lineNumber: 159,
                                 columnNumber: 13
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/apps/pwa/src/app/login/page.tsx",
-                            lineNumber: 76,
+                            lineNumber: 158,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -329,7 +407,7 @@ function LoginPage() {
                                     children: "Farm2Flow"
                                 }, void 0, false, {
                                     fileName: "[project]/apps/pwa/src/app/login/page.tsx",
-                                    lineNumber: 80,
+                                    lineNumber: 162,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -337,148 +415,161 @@ function LoginPage() {
                                     children: "From Farm to Market, Smarter."
                                 }, void 0, false, {
                                     fileName: "[project]/apps/pwa/src/app/login/page.tsx",
-                                    lineNumber: 81,
+                                    lineNumber: 163,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/apps/pwa/src/app/login/page.tsx",
-                            lineNumber: 79,
+                            lineNumber: 161,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/apps/pwa/src/app/login/page.tsx",
-                    lineNumber: 75,
+                    lineNumber: 157,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                    className: "bg-surface-container-low p-3.5 rounded-xl border border-outline-variant flex flex-col gap-2",
+                    className: "bg-surface-container-low p-3.5 rounded-xl border border-outline-variant flex flex-col gap-2.5",
                     children: [
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                             className: "flex items-center justify-between",
                             children: [
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                    className: "text-[11px] font-bold text-secondary uppercase tracking-wider",
-                                    children: "🌟 1-Click Fast Login"
+                                    className: "text-[11px] font-extrabold text-secondary uppercase tracking-wider",
+                                    children: "🌟 1-Click Verified Person Profiles"
                                 }, void 0, false, {
                                     fileName: "[project]/apps/pwa/src/app/login/page.tsx",
-                                    lineNumber: 88,
+                                    lineNumber: 170,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                     className: "text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-bold",
-                                    children: "Direct Access"
+                                    children: "Real Addresses"
                                 }, void 0, false, {
                                     fileName: "[project]/apps/pwa/src/app/login/page.tsx",
-                                    lineNumber: 89,
+                                    lineNumber: 171,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/apps/pwa/src/app/login/page.tsx",
-                            lineNumber: 87,
+                            lineNumber: 169,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                            className: "grid grid-cols-2 gap-2 text-[12px] font-bold",
+                            className: "grid grid-cols-2 gap-1 bg-surface-container-high p-1 rounded-lg text-[11px] font-bold",
                             children: [
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                     type: "button",
-                                    onClick: ()=>handleDemoLogin('farmer'),
-                                    className: "p-3 bg-white hover:bg-primary-fixed-dim/20 border border-outline-variant rounded-xl flex items-center gap-2 text-left transition-all active:scale-95 shadow-xs",
-                                    children: [
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                            className: "text-xl",
-                                            children: "🌾"
-                                        }, void 0, false, {
-                                            fileName: "[project]/apps/pwa/src/app/login/page.tsx",
-                                            lineNumber: 97,
-                                            columnNumber: 15
-                                        }, this),
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                            children: [
-                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                                    className: "leading-tight text-on-surface font-extrabold",
-                                                    children: "Farmer"
-                                                }, void 0, false, {
-                                                    fileName: "[project]/apps/pwa/src/app/login/page.tsx",
-                                                    lineNumber: 99,
-                                                    columnNumber: 17
-                                                }, this),
-                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                                    className: "text-[11px] text-on-surface-variant font-normal",
-                                                    children: "Ramesh (Hooghly)"
-                                                }, void 0, false, {
-                                                    fileName: "[project]/apps/pwa/src/app/login/page.tsx",
-                                                    lineNumber: 100,
-                                                    columnNumber: 17
-                                                }, this)
-                                            ]
-                                        }, void 0, true, {
-                                            fileName: "[project]/apps/pwa/src/app/login/page.tsx",
-                                            lineNumber: 98,
-                                            columnNumber: 15
-                                        }, this)
-                                    ]
-                                }, void 0, true, {
+                                    onClick: ()=>setRole('farmer'),
+                                    className: `py-1 rounded-md transition-all ${role === 'farmer' ? 'bg-primary-container text-on-primary shadow-xs font-black' : 'text-on-surface-variant'}`,
+                                    children: "🌾 Farmers (Singur / Burdwan)"
+                                }, void 0, false, {
                                     fileName: "[project]/apps/pwa/src/app/login/page.tsx",
-                                    lineNumber: 92,
+                                    lineNumber: 176,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                     type: "button",
-                                    onClick: ()=>handleDemoLogin('buyer'),
-                                    className: "p-3 bg-white hover:bg-primary-fixed-dim/20 border border-outline-variant rounded-xl flex items-center gap-2 text-left transition-all active:scale-95 shadow-xs",
-                                    children: [
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                            className: "text-xl",
-                                            children: "🏪"
-                                        }, void 0, false, {
-                                            fileName: "[project]/apps/pwa/src/app/login/page.tsx",
-                                            lineNumber: 109,
-                                            columnNumber: 15
-                                        }, this),
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                            children: [
-                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                                    className: "leading-tight text-on-surface font-extrabold",
-                                                    children: "Buyer"
-                                                }, void 0, false, {
-                                                    fileName: "[project]/apps/pwa/src/app/login/page.tsx",
-                                                    lineNumber: 111,
-                                                    columnNumber: 17
-                                                }, this),
-                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                                    className: "text-[11px] text-on-surface-variant font-normal",
-                                                    children: "Kolkata Mandi"
-                                                }, void 0, false, {
-                                                    fileName: "[project]/apps/pwa/src/app/login/page.tsx",
-                                                    lineNumber: 112,
-                                                    columnNumber: 17
-                                                }, this)
-                                            ]
-                                        }, void 0, true, {
-                                            fileName: "[project]/apps/pwa/src/app/login/page.tsx",
-                                            lineNumber: 110,
-                                            columnNumber: 15
-                                        }, this)
-                                    ]
-                                }, void 0, true, {
+                                    onClick: ()=>setRole('buyer'),
+                                    className: `py-1 rounded-md transition-all ${role === 'buyer' ? 'bg-primary-container text-on-primary shadow-xs font-black' : 'text-on-surface-variant'}`,
+                                    children: "👨‍💼 Consumers (Salt Lake / New Town)"
+                                }, void 0, false, {
                                     fileName: "[project]/apps/pwa/src/app/login/page.tsx",
-                                    lineNumber: 104,
+                                    lineNumber: 183,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/apps/pwa/src/app/login/page.tsx",
-                            lineNumber: 91,
+                            lineNumber: 175,
+                            columnNumber: 11
+                        }, this),
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                            className: "flex flex-col gap-2 max-h-[220px] overflow-y-auto no-scrollbar pr-0.5",
+                            children: (role === 'farmer' ? DEMO_PROFILES.farmer : DEMO_PROFILES.buyer).map((profile)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                    type: "button",
+                                    onClick: ()=>handleProfileLogin(profile, role === 'farmer' ? 'farmer' : 'buyer'),
+                                    className: "p-2.5 bg-white hover:bg-emerald-50/70 border border-outline-variant hover:border-primary/50 rounded-xl flex items-start gap-2.5 text-left transition-all active:scale-98 shadow-xs group",
+                                    children: [
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                            className: "text-2xl shrink-0 mt-0.5",
+                                            children: profile.icon
+                                        }, void 0, false, {
+                                            fileName: "[project]/apps/pwa/src/app/login/page.tsx",
+                                            lineNumber: 201,
+                                            columnNumber: 17
+                                        }, this),
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                            className: "flex-1 min-w-0",
+                                            children: [
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                    className: "flex items-center justify-between",
+                                                    children: [
+                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                                            className: "leading-tight text-on-surface font-extrabold text-[13px] truncate",
+                                                            children: profile.name
+                                                        }, void 0, false, {
+                                                            fileName: "[project]/apps/pwa/src/app/login/page.tsx",
+                                                            lineNumber: 204,
+                                                            columnNumber: 21
+                                                        }, this),
+                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                            className: "text-[10px] text-emerald-700 font-bold bg-emerald-50 px-1.5 py-0.2 rounded shrink-0",
+                                                            children: "1-Click"
+                                                        }, void 0, false, {
+                                                            fileName: "[project]/apps/pwa/src/app/login/page.tsx",
+                                                            lineNumber: 205,
+                                                            columnNumber: 21
+                                                        }, this)
+                                                    ]
+                                                }, void 0, true, {
+                                                    fileName: "[project]/apps/pwa/src/app/login/page.tsx",
+                                                    lineNumber: 203,
+                                                    columnNumber: 19
+                                                }, this),
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                                    className: "text-[11px] text-primary font-bold",
+                                                    children: profile.occupation
+                                                }, void 0, false, {
+                                                    fileName: "[project]/apps/pwa/src/app/login/page.tsx",
+                                                    lineNumber: 207,
+                                                    columnNumber: 19
+                                                }, this),
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                                    className: "text-[10px] text-on-surface-variant font-medium truncate mt-0.5",
+                                                    children: [
+                                                        "📍 ",
+                                                        profile.address
+                                                    ]
+                                                }, void 0, true, {
+                                                    fileName: "[project]/apps/pwa/src/app/login/page.tsx",
+                                                    lineNumber: 208,
+                                                    columnNumber: 19
+                                                }, this)
+                                            ]
+                                        }, void 0, true, {
+                                            fileName: "[project]/apps/pwa/src/app/login/page.tsx",
+                                            lineNumber: 202,
+                                            columnNumber: 17
+                                        }, this)
+                                    ]
+                                }, profile.id, true, {
+                                    fileName: "[project]/apps/pwa/src/app/login/page.tsx",
+                                    lineNumber: 195,
+                                    columnNumber: 15
+                                }, this))
+                        }, void 0, false, {
+                            fileName: "[project]/apps/pwa/src/app/login/page.tsx",
+                            lineNumber: 193,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/apps/pwa/src/app/login/page.tsx",
-                    lineNumber: 86,
+                    lineNumber: 168,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("form", {
@@ -490,7 +581,7 @@ function LoginPage() {
                             children: error
                         }, void 0, false, {
                             fileName: "[project]/apps/pwa/src/app/login/page.tsx",
-                            lineNumber: 121,
+                            lineNumber: 220,
                             columnNumber: 13
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -500,7 +591,7 @@ function LoginPage() {
                                     children: "Select Account Role"
                                 }, void 0, false, {
                                     fileName: "[project]/apps/pwa/src/app/login/page.tsx",
-                                    lineNumber: 128,
+                                    lineNumber: 227,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -515,18 +606,18 @@ function LoginPage() {
                                             children: r === 'farmer' ? '🌾 Farmer' : '🏪 Buyer'
                                         }, r, false, {
                                             fileName: "[project]/apps/pwa/src/app/login/page.tsx",
-                                            lineNumber: 131,
+                                            lineNumber: 230,
                                             columnNumber: 17
                                         }, this))
                                 }, void 0, false, {
                                     fileName: "[project]/apps/pwa/src/app/login/page.tsx",
-                                    lineNumber: 129,
+                                    lineNumber: 228,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/apps/pwa/src/app/login/page.tsx",
-                            lineNumber: 127,
+                            lineNumber: 226,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -536,7 +627,7 @@ function LoginPage() {
                                     children: "Mobile Number or Email"
                                 }, void 0, false, {
                                     fileName: "[project]/apps/pwa/src/app/login/page.tsx",
-                                    lineNumber: 147,
+                                    lineNumber: 246,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -547,7 +638,7 @@ function LoginPage() {
                                             children: "person"
                                         }, void 0, false, {
                                             fileName: "[project]/apps/pwa/src/app/login/page.tsx",
-                                            lineNumber: 149,
+                                            lineNumber: 248,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -558,19 +649,19 @@ function LoginPage() {
                                             className: "w-full pl-10 pr-4 py-3 bg-surface-container-low border border-outline-variant rounded-xl text-[14px] font-bold text-on-surface focus:outline-none focus:border-primary"
                                         }, void 0, false, {
                                             fileName: "[project]/apps/pwa/src/app/login/page.tsx",
-                                            lineNumber: 150,
+                                            lineNumber: 249,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/apps/pwa/src/app/login/page.tsx",
-                                    lineNumber: 148,
+                                    lineNumber: 247,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/apps/pwa/src/app/login/page.tsx",
-                            lineNumber: 146,
+                            lineNumber: 245,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -580,7 +671,7 @@ function LoginPage() {
                                     children: "Password"
                                 }, void 0, false, {
                                     fileName: "[project]/apps/pwa/src/app/login/page.tsx",
-                                    lineNumber: 162,
+                                    lineNumber: 261,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -591,7 +682,7 @@ function LoginPage() {
                                             children: "lock"
                                         }, void 0, false, {
                                             fileName: "[project]/apps/pwa/src/app/login/page.tsx",
-                                            lineNumber: 164,
+                                            lineNumber: 263,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -602,19 +693,19 @@ function LoginPage() {
                                             className: "w-full pl-10 pr-4 py-3 bg-surface-container-low border border-outline-variant rounded-xl text-[14px] font-bold text-on-surface focus:outline-none focus:border-primary"
                                         }, void 0, false, {
                                             fileName: "[project]/apps/pwa/src/app/login/page.tsx",
-                                            lineNumber: 165,
+                                            lineNumber: 264,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/apps/pwa/src/app/login/page.tsx",
-                                    lineNumber: 163,
+                                    lineNumber: 262,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/apps/pwa/src/app/login/page.tsx",
-                            lineNumber: 161,
+                            lineNumber: 260,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -630,20 +721,20 @@ function LoginPage() {
                                             className: "w-4 h-4 rounded text-primary border-outline-variant accent-primary"
                                         }, void 0, false, {
                                             fileName: "[project]/apps/pwa/src/app/login/page.tsx",
-                                            lineNumber: 178,
+                                            lineNumber: 277,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                             children: "Remember me"
                                         }, void 0, false, {
                                             fileName: "[project]/apps/pwa/src/app/login/page.tsx",
-                                            lineNumber: 184,
+                                            lineNumber: 283,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/apps/pwa/src/app/login/page.tsx",
-                                    lineNumber: 177,
+                                    lineNumber: 276,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("a", {
@@ -656,13 +747,13 @@ function LoginPage() {
                                     children: "Forgot password?"
                                 }, void 0, false, {
                                     fileName: "[project]/apps/pwa/src/app/login/page.tsx",
-                                    lineNumber: 186,
+                                    lineNumber: 285,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/apps/pwa/src/app/login/page.tsx",
-                            lineNumber: 176,
+                            lineNumber: 275,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -673,7 +764,7 @@ function LoginPage() {
                                 children: "Signing in..."
                             }, void 0, false, {
                                 fileName: "[project]/apps/pwa/src/app/login/page.tsx",
-                                lineNumber: 198,
+                                lineNumber: 297,
                                 columnNumber: 15
                             }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Fragment"], {
                                 children: [
@@ -684,7 +775,7 @@ function LoginPage() {
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/apps/pwa/src/app/login/page.tsx",
-                                        lineNumber: 201,
+                                        lineNumber: 300,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -692,24 +783,24 @@ function LoginPage() {
                                         children: "arrow_forward"
                                     }, void 0, false, {
                                         fileName: "[project]/apps/pwa/src/app/login/page.tsx",
-                                        lineNumber: 202,
+                                        lineNumber: 301,
                                         columnNumber: 17
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/apps/pwa/src/app/login/page.tsx",
-                                lineNumber: 200,
+                                lineNumber: 299,
                                 columnNumber: 15
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/apps/pwa/src/app/login/page.tsx",
-                            lineNumber: 192,
+                            lineNumber: 291,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/apps/pwa/src/app/login/page.tsx",
-                    lineNumber: 119,
+                    lineNumber: 218,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$pwa$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -720,24 +811,24 @@ function LoginPage() {
                             children: "1800-180-1551"
                         }, void 0, false, {
                             fileName: "[project]/apps/pwa/src/app/login/page.tsx",
-                            lineNumber: 210,
+                            lineNumber: 309,
                             columnNumber: 52
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/apps/pwa/src/app/login/page.tsx",
-                    lineNumber: 209,
+                    lineNumber: 308,
                     columnNumber: 9
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/apps/pwa/src/app/login/page.tsx",
-            lineNumber: 72,
+            lineNumber: 154,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/apps/pwa/src/app/login/page.tsx",
-        lineNumber: 71,
+        lineNumber: 153,
         columnNumber: 5
     }, this);
 }
