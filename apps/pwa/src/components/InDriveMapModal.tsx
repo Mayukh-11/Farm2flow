@@ -17,21 +17,28 @@ interface InDriveMapModalProps {
   onSelectLocation: (loc: LocationData) => void;
 }
 
-// Popular Bengal Agricultural hubs & mandis for quick selection
+// Popular agricultural hubs & mandis for quick selection
 const POPULAR_LOCATIONS: Record<'farmer' | 'buyer', LocationData[]> = {
   farmer: [
-    { name: 'Hooghly Hub (Singur)', address: 'Singur Vegetable Belt, Hooghly, WB', lat: 22.8123, lng: 88.2325 },
-    { name: 'Burdwan Paddy Mandi', address: 'Shaktigarh Agricultural Cluster, Purba Bardhaman, WB', lat: 23.2324, lng: 87.8615 },
-    { name: 'Nadia Vegetable Zone', address: 'Ranaghat Mandi Complex, Nadia, WB', lat: 23.1812, lng: 88.5812 },
-    { name: 'North 24 Parganas (Barasat)', address: 'Kachua Road, Barasat Agro Market, WB', lat: 22.7225, lng: 88.4812 },
-    { name: 'Midnapore Potato Center', address: 'Ghatal Mandi Depot, Paschim Medinipur, WB', lat: 22.6681, lng: 87.7214 }
+    { name: 'Hooghly Hub (Singur)', address: 'Singur Vegetable Belt, Hooghly, West Bengal - 712409', lat: 22.8123, lng: 88.2325 },
+    { name: 'Burdwan Paddy Mandi', address: 'Shaktigarh Agricultural Cluster, Purba Bardhaman, WB - 713149', lat: 23.2324, lng: 87.8615 },
+    { name: 'Nadia Vegetable Zone', address: 'Ranaghat Mandi Complex, Nadia, West Bengal - 741201', lat: 23.1812, lng: 88.5812 },
+    { name: 'North 24 Parganas (Barasat)', address: 'Kachua Road, Barasat Agro Market, WB - 700124', lat: 22.7225, lng: 88.4812 },
+    { name: 'Midnapore Potato Center', address: 'Ghatal Mandi Depot, Paschim Medinipur, WB - 721212', lat: 22.6681, lng: 87.7214 },
+    { name: 'Katihar Grain Mandi (Bihar)', address: 'Kosi Seemanchal Grain Hub, Katihar, Bihar - 854105', lat: 25.5412, lng: 87.5714 },
+    { name: 'Nashik Onion Mandi (MH)', address: 'Lasalgaon APMC Market, Nashik, Maharashtra - 422306', lat: 20.1481, lng: 74.2289 },
+    { name: 'Shimla Apple Orchards (HP)', address: 'Kotkhai Valley Orchards, Shimla, Himachal Pradesh - 171202', lat: 31.1172, lng: 77.5321 },
+    { name: 'Guntur Chilli Yard (AP)', address: 'Kisan Road, Mirchi Yard, Guntur, Andhra Pradesh - 522004', lat: 16.3067, lng: 80.4365 },
+    { name: 'Ratnagiri Alphonso Estate (MH)', address: 'Devgad Coastal Groves, Ratnagiri, Maharashtra - 416612', lat: 16.9902, lng: 73.3120 }
   ],
   buyer: [
     { name: 'Salt Lake (Sector 1), Kolkata', address: 'AD-Block, Sector 1, Salt Lake, Kolkata - 700064', lat: 22.5862, lng: 88.4091 },
     { name: 'New Town (Action Area 1)', address: 'Tower 4, Uniworld City, New Town, Kolkata - 700156', lat: 22.5804, lng: 88.4625 },
     { name: 'Ballygunge, South Kolkata', address: '42/1 Dover Road, Ballygunge, Kolkata - 700019', lat: 22.5280, lng: 88.3653 },
     { name: 'Jadavpur, Kolkata', address: 'Prince Anwar Shah Road, Jadavpur, Kolkata - 700032', lat: 22.4988, lng: 88.3715 },
-    { name: 'Dum Dum Park, North Kolkata', address: 'Tank No. 3, Dum Dum Park, Kolkata - 700055', lat: 22.6072, lng: 88.4065 }
+    { name: 'Dum Dum Park, North Kolkata', address: 'Tank No. 3, Dum Dum Park, Kolkata - 700055', lat: 22.6072, lng: 88.4065 },
+    { name: 'Alipore, South Kolkata', address: '14B Burdwan Road, Alipore, Kolkata - 700027', lat: 22.5312, lng: 88.3289 },
+    { name: 'Howrah Central Depot', address: 'Golabari Road, Salkia, Howrah - 711106', lat: 22.5958, lng: 88.3498 }
   ]
 };
 
@@ -47,10 +54,17 @@ export const InDriveMapModal: React.FC<InDriveMapModalProps> = ({
   const markerRef = useRef<any>(null);
 
   const [selectedLoc, setSelectedLoc] = useState<LocationData>(() => {
-    const list = POPULAR_LOCATIONS[userRole];
-    const match = list.find(l => l.name.toLowerCase().includes(currentLocationName.toLowerCase())) || list[0];
+    const list = POPULAR_LOCATIONS[userRole] || POPULAR_LOCATIONS.farmer;
+    const match = list.find(l => currentLocationName && l.name.toLowerCase().includes(currentLocationName.toLowerCase())) || list[0];
     return match;
   });
+
+  // Re-sync when currentLocationName or userRole changes
+  useEffect(() => {
+    const list = POPULAR_LOCATIONS[userRole] || POPULAR_LOCATIONS.farmer;
+    const match = list.find(l => currentLocationName && l.name.toLowerCase().includes(currentLocationName.toLowerCase())) || list[0];
+    setSelectedLoc(match);
+  }, [currentLocationName, userRole, isOpen]);
 
   const [searchQuery, setSearchQuery] = useState('');
   const [isLocatingGPS, setIsLocatingGPS] = useState(false);

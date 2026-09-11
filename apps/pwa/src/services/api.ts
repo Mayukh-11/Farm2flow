@@ -1,12 +1,13 @@
 import { mockForecasts, initialProduceList, mockLogisticsData, mockImpactMetrics, initialOrders } from '@/data/mockData';
-import { DemandForecast, PriceEstimate, Produce, SmartMatchResult, LogisticsOptimization, Order } from '@/types';
+import { DemandForecast, PriceEstimate, Produce, SmartMatchResult, LogisticsOptimization, Order, CartItem } from '@/types';
 
 // Browser storage fallback for PWA offline execution
 const STORAGE_KEYS = {
   PRODUCE: 'farm2flow_produce_items',
   ORDERS: 'farm2flow_orders',
   PENDING_SYNC: 'farm2flow_pending_sync',
-  REGISTERED_USERS: 'farm2flow_registered_users_db'
+  REGISTERED_USERS: 'farm2flow_registered_users_db',
+  CART: 'farm2flow_consumer_cart'
 };
 
 export interface RegisteredAccount {
@@ -342,10 +343,150 @@ export const getOrders = (): Order[] => {
   }
 };
 
-export const getLogisticsOptimization = (): LogisticsOptimization => {
-  return mockLogisticsData;
+export const getCart = (): CartItem[] => {
+  if (typeof window === 'undefined') return [];
+  const stored = localStorage.getItem(STORAGE_KEYS.CART);
+  if (!stored) return [];
+  try {
+    return JSON.parse(stored);
+  } catch {
+    return [];
+  }
 };
 
-export const getImpactMetrics = () => {
-  return mockImpactMetrics;
+export const saveCart = (cart: CartItem[]): CartItem[] => {
+  if (typeof window !== 'undefined') {
+    localStorage.setItem(STORAGE_KEYS.CART, JSON.stringify(cart));
+    window.dispatchEvent(new CustomEvent('farm2flow_cart_updated', { detail: { cart } }));
+  }
+  return cart;
+};
+
+export const addToCart = (item: CartItem): CartItem[] => {
+  const cart = getCart();
+  const existingIndex = cart.findIndex(c => c.produceId === item.produceId);
+  let updated: CartItem[];
+  if (existingIndex > -1) {
+    updated = [...cart];
+    const newQty = Math.min(updated[existingIndex].quantityKg + item.quantityKg, updated[existingIndex].maxAvailableKg);
+    updated[existingIndex] = {
+      ...updated[existingIndex],
+      quantityKg: newQty
+    };
+  } else {
+    updated = [item, ...cart];
+  }
+  return saveCart(updated);
+};
+
+export const updateCartQuantity = (produceId: string, quantityKg: number): CartItem[] => {
+  const cart = getCart();
+  if (quantityKg <= 0) {
+    return removeFromCart(produceId);
+  }
+  const updated = cart.map(item => {
+    if (item.produceId === produceId) {
+      return {
+        ...item,
+        quantityKg: Math.min(quantityKg, item.maxAvailableKg)
+      };
+    }
+    return item;
+  });
+  return saveCart(updated);
+};
+
+export const removeFromCart = (produceId: string): CartItem[] => {
+  const cart = getCart();
+  const updated = cart.filter(c => c.produceId !== produceId);
+  return saveCart(updated);
+};
+
+export const clearCart = (): void => {
+  if (typeof window !== 'undefined') {
+    localStorage.removeItem(STORAGE_KEYS.CART);
+    window.dispatchEvent(new CustomEvent('farm2flow_cart_updated', { detail: { cart: [] } }));
+  }
+};
+
+export const createOrderFromCart = (
+  cartItems: CartItem[],
+  buyerName: string = 'Kolkata Consumer',
+  paymentMethod: 'Cash on Delivery' | 'Card Payment' | 'Online (UPI/QR)' = 'Cash on Delivery',
+  destination: string = 'Salt Lake, Kolkata'
+): Order => {
+  // Farmer payout is sum of (qty * demanded price)
+  const farmerTotalPayout = cartItems.reduce((acc, item) => acc + item.quantityKg * item.pricePerKg, 0);
+  const totalQuantityKg = cartItems.reduce((acc, item) => acc + item.quantityKg, 0);
+  
+  // Platform fee ₹3/kg collected from consumer
+  const platformFee = totalQuantityKg * PLATFORM_CONVENIENCE_FEE_PER_KG;
+  const consumerTotalAmount = farmerTotalPayout + platformFee;
+
+  const newOrder: Order = {
+    id: `ord-${Date.now()}`,
+    orderNumber: `FF-${Math.floor(1000 + Math.random() * 9000)}`,
+    buyerId: 'b-201',
+    buyerName,
+    destination,
+    items: cartItems.map(item => ({
+      produceId: item.produceId,
+      farmerName: item.farmerName,
+      cropName: `${item.cropName} (${item.grade})`,
+      quantityKg: item.quantityKg,
+      // Consumer price = farmer demanded rate + ₹3/kg convenience fee
+      pricePerKg: item.pricePerKg + PLATFORM_CONVENIENCE_FEE_PER_KG,
+      subtotal: item.quantityKg * (item.pricePerKg + PLATFORM_CONVENIENCE_FEE_PER_KG)
+    })),
+    totalQuantityKg,
+    totalAmount: consumerTotalAmount,
+    platformFeePerKg: PLATFORM_CONVENIENCE_FEE_PER_KG,
+    totalPlatformFee: platformFee,
+    farmerPayoutAmount: farmerTotalPayout,
+    savingsRealized: Math.round(consumerTotalAmount * 0.18),
+    status: 'Confirmed',
+    expectedDelivery: 'Tomorrow, 2:30 PM',
+    createdAt: new Date().toISOString(),
+    routeId: 'route-cart-101',
+    paymentMethod,
+    paymentStatus: paymentMethod === 'Cash on Delivery' ? 'Pending Cash on Delivery' : 'Paid'
+  };
+
+  if (typeof window !== 'undefined') {
+    // 1. Save new Order in history
+    const existingOrders = JSON.parse(localStorage.getItem(STORAGE_KEYS.ORDERS) || JSON.stringify(initialOrders));
+    localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify([newOrder, ...existingOrders]));
+
+    // 2. Real-time stock deduction for all items purchased
+    const currentProduce = getStoredProduce();
+    let produceChanged = false;
+
+    const updatedProduce = currentProduce.map(item => {
+      const cartMatch = cartItems.find(c => c.produceId === item.id);
+      if (cartMatch) {
+        produceChanged = true;
+        const newQty = Math.max(0, item.quantityKg - cartMatch.quantityKg);
+        return {
+          ...item,
+          quantityKg: newQty,
+          status: (newQty === 0 ? 'Sold Out' : item.status) as any
+        };
+      }
+      return item;
+    });
+
+    if (produceChanged) {
+      localStorage.setItem(STORAGE_KEYS.PRODUCE, JSON.stringify(updatedProduce));
+      window.dispatchEvent(
+        new CustomEvent('farm2flow_produce_updated', {
+          detail: { produceList: updatedProduce, purchasedOrder: newOrder }
+        })
+      );
+    }
+
+    // 3. Clear cart once order is placed
+    clearCart();
+  }
+
+  return newOrder;
 };

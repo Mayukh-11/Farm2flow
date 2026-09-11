@@ -7,7 +7,11 @@ import { Produce, Order } from '@/types';
 import { PredefinedHelpModal } from '@/components/PredefinedHelpModal';
 import { ListProduceWizard } from '@/components/ListProduceWizard';
 import { CropMarketExplorer } from '@/components/CropMarketExplorer';
+import { PanIndiaBuyerMapModal } from '@/components/PanIndiaBuyerMapModal';
+import { InDriveMapModal, LocationData } from '@/components/InDriveMapModal';
 import { translations, Language } from '@/data/translations';
+import { getCropPhoto } from '@/data/cropImages';
+
 
 export default function FarmerPage() {
   const [language, setLanguage] = useState<Language>('EN');
@@ -25,8 +29,11 @@ export default function FarmerPage() {
   // Modal Visibility States
   const [isHelpOpen, setIsHelpOpen] = useState(false);
   const [isListWizardOpen, setIsListWizardOpen] = useState(false);
+  const [isPanIndiaMapOpen, setIsPanIndiaMapOpen] = useState(false);
+  const [isLocationMapOpen, setIsLocationMapOpen] = useState(false);
   const [wizardInitialQuantity, setWizardInitialQuantity] = useState<number | undefined>(undefined);
   const [wizardInitialPrice, setWizardInitialPrice] = useState<number | undefined>(undefined);
+
 
   // Active Bottom Navigation Tab for Farmer
   const [farmerTab, setFarmerTab] = useState<'home' | 'market' | 'sell' | 'orders' | 'profile'>('home');
@@ -161,16 +168,23 @@ export default function FarmerPage() {
           </div>
         </header>
 
-        {/* Location & Mandi Status Bar */}
+        {/* Location & Mandi Status Bar (Clickable Map Picker like Consumer) */}
         <section className="bg-surface-container-low px-4 py-2 flex items-center justify-between border-b border-outline-variant text-[11px]">
-          <div className="flex items-center gap-1.5 font-bold text-on-surface max-w-[280px]">
-            <span className="material-symbols-outlined text-[18px] text-primary">location_on</span>
-            <span className="truncate">{currentLocation}</span>
-          </div>
+          <button
+            type="button"
+            onClick={() => setIsLocationMapOpen(true)}
+            className="flex items-center gap-1.5 font-bold text-on-surface hover:text-primary max-w-[280px] text-left group transition-colors"
+            title="Click to change farm/mandi location on map"
+          >
+            <span className="material-symbols-outlined text-[18px] text-primary group-hover:scale-110 transition-transform">location_on</span>
+            <span className="truncate underline decoration-outline-variant underline-offset-2">{currentLocation}</span>
+            <span className="material-symbols-outlined text-[14px] text-slate-400">expand_more</span>
+          </button>
           <div className="bg-surface-container-lowest px-2 py-0.5 rounded-full border border-outline-variant font-bold text-primary-container shrink-0">
             {t.mandiOpen}
           </div>
         </section>
+
 
         {/* MAIN FARMER CONTENT */}
         <main className="p-4 flex flex-col gap-4">
@@ -214,13 +228,22 @@ export default function FarmerPage() {
                   </div>
                 </div>
 
-                <button
-                  onClick={() => setIsListWizardOpen(true)}
-                  className="w-full py-3 bg-primary-container text-on-primary rounded-xl text-[14px] font-bold hover:bg-primary transition-all flex items-center justify-center gap-2 active:scale-95 shadow-md"
-                >
-                  <span className="material-symbols-outlined text-[20px]">add_circle</span>
-                  <span>{t.listProduceBtn}</span>
-                </button>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    onClick={() => setIsListWizardOpen(true)}
+                    className="py-3 bg-primary-container text-on-primary rounded-xl text-[13px] font-bold hover:bg-primary transition-all flex items-center justify-center gap-1.5 active:scale-95 shadow-md"
+                  >
+                    <span className="material-symbols-outlined text-[18px]">add_circle</span>
+                    <span>{t.listProduceBtn}</span>
+                  </button>
+                  <button
+                    onClick={() => setIsPanIndiaMapOpen(true)}
+                    className="py-3 bg-emerald-100 hover:bg-emerald-200 text-emerald-900 border border-emerald-300 rounded-xl text-[13px] font-black transition-all flex items-center justify-center gap-1.5 active:scale-95 shadow-xs"
+                  >
+                    <span className="material-symbols-outlined text-[18px] text-emerald-700">map</span>
+                    <span>Pan-India Map</span>
+                  </button>
+                </div>
               </section>
 
               {/* Farmer Active Quick Overview */}
@@ -265,9 +288,16 @@ export default function FarmerPage() {
               {produceList.map(item => (
                 <div key={item.id} className="bg-surface-container-lowest p-3.5 rounded-xl border border-outline-variant flex flex-col gap-2 shadow-xs transition-all hover:border-outline">
                   <div className="flex justify-between items-start">
-                    <div>
-                      <h4 className="font-bold text-on-surface text-[15px]">{item.cropName} ({item.grade})</h4>
-                      <p className="text-[12px] text-on-surface-variant">{item.farmerLocation} • {item.variety}</p>
+                    <div className="flex items-center gap-3">
+                      <img
+                        src={getCropPhoto(item.cropName)}
+                        alt={item.cropName}
+                        className="w-14 h-14 rounded-xl object-cover border border-slate-100 shadow-xs shrink-0"
+                      />
+                      <div>
+                        <h4 className="font-bold text-on-surface text-[15px]">{item.cropName} ({item.grade})</h4>
+                        <p className="text-[12px] text-on-surface-variant">{item.farmerLocation} • {item.variety}</p>
+                      </div>
                     </div>
                     <div className="flex items-center gap-1.5">
                       <span className="bg-emerald-100 text-primary-container px-2 py-0.5 rounded-full text-[11px] font-bold">
@@ -327,9 +357,20 @@ export default function FarmerPage() {
               <h3 className="text-[16px] font-bold text-on-surface">{t.farmerProfile}</h3>
               <p><strong>Name:</strong> {farmerName}</p>
               <p><strong>{t.mobile}:</strong> +91 98310 44210</p>
-              <p><strong>{t.location}:</strong> {currentLocation}</p>
+              <div className="flex items-center justify-between">
+                <p><strong>{t.location}:</strong> {currentLocation}</p>
+                <button
+                  type="button"
+                  onClick={() => setIsLocationMapOpen(true)}
+                  className="text-[11px] font-extrabold text-primary hover:underline bg-primary/10 px-2 py-0.5 rounded-lg flex items-center gap-0.5"
+                >
+                  <span className="material-symbols-outlined text-[14px]">map</span>
+                  <span>Change on Map</span>
+                </button>
+              </div>
               <p><strong>Address:</strong> {farmerAddress}</p>
               <p><strong>{t.verification}:</strong> NABARD / e-NAM Verified ✓</p>
+
               <div className="pt-2 border-t border-outline-variant">
                 <button 
                   type="button"
@@ -412,7 +453,38 @@ export default function FarmerPage() {
           onClose={() => setIsListWizardOpen(false)}
           onSuccess={handleProduceCreated}
         />
+
+        <PanIndiaBuyerMapModal
+          isOpen={isPanIndiaMapOpen}
+          onClose={() => setIsPanIndiaMapOpen(false)}
+          buyerCityName={currentLocation}
+          initialCrop={selectedCrop}
+        />
+
+        {/* Interactive InDrive Map Modal for Farmer (Select & update location/address) */}
+        <InDriveMapModal
+          isOpen={isLocationMapOpen}
+          userRole="farmer"
+          currentLocationName={currentLocation}
+          onClose={() => setIsLocationMapOpen(false)}
+          onSelectLocation={(loc: LocationData) => {
+            setCurrentLocation(loc.name);
+            setFarmerAddress(loc.address);
+            if (typeof window !== 'undefined') {
+              const sessionStr = localStorage.getItem('farm2flow_user_session');
+              if (sessionStr) {
+                try {
+                  const sess = JSON.parse(sessionStr);
+                  sess.location = loc.name;
+                  sess.address = loc.address;
+                  localStorage.setItem('farm2flow_user_session', JSON.stringify(sess));
+                } catch {}
+              }
+            }
+          }}
+        />
       </div>
     </div>
   );
+
 }

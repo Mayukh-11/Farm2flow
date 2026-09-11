@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { SmartMatchResult, Order } from '@/types';
-import { findSmartMatches, createOrderFromMatch, getStoredProduce, PLATFORM_CONVENIENCE_FEE_PER_KG } from '@/services/api';
-
+import { SmartMatchResult, Order, CartItem } from '@/types';
+import { findSmartMatches, createOrderFromMatch, getStoredProduce, PLATFORM_CONVENIENCE_FEE_PER_KG, addToCart } from '@/services/api';
+import { getCropPhoto } from '@/data/cropImages';
 import { getAllCatalogCrops } from '@/data/cropCatalog';
 import { PanIndiaSeller, updatePanIndiaSellerStock } from '@/data/panIndiaSellers';
 
@@ -349,17 +349,58 @@ export const BuyerSmartMatchModal: React.FC<BuyerSmartMatchModalProps> = ({
               </div>
             </div>
 
-            {/* Step 3: Payment Section / Buy Now */}
+            {/* Step 3: Action Buttons (Buy Now + Add to Cart) */}
             {!showPaymentStep ? (
-              <button
-                onClick={handleProceedToBuy}
-                disabled={matchResult.fulfilledKg === 0}
-                className="w-full py-3.5 bg-primary-container text-on-primary rounded-xl text-label-md font-extrabold hover:bg-primary transition-all shadow-md active:scale-98 flex items-center justify-center gap-2 disabled:opacity-50 disabled:pointer-events-none"
-              >
-                <span className="material-symbols-outlined text-[20px]">shopping_cart_checkout</span>
-                <span>Buy Now • ₹{matchResult.estimatedTotalCost.toLocaleString()}</span>
-              </button>
+              <div className="flex flex-col gap-2">
+                {/* Primary Buy Now Button */}
+                <button
+                  onClick={handleProceedToBuy}
+                  disabled={matchResult.fulfilledKg === 0}
+                  className="w-full py-3.5 bg-primary-container text-on-primary rounded-xl text-label-md font-extrabold hover:bg-primary transition-all shadow-md active:scale-98 flex items-center justify-center gap-2 disabled:opacity-50 disabled:pointer-events-none"
+                >
+                  <span className="material-symbols-outlined text-[20px]">shopping_cart_checkout</span>
+                  <span>Buy Now • ₹{matchResult.estimatedTotalCost.toLocaleString()}</span>
+                </button>
+
+                {/* Secondary Flipkart-style Add to Cart Button */}
+                <button
+                  onClick={() => {
+                    if (!matchResult || matchResult.fulfilledKg === 0) return;
+                    // Add each matched supplier's produce to consumer cart
+                    matchResult.suppliers.forEach(supplier => {
+                      const itemToAdd: CartItem = {
+                        id: supplier.produceId,
+                        produceId: supplier.produceId,
+                        cropName: matchResult.cropName,
+                        variety: supplier.grade,
+                        grade: supplier.grade,
+                        farmerName: supplier.farmerName,
+                        farmerLocation: supplier.farmerLocation,
+                        pricePerKg: supplier.pricePerKg,
+                        quantityKg: supplier.matchedKg,
+                        maxAvailableKg: supplier.availableKg,
+                        image: getCropPhoto(matchResult.cropName)
+                      };
+                      addToCart(itemToAdd);
+                    });
+
+                    // Trigger alert and close
+                    window.dispatchEvent(
+                      new CustomEvent('farm2flow_cart_updated', {
+                        detail: { message: `Added ${matchResult.fulfilledKg} kg ${matchResult.cropName} to Cart!` }
+                      })
+                    );
+                    onClose();
+                  }}
+                  disabled={matchResult.fulfilledKg === 0}
+                  className="w-full py-3 bg-amber-50 hover:bg-amber-100 border-2 border-amber-400/80 text-amber-950 font-black rounded-xl text-[13px] transition-all shadow-xs active:scale-98 flex items-center justify-center gap-2 disabled:opacity-50 disabled:pointer-events-none"
+                >
+                  <span className="material-symbols-outlined text-[20px] text-amber-700">add_shopping_cart</span>
+                  <span>Add to Cart ({matchResult.fulfilledKg} kg • ₹{matchResult.estimatedTotalCost.toLocaleString()})</span>
+                </button>
+              </div>
             ) : (
+
               /* Payment Options Container */
               <div className="bg-surface-container-lowest p-4 rounded-xl border-2 border-primary/40 flex flex-col gap-3 shadow-md animate-in slide-in-from-bottom-2 duration-200">
                 <div className="flex items-center justify-between border-b border-outline-variant pb-2">

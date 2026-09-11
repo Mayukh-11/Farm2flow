@@ -3,41 +3,23 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { getStoredProduce, getOrders } from '@/services/api';
-import { Produce, Order } from '@/types';
+import { getStoredProduce, getOrders, getCart, addToCart } from '@/services/api';
+import { Produce, Order, CartItem } from '@/types';
 import { BuyerSmartMatchModal } from '@/components/BuyerSmartMatchModal';
 import { InDriveMapModal, LocationData } from '@/components/InDriveMapModal';
 import { PanIndiaBuyerMapModal } from '@/components/PanIndiaBuyerMapModal';
+import { ConsumerCartDrawer } from '@/components/ConsumerCartDrawer';
 import { PanIndiaSeller } from '@/data/panIndiaSellers';
 import { translations, Language } from '@/data/translations';
-
-// High resolution food/crop photography for luxury e-commerce cards
-const CROP_PHOTOS: Record<string, string> = {
-  tomato: 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?auto=format&fit=crop&q=80&w=600',
-  potato: 'https://images.unsplash.com/photo-1518977676601-b53f82aba655?auto=format&fit=crop&q=80&w=600',
-  onion: 'https://images.unsplash.com/photo-1587049352846-4a222e784d38?auto=format&fit=crop&q=80&w=600',
-  rice: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&q=80&w=600',
-  wheat: 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?auto=format&fit=crop&q=80&w=600',
-  chilli: 'https://images.unsplash.com/photo-1563227812-0ea4c22e6cc8?auto=format&fit=crop&q=80&w=600',
-  cauliflower: 'https://images.unsplash.com/photo-1568584711075-3d021a7c3ca3?auto=format&fit=crop&q=80&w=600',
-  cabbage: 'https://images.unsplash.com/photo-1551893478-d726eaf0442c?auto=format&fit=crop&q=80&w=600',
-  carrot: 'https://images.unsplash.com/photo-1598170845058-32b9d6a5c317?auto=format&fit=crop&q=80&w=600',
-  apple: 'https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?auto=format&fit=crop&q=80&w=600',
-  default: 'https://images.unsplash.com/photo-1610348725531-843dff563e2c?auto=format&fit=crop&q=80&w=600',
-};
-
-const CATEGORIES = [
-  { id: 'All', label: 'All Items', icon: '✨' },
-  { id: 'Vegetables', label: 'Vegetables', icon: '🥦' },
-  { id: 'Fruits', label: 'Fresh Fruits', icon: '🍎' },
-  { id: 'Grains', label: 'Grains & Cereals', icon: '🌾' },
-  { id: 'Spices', label: 'Pure Spices', icon: '🌶️' },
-];
+import { getCropPhoto } from '@/data/cropImages';
 
 export default function BuyerPage() {
   const [language, setLanguage] = useState<Language>('EN');
   const [produceList, setProduceList] = useState<Produce[]>([]);
   const [ordersList, setOrdersList] = useState<Order[]>([]);
+  const [cartList, setCartList] = useState<CartItem[]>([]);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [cartAddedToast, setCartAddedToast] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [isSmartMatchOpen, setIsSmartMatchOpen] = useState(false);
@@ -49,9 +31,17 @@ export default function BuyerPage() {
   const [buyerLocation, setBuyerLocation] = useState<string>('Salt Lake, Kolkata');
   const [buyerAddress, setBuyerAddress] = useState<string>('AD-Block, Sector 1, Salt Lake, Kolkata - 700064');
   const [buyerTab, setBuyerTab] = useState<'home' | 'browse' | 'orders' | 'profile'>('home');
-  const [cartBadgeCount, setCartBadgeCount] = useState<number>(0);
 
-  const t = translations[language] || translations.EN;
+
+  const t = (translations[language] || translations.EN) as any;
+
+  const categories = [
+    { id: 'All', label: t.catAll || 'All Items', icon: '✨' },
+    { id: 'Vegetables', label: t.catVegetables || 'Vegetables', icon: '🥦' },
+    { id: 'Fruits', label: t.catFruits || 'Fresh Fruits', icon: '🍎' },
+    { id: 'Grains', label: t.catGrains || 'Grains & Cereals', icon: '🌾' },
+    { id: 'Spices', label: t.catSpices || 'Pure Spices', icon: '🌶️' },
+  ];
 
   useEffect(() => {
     // Auth Guard: Check session
@@ -70,6 +60,7 @@ export default function BuyerPage() {
     }
     setProduceList(getStoredProduce());
     setOrdersList(getOrders());
+    setCartList(getCart());
 
     const handleProduceUpdated = (e: any) => {
       if (e?.detail?.produceList) {
@@ -79,26 +70,62 @@ export default function BuyerPage() {
       }
     };
 
+    const handleCartUpdated = (e: any) => {
+      if (e?.detail?.cart) {
+        setCartList(e.detail.cart);
+      } else {
+        setCartList(getCart());
+      }
+    };
+
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === 'farm2flow_produce_items') {
         setProduceList(getStoredProduce());
       }
+      if (e.key === 'farm2flow_consumer_cart') {
+        setCartList(getCart());
+      }
     };
 
     window.addEventListener('farm2flow_produce_updated', handleProduceUpdated);
+    window.addEventListener('farm2flow_cart_updated', handleCartUpdated);
     window.addEventListener('storage', handleStorageChange);
 
     return () => {
       window.removeEventListener('farm2flow_produce_updated', handleProduceUpdated);
+      window.removeEventListener('farm2flow_cart_updated', handleCartUpdated);
       window.removeEventListener('storage', handleStorageChange);
     };
   }, []);
 
+  const handleAddToCart = (produce: Produce, quantityKg: number = 5) => {
+    const itemToAdd: CartItem = {
+      id: produce.id,
+      produceId: produce.id,
+      cropName: produce.cropName,
+      variety: produce.variety,
+      grade: produce.grade,
+      farmerName: produce.farmerName,
+      farmerLocation: produce.farmerLocation,
+      pricePerKg: produce.expectedPricePerKg,
+      quantityKg: Math.min(quantityKg, produce.quantityKg),
+      maxAvailableKg: produce.quantityKg,
+      image: getCropPhoto(produce.cropName)
+    };
+    const updated = addToCart(itemToAdd);
+    setCartList(updated);
+    setCartAddedToast(`Added ${produce.cropName} to your Cart!`);
+    setTimeout(() => {
+      setCartAddedToast(null);
+    }, 2800);
+  };
+
   const handleOrderCreated = (newOrder: Order) => {
     setOrdersList(getOrders());
+    setCartList(getCart());
     setBuyerTab('orders');
-    setCartBadgeCount(prev => prev + 1);
   };
+
 
   // Filter produce by category & search query (only show lots with available stock)
   const filteredProduce = useMemo(() => {
@@ -107,17 +134,23 @@ export default function BuyerPage() {
       const hasStock = item.quantityKg > 0 && item.status !== 'Sold Out';
       if (!hasStock) return false;
 
+      const FRUIT_NAMES = ['Apple', 'Banana', 'Mango', 'Orange', 'Guava', 'Papaya', 'Watermelon', 'Pomegranate', 'Pineapple', 'Grapes', 'Lemon', 'Coconut', 'Muskmelon', 'Custard Apple', 'Lychee', 'Pear', 'Peach', 'Plum', 'Kiwi', 'Dragon Fruit', 'Sweet Lime', 'Sapota', 'Jackfruit'];
+      const GRAIN_NAMES = ['Rice', 'Wheat', 'Maize', 'Jowar', 'Bajra', 'Ragi', 'Barley', 'Basmati Rice'];
+      const SPICE_NAMES = ['Chilli', 'Mustard', 'Turmeric', 'Cardamom', 'Black Pepper', 'Cumin', 'Coriander Seeds', 'Fennel'];
+
       const matchCat =
         selectedCategory === 'All'
           ? true
-          : selectedCategory === 'Vegetables'
-          ? ['Tomato', 'Potato', 'Onion', 'Cauliflower', 'Cabbage', 'Carrot'].includes(item.cropName)
-          : selectedCategory === 'Grains'
-          ? ['Rice', 'Wheat'].includes(item.cropName)
-          : selectedCategory === 'Spices'
-          ? ['Chilli'].includes(item.cropName)
           : selectedCategory === 'Fruits'
-          ? ['Apple'].includes(item.cropName)
+          ? FRUIT_NAMES.some(f => item.cropName.toLowerCase().includes(f.toLowerCase()))
+          : selectedCategory === 'Grains'
+          ? GRAIN_NAMES.some(g => item.cropName.toLowerCase().includes(g.toLowerCase()))
+          : selectedCategory === 'Spices'
+          ? SPICE_NAMES.some(s => item.cropName.toLowerCase().includes(s.toLowerCase()))
+          : selectedCategory === 'Vegetables'
+          ? !FRUIT_NAMES.some(f => item.cropName.toLowerCase().includes(f.toLowerCase())) &&
+            !GRAIN_NAMES.some(g => item.cropName.toLowerCase().includes(g.toLowerCase())) &&
+            !SPICE_NAMES.some(s => item.cropName.toLowerCase().includes(s.toLowerCase()))
           : true;
 
       const matchSearch =
@@ -180,14 +213,30 @@ export default function BuyerPage() {
                 ))}
               </div>
 
+              {/* Shopping Cart Button (Flipkart style) */}
+              <button
+                onClick={() => setIsCartOpen(true)}
+                className="w-9 h-9 rounded-full bg-emerald-50 hover:bg-emerald-100 text-emerald-800 flex items-center justify-center transition-all relative border border-emerald-200 active:scale-95"
+                aria-label="View Cart"
+                title="View Cart"
+              >
+                <span className="material-symbols-outlined text-[20px]">shopping_cart</span>
+                {cartList.length > 0 && (
+                  <span className="absolute -top-1.5 -right-1.5 min-w-5 h-5 px-1 bg-rose-600 text-white text-[10px] font-black rounded-full flex items-center justify-center border-2 border-white shadow-sm animate-pulse">
+                    {cartList.length}
+                  </span>
+                )}
+              </button>
+
               <button
                 onClick={() => setBuyerTab('orders')}
-                className="w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-800 flex items-center justify-center transition-all relative border border-slate-200"
+                className="w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-800 flex items-center justify-center transition-all relative border border-slate-200 active:scale-95"
                 aria-label="View Orders"
+                title="Track Orders"
               >
-                <span className="material-symbols-outlined text-[20px]">shopping_bag</span>
+                <span className="material-symbols-outlined text-[20px]">receipt_long</span>
                 {ordersList.length > 0 && (
-                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-emerald-600 text-white text-[10px] font-black rounded-full flex items-center justify-center border-2 border-white shadow-xs">
+                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-slate-900 text-white text-[9px] font-black rounded-full flex items-center justify-center border-2 border-white shadow-xs">
                     {ordersList.length}
                   </span>
                 )}
@@ -195,6 +244,7 @@ export default function BuyerPage() {
             </div>
           </div>
         </header>
+
 
         {/* MAIN BODY CONTENT */}
         <main className="flex-1 flex flex-col">
@@ -218,22 +268,22 @@ export default function BuyerPage() {
                     <div className="flex items-center justify-between">
                       <div className="dribbble-badge text-emerald-950 bg-white/95 border-none">
                         <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                        <span className="text-[11px] font-black tracking-tight">100% Farm-Gate Direct</span>
+                        <span className="text-[11px] font-black tracking-tight">{t.heroTag || '100% Farm-Gate Direct'}</span>
                       </div>
                       <span className="text-[11px] font-bold text-emerald-200/90 bg-emerald-900/60 backdrop-blur-md px-2.5 py-1 rounded-full border border-emerald-700/50">
-                        Zero Middlemen
+                        {t.zeroMiddlemen || 'Zero Middlemen'}
                       </span>
                     </div>
 
                     <div>
                       <h1 className="text-[26px] font-black tracking-tight leading-[1.15] text-white">
-                        Fresh from the soil, <br />
+                        {t.heroTitlePart1 || 'Fresh from the soil,'} <br />
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 via-green-200 to-amber-200">
-                          straight to your door.
+                          {t.heroTitlePart2 || 'straight to your door.'}
                         </span>
                       </h1>
                       <p className="text-[12px] text-slate-300/95 font-medium mt-1.5 leading-relaxed">
-                        Order pristine harvests directly from verified Indian farmers at transparent mandi-index prices.
+                        {t.heroDesc || 'Order pristine harvests directly from verified Indian farmers at transparent mandi-index prices.'}
                       </p>
                     </div>
 
@@ -244,7 +294,7 @@ export default function BuyerPage() {
                         className="py-3 px-3.5 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white rounded-2xl text-[12px] font-extrabold shadow-lg shadow-emerald-500/25 flex items-center justify-center gap-1.5 active:scale-95 transition-all"
                       >
                         <span className="material-symbols-outlined text-[18px]">handshake</span>
-                        <span>Smart Procure</span>
+                        <span>{t.smartProcureBtn || 'Smart Procure'}</span>
                       </button>
 
                       <button
@@ -255,7 +305,7 @@ export default function BuyerPage() {
                         className="py-3 px-3 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white rounded-2xl text-[12px] font-bold border border-white/20 flex items-center justify-center gap-1.5 active:scale-95 transition-all"
                       >
                         <span className="material-symbols-outlined text-[18px] text-emerald-300">map</span>
-                        <span>Farmer Radar</span>
+                        <span>{t.farmerRadarBtn || 'Farmer Radar'}</span>
                       </button>
                     </div>
                   </div>
@@ -268,7 +318,7 @@ export default function BuyerPage() {
                   <span className="material-symbols-outlined text-slate-400 text-[20px]">search</span>
                   <input
                     type="text"
-                    placeholder="Search fresh tomatoes, aromatic rice, potatoes..."
+                    placeholder={t.searchPlaceholder || "Search fresh tomatoes, aromatic rice, potatoes..."}
                     value={searchQuery}
                     onChange={e => setSearchQuery(e.target.value)}
                     className="flex-1 bg-transparent text-[13px] font-medium text-slate-800 placeholder-slate-400 outline-none"
@@ -288,14 +338,14 @@ export default function BuyerPage() {
               {/* CATEGORY PILL CAROUSEL */}
               <section className="px-4 py-2">
                 <div className="flex items-center justify-between mb-2.5">
-                  <h2 className="text-[15px] font-extrabold text-slate-900 tracking-tight">Categories</h2>
+                  <h2 className="text-[15px] font-extrabold text-slate-900 tracking-tight">{t.categoriesTitle || 'Categories'}</h2>
                   <span className="text-[11px] text-emerald-700 font-bold hover:underline cursor-pointer">
-                    {filteredProduce.length} lots online
+                    {filteredProduce.length} {t.lotsOnlineSuffix || 'lots online'}
                   </span>
                 </div>
 
                 <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
-                  {CATEGORIES.map(cat => {
+                  {categories.map(cat => {
                     const isSelected = selectedCategory === cat.id;
                     return (
                       <button
@@ -324,11 +374,11 @@ export default function BuyerPage() {
                     </div>
                     <div>
                       <div className="flex items-center gap-1.5">
-                        <span className="text-[13px] font-black text-white">All-India Farmers Radar</span>
+                        <span className="text-[13px] font-black text-white">{t.radarBannerTitle || 'All-India Farmers Radar'}</span>
                         <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
                       </div>
                       <p className="text-[11px] text-emerald-200/90 font-medium">
-                        Compare farm-gate prices & route direct transit across 15+ states.
+                        {t.radarBannerDesc || 'Compare farm-gate prices & route direct transit across 15+ states.'}
                       </p>
                     </div>
                   </div>
@@ -339,7 +389,7 @@ export default function BuyerPage() {
                     }}
                     className="px-3 py-1.5 bg-white text-emerald-950 font-black text-[11px] rounded-xl hover:bg-emerald-50 transition-all shrink-0 active:scale-95 shadow-xs"
                   >
-                    View Map
+                    {t.viewMapBtn || 'View Map'}
                   </button>
                 </div>
               </section>
@@ -348,21 +398,20 @@ export default function BuyerPage() {
               <section className="px-4 py-2 flex flex-col gap-3">
                 <div className="flex justify-between items-center">
                   <div>
-                    <h2 className="text-[16px] font-extrabold text-slate-900 tracking-tight">Today’s Verified Harvests</h2>
-                    <p className="text-[11px] text-slate-500 font-medium">Direct farm batches inspected for quality & weight</p>
+                    <h2 className="text-[16px] font-extrabold text-slate-900 tracking-tight">{t.todayHarvestsTitle || 'Today’s Verified Harvests'}</h2>
+                    <p className="text-[11px] text-slate-500 font-medium">{t.todayHarvestsSub || 'Direct farm batches inspected for quality & weight'}</p>
                   </div>
                   <button
                     onClick={() => setBuyerTab('browse')}
                     className="text-[12px] text-emerald-700 font-black hover:text-emerald-800 transition-colors"
                   >
-                    View All →
+                    {t.viewAllArrow || 'View All →'}
                   </button>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
-                  {filteredProduce.slice(0, 6).map(item => {
-                    const photoUrl =
-                      CROP_PHOTOS[item.cropName.toLowerCase()] || CROP_PHOTOS.default;
+                  {filteredProduce.slice(0, 8).map(item => {
+                    const photoUrl = getCropPhoto(item.cropName);
 
                     return (
                       <div
@@ -394,7 +443,7 @@ export default function BuyerPage() {
                           {/* Quantity pill overlay bottom */}
                           <div className="absolute bottom-2 left-2 text-[10px] font-bold text-white flex items-center gap-1 drop-shadow-sm">
                             <span className="material-symbols-outlined text-[13px]">inventory_2</span>
-                            <span>{item.quantityKg} kg ready</span>
+                            <span>{item.quantityKg} kg {t.readySuffix || 'ready'}</span>
                           </div>
                         </div>
 
@@ -419,33 +468,47 @@ export default function BuyerPage() {
                             </p>
                           </div>
 
-                          {/* Price & Action Button */}
-                          <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
+                          {/* Price & Action Buttons (Add to Cart + Buy Now) */}
+                          <div className="pt-2 border-t border-slate-100 flex items-center justify-between gap-1.5">
                             <div>
                               <span className="text-[9px] uppercase font-bold text-slate-400 block leading-none">
-                                Farm-Gate
+                                {t.farmGatePriceLabel || 'Farm-Gate'}
                               </span>
-                              <div className="text-[15px] font-black text-slate-900 leading-tight">
+                              <div className="text-[14px] font-black text-slate-900 leading-tight">
                                 ₹{item.expectedPricePerKg}
                                 <span className="text-[10px] font-semibold text-slate-500">/kg</span>
                               </div>
                             </div>
 
-                            <button
-                              onClick={() => {
-                                setSelectedMapCrop(item.cropName);
-                                setIsSmartMatchOpen(true);
-                              }}
-                              className="w-8 h-8 rounded-full bg-emerald-700 hover:bg-emerald-800 active:scale-90 text-white flex items-center justify-center transition-all shadow-md shadow-emerald-700/20"
-                              title="Procure with Smart Match"
-                            >
-                              <span className="material-symbols-outlined text-[18px]">add</span>
-                            </button>
+                            <div className="flex items-center gap-1.5">
+                              {/* Flipkart Style Add to Cart Button */}
+                              <button
+                                onClick={() => handleAddToCart(item, 10)}
+                                className="px-2 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-300 text-amber-900 font-extrabold text-[10px] flex items-center gap-0.5 active:scale-95 transition-all shadow-2xs"
+                                title="Add to Cart (Flipkart style)"
+                              >
+                                <span className="material-symbols-outlined text-[14px] text-amber-700">add_shopping_cart</span>
+                                <span>Cart</span>
+                              </button>
+
+                              {/* Direct Smart Procure Button */}
+                              <button
+                                onClick={() => {
+                                  setSelectedMapCrop(item.cropName);
+                                  setIsSmartMatchOpen(true);
+                                }}
+                                className="w-7 h-7 rounded-xl bg-emerald-700 hover:bg-emerald-800 active:scale-90 text-white flex items-center justify-center transition-all shadow-xs"
+                                title="Instant Direct Buy"
+                              >
+                                <span className="material-symbols-outlined text-[15px]">flash_on</span>
+                              </button>
+                            </div>
                           </div>
                         </div>
                       </div>
                     );
                   })}
+
                 </div>
               </section>
 
@@ -457,7 +520,7 @@ export default function BuyerPage() {
                     <h3 className="text-[13px] font-black text-emerald-950">{t.farmEconomicsTitle}</h3>
                   </div>
                   <p className="text-[11px] text-emerald-800/90 font-medium leading-relaxed">
-                    {t.farmEconomicsDesc} Direct cold-chain dispatch eliminates 4 intermediate mandi commissions.
+                    {t.farmEconomicsDesc}
                   </p>
                 </div>
               </section>
@@ -469,8 +532,8 @@ export default function BuyerPage() {
             <div className="p-4 flex flex-col gap-3">
               <div className="flex justify-between items-center">
                 <div>
-                  <h2 className="text-[18px] font-black text-slate-900">Explore Catalog</h2>
-                  <p className="text-[12px] text-slate-500 font-medium">All active harvest batches from registered farmers</p>
+                  <h2 className="text-[18px] font-black text-slate-900">{t.exploreCatalogTitle || 'Explore Catalog'}</h2>
+                  <p className="text-[12px] text-slate-500 font-medium">{t.exploreCatalogSub || 'All active harvest batches from registered farmers'}</p>
                 </div>
                 <button
                   onClick={() => {
@@ -480,7 +543,7 @@ export default function BuyerPage() {
                   className="px-3 py-1.5 bg-emerald-100 text-emerald-800 border border-emerald-200 rounded-xl text-[11px] font-black flex items-center gap-1 hover:bg-emerald-200 transition-all shadow-xs"
                 >
                   <span className="material-symbols-outlined text-[14px]">map</span>
-                  <span>Map Radar</span>
+                  <span>{t.mapRadarBtn || 'Map Radar'}</span>
                 </button>
               </div>
 
@@ -489,7 +552,7 @@ export default function BuyerPage() {
                 <span className="material-symbols-outlined text-slate-400 text-[20px]">search</span>
                 <input
                   type="text"
-                  placeholder="Search produce name, grade, location..."
+                  placeholder={t.browseSearchPlaceholder || 'Search produce name, grade, location...'}
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
                   className="flex-1 bg-transparent text-[13px] font-medium text-slate-800 placeholder-slate-400 outline-none"
@@ -498,25 +561,27 @@ export default function BuyerPage() {
 
               {/* Filter Pills */}
               <div className="flex gap-2 overflow-x-auto no-scrollbar py-1">
-                {CATEGORIES.map(cat => (
-                  <button
-                    key={cat.id}
-                    onClick={() => setSelectedCategory(cat.id)}
-                    className={`px-3 py-1.5 rounded-full text-[11px] font-bold whitespace-nowrap transition-all ${
-                      selectedCategory === cat.id
-                        ? 'dribbble-pill-active'
-                        : 'bg-white text-slate-600 border border-slate-200'
-                    }`}
-                  >
-                    {cat.icon} {cat.label}
-                  </button>
-                ))}
+                {categories.map(cat => {
+                  return (
+                    <button
+                      key={cat.id}
+                      onClick={() => setSelectedCategory(cat.id)}
+                      className={`px-3 py-1.5 rounded-full text-[11px] font-bold whitespace-nowrap transition-all ${
+                        selectedCategory === cat.id
+                          ? 'dribbble-pill-active'
+                          : 'bg-white text-slate-600 border border-slate-200'
+                      }`}
+                    >
+                      {cat.icon} {cat.label}
+                    </button>
+                  );
+                })}
               </div>
 
               {/* Produce List Cards */}
               <div className="flex flex-col gap-3">
                 {filteredProduce.map(item => {
-                  const photoUrl = CROP_PHOTOS[item.cropName.toLowerCase()] || CROP_PHOTOS.default;
+                  const photoUrl = getCropPhoto(item.cropName);
                   return (
                     <div
                       key={item.id}
@@ -525,7 +590,7 @@ export default function BuyerPage() {
                       <img
                         src={photoUrl}
                         alt={item.cropName}
-                        className="w-20 h-20 rounded-2xl object-cover shrink-0 border border-slate-100"
+                        className="w-20 h-20 rounded-2xl object-cover shrink-0 border border-slate-100 shadow-xs"
                       />
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between">
@@ -542,11 +607,19 @@ export default function BuyerPage() {
                         </p>
                         <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-100">
                           <div>
-                            <span className="text-[10px] text-slate-400 font-bold block leading-none">AVAILABLE</span>
+                            <span className="text-[10px] text-slate-400 font-bold block leading-none">{t.availableLabel || 'AVAILABLE'}</span>
                             <span className="text-[13px] font-extrabold text-slate-800">{item.quantityKg} kg</span>
                           </div>
-                          <div className="flex items-center gap-2">
-                            <span className="text-[16px] font-black text-emerald-700">₹{item.expectedPricePerKg}/kg</span>
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-[15px] font-black text-emerald-700">₹{item.expectedPricePerKg}/kg</span>
+                            <button
+                              onClick={() => handleAddToCart(item, 10)}
+                              className="px-2.5 py-1.5 bg-amber-50 hover:bg-amber-100 border border-amber-300 text-amber-900 rounded-xl text-[11px] font-extrabold active:scale-95 transition-all shadow-2xs flex items-center gap-1"
+                              title="Add to Cart (Flipkart style)"
+                            >
+                              <span className="material-symbols-outlined text-[15px] text-amber-700">add_shopping_cart</span>
+                              <span>Cart</span>
+                            </button>
                             <button
                               onClick={() => {
                                 setSelectedMapCrop(item.cropName);
@@ -554,12 +627,13 @@ export default function BuyerPage() {
                               }}
                               className="px-3 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl text-[11px] font-black active:scale-95 transition-all shadow-xs"
                             >
-                              Procure
+                              {t.procureBtn || 'Procure'}
                             </button>
                           </div>
                         </div>
                       </div>
                     </div>
+
                   );
                 })}
               </div>
@@ -571,11 +645,11 @@ export default function BuyerPage() {
             <div className="p-4 flex flex-col gap-3">
               <div className="flex justify-between items-center">
                 <div>
-                  <h2 className="text-[18px] font-black text-slate-900">{t.trackOrdersTitle}</h2>
-                  <p className="text-[12px] text-slate-500 font-medium">{ordersList.length} Active procurements</p>
+                  <h2 className="text-[18px] font-black text-slate-900">{t.trackOrdersTitle || 'Active Orders'}</h2>
+                  <p className="text-[12px] text-slate-500 font-medium">{ordersList.length} {t.activeProcurementsSuffix || 'Active procurements'}</p>
                 </div>
                 <span className="text-[11px] font-extrabold bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-full">
-                  Verified Dispatch
+                  {t.verifiedDispatchBadge || 'Verified Dispatch'}
                 </span>
               </div>
 
@@ -585,16 +659,16 @@ export default function BuyerPage() {
                     <span className="material-symbols-outlined text-[32px]">receipt_long</span>
                   </div>
                   <div>
-                    <h3 className="text-[15px] font-bold text-slate-800">No active orders yet</h3>
+                    <h3 className="text-[15px] font-bold text-slate-800">{t.noActiveOrders || 'No active orders yet'}</h3>
                     <p className="text-[12px] text-slate-500 mt-1">
-                      Run Smart Match to create your first direct farmer order!
+                      {t.noActiveOrdersSub || 'Run Smart Match to create your first direct farmer order!'}
                     </p>
                   </div>
                   <button
                     onClick={() => setIsSmartMatchOpen(true)}
                     className="px-4 py-2 bg-emerald-700 text-white rounded-xl text-[12px] font-black shadow-md shadow-emerald-700/20"
                   >
-                    Start Procurement
+                    {t.startProcurementBtn || 'Start Procurement'}
                   </button>
                 </div>
               ) : (
@@ -605,7 +679,7 @@ export default function BuyerPage() {
                   >
                     <div className="flex justify-between items-center">
                       <div>
-                        <span className="text-[10px] uppercase font-bold text-slate-400">Order ID</span>
+                        <span className="text-[10px] uppercase font-bold text-slate-400">{t.orderIdLabel || 'Order ID'}</span>
                         <h4 className="font-black text-emerald-900 text-[14px]">{ord.orderNumber}</h4>
                       </div>
                       <span className="bg-amber-100 text-amber-900 px-2.5 py-1 rounded-full text-[11px] font-extrabold border border-amber-200">
@@ -632,17 +706,17 @@ export default function BuyerPage() {
 
                     <div className="flex justify-between items-center pt-2 border-t border-slate-100">
                       <div>
-                        <span className="text-[10px] text-slate-400 font-bold block leading-none">TOTAL PAID (INCL. ₹3/KG ESCROW)</span>
+                        <span className="text-[10px] text-slate-400 font-bold block leading-none">{t.totalPaidLabel || 'TOTAL PAID (INCL. ₹3/KG ESCROW)'}</span>
                         <span className="text-[17px] font-black text-slate-900">₹{ord.totalAmount.toLocaleString()}</span>
                       </div>
                       {ord.totalPlatformFee && (
                         <span className="text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-1 rounded-md">
-                          Platform Fee: ₹{ord.totalPlatformFee.toLocaleString()}
+                          {t.platformFeeLabel || 'Platform Fee'}: ₹{ord.totalPlatformFee.toLocaleString()}
                         </span>
                       )}
                       {ord.savingsRealized && (
                         <div className="text-[11px] text-emerald-800 font-black bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-xl text-center">
-                          💰 Saved: ₹{ord.savingsRealized.toLocaleString()}
+                          💰 {t.savedLabel || 'Saved'}: ₹{ord.savingsRealized.toLocaleString()}
                         </div>
                       )}
                     </div>
@@ -662,17 +736,17 @@ export default function BuyerPage() {
                   </div>
                   <div>
                     <h3 className="text-[17px] font-black text-slate-900">{buyerName}</h3>
-                    <p className="text-[12px] text-slate-500 font-medium">Household & Institutional Buyer</p>
+                    <p className="text-[12px] text-slate-500 font-medium">{t.consumerSubtitle || 'Household & Institutional Buyer'}</p>
                     <span className="inline-block mt-1 text-[10px] font-black text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-md border border-emerald-200">
-                      ✓ KYC Verified
+                      ✓ {t.kycVerifiedBadge || 'KYC Verified'}
                     </span>
                   </div>
                 </div>
 
                 <div className="space-y-2 text-[12px] text-slate-600 bg-slate-50 rounded-xl p-3.5 border border-slate-100">
-                  <p><strong className="text-slate-800">Registered Phone:</strong> +91 98300 12345</p>
-                  <p><strong className="text-slate-800">Hub City:</strong> {buyerLocation}</p>
-                  <p><strong className="text-slate-800">Receiving Address:</strong> {buyerAddress}</p>
+                  <p><strong className="text-slate-800">{t.registeredPhoneLabel || 'Registered Phone'}:</strong> +91 98300 12345</p>
+                  <p><strong className="text-slate-800">{t.hubCityLabel || 'Hub City'}:</strong> {buyerLocation}</p>
+                  <p><strong className="text-slate-800">{t.receivingAddressLabel || 'Receiving Address'}:</strong> {buyerAddress}</p>
                 </div>
 
                 <button
@@ -696,10 +770,10 @@ export default function BuyerPage() {
         {/* BOTTOM NAVIGATION BAR */}
         <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] bg-white/95 backdrop-blur-xl border-t border-slate-200 grid grid-cols-4 text-[11px] font-bold text-center py-2.5 z-40 shadow-xl px-2">
           {[
-            { id: 'home', icon: 'storefront', label: 'Shop' },
-            { id: 'browse', icon: 'explore', label: 'Browse' },
-            { id: 'orders', icon: 'receipt_long', label: 'Orders' },
-            { id: 'profile', icon: 'person', label: 'Profile' },
+            { id: 'home', icon: 'storefront', label: t.shopTab || 'Shop' },
+            { id: 'browse', icon: 'explore', label: t.browseTab || 'Browse' },
+            { id: 'orders', icon: 'receipt_long', label: t.ordersTab || 'Orders' },
+            { id: 'profile', icon: 'person', label: t.profileTab || 'Profile' },
           ].map(item => {
             const isActive = buyerTab === item.id;
             return (
@@ -726,7 +800,62 @@ export default function BuyerPage() {
           })}
         </nav>
 
-        {/* MODALS */}
+        {/* FLOATING CART PILL (Flipkart / Zepto style when items exist in cart) */}
+        {cartList.length > 0 && !isCartOpen && (
+          <div className="fixed bottom-20 left-1/2 -translate-x-1/2 w-full max-w-[390px] px-3 z-30 animate-in slide-in-from-bottom-3 duration-300">
+            <button
+              onClick={() => setIsCartOpen(true)}
+              className="w-full bg-slate-900 text-white rounded-2xl p-3 px-4 shadow-xl border border-slate-700/80 flex items-center justify-between hover:bg-slate-850 active:scale-98 transition-all"
+            >
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-black text-[13px] shadow-sm">
+                  {cartList.length}
+                </div>
+                <div className="text-left">
+                  <p className="text-[12px] font-black leading-none">
+                    {cartList.length} {cartList.length === 1 ? 'Item' : 'Items'} in Cart
+                  </p>
+                  <p className="text-[10px] text-emerald-400 font-bold mt-0.5">
+                    {cartList.reduce((acc, i) => acc + i.quantityKg, 0)} kg total harvest
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-1 text-[13px] font-black text-emerald-400">
+                <span>View Cart & Checkout</span>
+                <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+              </div>
+            </button>
+          </div>
+        )}
+
+        {/* TOAST ALERT WHEN ITEM ADDED TO CART */}
+        {cartAddedToast && (
+          <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-slate-900/95 text-white px-4 py-2.5 rounded-full shadow-2xl border border-emerald-500/50 flex items-center gap-2 text-[12px] font-extrabold animate-in fade-in slide-in-from-top-2 duration-200">
+            <span className="material-symbols-outlined text-emerald-400 text-[18px]">shopping_cart_checkout</span>
+            <span>{cartAddedToast}</span>
+            <button
+              onClick={() => {
+                setCartAddedToast(null);
+                setIsCartOpen(true);
+              }}
+              className="underline text-emerald-400 ml-1 text-[11px]"
+            >
+              View Cart
+            </button>
+          </div>
+        )}
+
+        {/* MODALS & DRAWERS */}
+        <ConsumerCartDrawer
+          isOpen={isCartOpen}
+          onClose={() => setIsCartOpen(false)}
+          cart={cartList}
+          buyerName={buyerName}
+          buyerAddress={buyerAddress || buyerLocation}
+          onOrderPlaced={handleOrderCreated}
+        />
+
         <BuyerSmartMatchModal
           isOpen={isSmartMatchOpen}
           onClose={() => {
@@ -765,3 +894,4 @@ export default function BuyerPage() {
     </div>
   );
 }
+

@@ -1,6 +1,67 @@
 import React, { useEffect, useRef, useState, useMemo } from 'react';
 import { getLivePanIndiaSellers, PanIndiaSeller } from '@/data/panIndiaSellers';
 import { getStoredProduce } from '@/services/api';
+import { getCropPhoto } from '@/data/cropImages';
+
+export const CROP_MAP_COLORS: Record<string, { bg: string; border: string; emoji: string }> = {
+  tomato: { bg: '#dc2626', border: '#fef2f2', emoji: '🍅' },
+  potato: { bg: '#d97706', border: '#fffbeb', emoji: '🥔' },
+  onion: { bg: '#9333ea', border: '#faf5ff', emoji: '🧅' },
+  wheat: { bg: '#ca8a04', border: '#fefce8', emoji: '🌾' },
+  rice: { bg: '#059669', border: '#ecfdf5', emoji: '🍚' },
+  chilli: { bg: '#e11d48', border: '#fff1f2', emoji: '🌶️' },
+  mustard: { bg: '#eab308', border: '#fefce8', emoji: '🌼' },
+  apple: { bg: '#b91c1c', border: '#fef2f2', emoji: '🍎' },
+  banana: { bg: '#eab308', border: '#fefce8', emoji: '🍌' },
+  mango: { bg: '#ea580c', border: '#fff7ed', emoji: '🥭' },
+  orange: { bg: '#f97316', border: '#fff7ed', emoji: '🍊' },
+  guava: { bg: '#84cc16', border: '#f7fee7', emoji: '🍈' },
+  papaya: { bg: '#f59e0b', border: '#fffbeb', emoji: '🥭' },
+  watermelon: { bg: '#10b981', border: '#ecfdf5', emoji: '🍉' },
+  pomegranate: { bg: '#be123c', border: '#fff1f2', emoji: '🫐' },
+  pineapple: { bg: '#ca8a04', border: '#fefce8', emoji: '🍍' },
+  grapes: { bg: '#7c3aed', border: '#f5f3ff', emoji: '🍇' },
+  lemon: { bg: '#eab308', border: '#fefce8', emoji: '🍋' },
+  kiwi: { bg: '#65a30d', border: '#f7fee7', emoji: '🥝' },
+  'dragon fruit': { bg: '#ec4899', border: '#fdf2f8', emoji: '🐉' },
+  'sweet lime': { bg: '#84cc16', border: '#f7fee7', emoji: '🍋' },
+  sapota: { bg: '#78350f', border: '#fef3c7', emoji: '🥔' },
+  litchi: { bg: '#e11d48', border: '#fff1f2', emoji: '🍓' },
+  coconut: { bg: '#065f46', border: '#ecfdf5', emoji: '🥥' },
+  jackfruit: { bg: '#65a30d', border: '#f7fee7', emoji: '🍈' },
+  pear: { bg: '#a3e635', border: '#f7fee7', emoji: '🍐' },
+  peach: { bg: '#fb923c', border: '#fff7ed', emoji: '🍑' },
+  plum: { bg: '#701a75', border: '#fdf4ff', emoji: '🟣' },
+  cauliflower: { bg: '#15803d', border: '#f0fdf4', emoji: '🥦' },
+  cabbage: { bg: '#16a34a', border: '#f0fdf4', emoji: '🥬' },
+  carrot: { bg: '#ea580c', border: '#fff7ed', emoji: '🥕' },
+  brinjal: { bg: '#6b21a8', border: '#faf5ff', emoji: '🍆' },
+  'lady finger': { bg: '#15803d', border: '#f0fdf4', emoji: '🌱' },
+  'green peas': { bg: '#22c55e', border: '#f0fdf4', emoji: '🫛' },
+  cucumber: { bg: '#10b981', border: '#ecfdf5', emoji: '🥒' },
+  ginger: { bg: '#b45309', border: '#fffbeb', emoji: '🫚' },
+  garlic: { bg: '#64748b', border: '#f8fafc', emoji: '🧄' },
+  pumpkin: { bg: '#ea580c', border: '#fff7ed', emoji: '🎃' },
+  radish: { bg: '#e2e8f0', border: '#ffffff', emoji: '🌱' },
+  beetroot: { bg: '#881337', border: '#fff1f2', emoji: '🟣' },
+  broccoli: { bg: '#14532d', border: '#f0fdf4', emoji: '🥦' },
+  mushroom: { bg: '#78716c', border: '#fafaf9', emoji: '🍄' },
+  spinach: { bg: '#166534', border: '#f0fdf4', emoji: '🥬' },
+  coriander: { bg: '#15803d', border: '#f0fdf4', emoji: '🌿' },
+  mint: { bg: '#047857', border: '#ecfdf5', emoji: '🍃' },
+  fenugreek: { bg: '#15803d', border: '#f0fdf4', emoji: '🌱' },
+  'ridge gourd': { bg: '#16a34a', border: '#f0fdf4', emoji: '🥒' },
+  'pointed gourd': { bg: '#15803d', border: '#f0fdf4', emoji: '🥒' },
+  drumstick: { bg: '#15803d', border: '#f0fdf4', emoji: '🥢' },
+  'sweet potato': { bg: '#9a3412', border: '#fff7ed', emoji: '🍠' },
+  maize: { bg: '#d97706', border: '#fffbeb', emoji: '🌽' },
+  jowar: { bg: '#b45309', border: '#fffbeb', emoji: '🌾' },
+  bajra: { bg: '#92400e', border: '#fffbeb', emoji: '🌾' },
+  ragi: { bg: '#78350f', border: '#fef3c7', emoji: '🌾' },
+  turmeric: { bg: '#d97706', border: '#fffbeb', emoji: '🟡' },
+  cardamom: { bg: '#15803d', border: '#f0fdf4', emoji: '🟢' },
+  'black pepper': { bg: '#1e293b', border: '#f8fafc', emoji: '⚫' }
+};
 
 interface PanIndiaBuyerMapModalProps {
   isOpen: boolean;
@@ -230,20 +291,9 @@ export const PanIndiaBuyerMapModal: React.FC<PanIndiaBuyerMapModalProps> = ({
     const L = (window as any).L;
     markersLayerRef.current.clearLayers();
 
-    const cropColors: Record<string, { bg: string; border: string; emoji: string }> = {
-      tomato: { bg: '#dc2626', border: '#fef2f2', emoji: '🍅' },
-      potato: { bg: '#d97706', border: '#fffbeb', emoji: '🥔' },
-      onion: { bg: '#9333ea', border: '#faf5ff', emoji: '🧅' },
-      wheat: { bg: '#ca8a04', border: '#fefce8', emoji: '🌾' },
-      rice: { bg: '#059669', border: '#ecfdf5', emoji: '🍚' },
-      chilli: { bg: '#e11d48', border: '#fff1f2', emoji: '🌶️' },
-      mustard: { bg: '#eab308', border: '#fefce8', emoji: '🌼' },
-      apple: { bg: '#b91c1c', border: '#fef2f2', emoji: '🍎' }
-    };
-
     filteredSellers.forEach(seller => {
       const cropKey = seller.crop.toLowerCase();
-      const style = cropColors[cropKey] || { bg: '#0284c7', border: '#f0f9ff', emoji: '📦' };
+      const style = CROP_MAP_COLORS[cropKey] || { bg: '#0284c7', border: '#f0f9ff', emoji: '📦' };
 
       const markerHtml = `
         <div class="seller-pin-marker" style="
@@ -477,20 +527,7 @@ export const PanIndiaBuyerMapModal: React.FC<PanIndiaBuyerMapModalProps> = ({
                 }`}
               >
                 <span>
-                  {crop === 'Tomato' && '🍅'}
-                  {crop === 'Potato' && '🥔'}
-                  {crop === 'Onion' && '🧅'}
-                  {crop === 'Wheat' && '🌾'}
-                  {crop === 'Rice' && '🍚'}
-                  {crop === 'Chilli' && '🌶️'}
-                  {crop === 'Mustard' && '🌼'}
-                  {crop === 'Apple' && '🍎'}
-                  {crop === 'Cauliflower' && '🥦'}
-                  {crop === 'Cabbage' && '🥬'}
-                  {crop === 'Carrot' && '🥕'}
-                  {crop === 'Brinjal' && '🍆'}
-                  {crop === 'All Crops' && '🌐'}
-                  {!['Tomato', 'Potato', 'Onion', 'Wheat', 'Rice', 'Chilli', 'Mustard', 'Apple', 'Cauliflower', 'Cabbage', 'Carrot', 'Brinjal', 'All Crops'].includes(crop) && '🌱'}
+                  {crop === 'All Crops' ? '🌐' : (CROP_MAP_COLORS[crop.toLowerCase()]?.emoji || '🌱')}
                 </span>
                 <span>{crop}</span>
                 <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-extrabold ${isSelected ? 'bg-white/20 text-white' : 'bg-surface-container text-on-surface-variant'}`}>
@@ -596,14 +633,16 @@ export const PanIndiaBuyerMapModal: React.FC<PanIndiaBuyerMapModalProps> = ({
               <div className="p-3 bg-emerald-50 border-b border-emerald-200 shrink-0 flex flex-col gap-2 animate-in slide-in-from-top duration-200">
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="text-2xl">
-                      {selectedSeller.crop === 'Tomato' ? '🍅' : selectedSeller.crop === 'Potato' ? '🥔' : selectedSeller.crop === 'Onion' ? '🧅' : '🌾'}
-                    </span>
+                    <img
+                      src={getCropPhoto(selectedSeller.crop)}
+                      alt={selectedSeller.crop}
+                      className="w-10 h-10 rounded-xl object-cover border border-emerald-300 shrink-0 shadow-xs"
+                    />
                     <div>
                       <h4 className="text-[14px] font-extrabold text-emerald-950 leading-tight">
                         {selectedSeller.name}
                       </h4>
-                      <p className="text-[11px] text-emerald-800 font-bold">{selectedSeller.fpoOrCoop}</p>
+                      <p className="text-[11px] text-emerald-800 font-bold">{selectedSeller.fpoOrCoop} • {selectedSeller.crop}</p>
                     </div>
                   </div>
                   <button 
@@ -678,13 +717,20 @@ export const PanIndiaBuyerMapModal: React.FC<PanIndiaBuyerMapModalProps> = ({
                     >
                       <div className="flex justify-between items-start">
                         <div className="flex items-center gap-2">
-                          <div className="w-8 h-8 rounded-full bg-emerald-100 text-emerald-900 flex items-center justify-center font-extrabold text-[12px]">
-                            {seller.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
-                          </div>
+                          <img
+                            src={getCropPhoto(seller.crop)}
+                            alt={seller.crop}
+                            className="w-9 h-9 rounded-xl object-cover border border-slate-200 shrink-0 shadow-xs"
+                          />
                           <div>
-                            <h4 className="text-[13px] font-extrabold text-on-surface leading-tight">
-                              {seller.name}
-                            </h4>
+                            <div className="flex items-center gap-1.5">
+                              <h4 className="text-[13px] font-extrabold text-on-surface leading-tight">
+                                {seller.name}
+                              </h4>
+                              <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800">
+                                {seller.crop}
+                              </span>
+                            </div>
                             <p className="text-[10px] text-on-surface-variant truncate max-w-[170px]">{seller.fpoOrCoop}</p>
                           </div>
                         </div>

@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { registerNewAccount, getRegisteredAccounts, syncRegisteredAccountsFromBackend, RegisteredAccount } from '@/services/api';
+import { InDriveMapModal, LocationData } from '@/components/InDriveMapModal';
+
 
 export default function LoginPage() {
   const [identifier, setIdentifier] = useState('');
@@ -26,8 +28,10 @@ export default function LoginPage() {
   const [regError, setRegError] = useState('');
   const [regSuccess, setRegSuccess] = useState('');
   const [isRegistering, setIsRegistering] = useState(false);
+  const [isRegMapOpen, setIsRegMapOpen] = useState(false);
 
-  // Real Person Profiles with Home Addresses
+
+  // Real Person Profiles with Home Addresses (15 Consumers & 15 Farmers)
   const DEMO_PROFILES = {
     buyer: [
       {
@@ -59,13 +63,133 @@ export default function LoginPage() {
         email: 'debojyoti.consumer@farm2flow.in',
         phone: '+91 98355 88990',
         icon: '👨‍⚕️'
+      },
+      {
+        id: 'consumer-4',
+        name: 'Ananya Roy',
+        occupation: 'Gourmet Organic Chef',
+        location: 'Alipore, South Kolkata',
+        address: '14B Burdwan Road, Alipore, Kolkata - 700027',
+        email: 'ananya.roy@farm2flow.in',
+        phone: '+91 98311 22334',
+        icon: '👩‍🍳'
+      },
+      {
+        id: 'consumer-5',
+        name: 'Amitava Bose',
+        occupation: 'Apartment Collective Lead',
+        location: 'Jadavpur, Kolkata',
+        address: '88 Central Road, Jadavpur, Kolkata - 700032',
+        email: 'amitava.bose@farm2flow.in',
+        phone: '+91 98322 33445',
+        icon: '👨‍💻'
+      },
+      {
+        id: 'consumer-6',
+        name: 'Sarmistha Ganguly',
+        occupation: 'School Administrator',
+        location: 'Behala Chowrasta, Kolkata',
+        address: '12 Diamond Harbour Road, Behala, Kolkata - 700034',
+        email: 'sarmistha.ganguly@farm2flow.in',
+        phone: '+91 98333 44556',
+        icon: '👩‍💼'
+      },
+      {
+        id: 'consumer-7',
+        name: 'Rajesh Agarwal',
+        occupation: 'Bulk Kitchen Purchaser',
+        location: 'Posta Bazar, Central Kolkata',
+        address: '22 Kalakar Street, Posta, Kolkata - 700007',
+        email: 'rajesh.agarwal@farm2flow.in',
+        phone: '+91 98344 55667',
+        icon: '👨‍💼'
+      },
+      {
+        id: 'consumer-8',
+        name: 'Sneha Majumder',
+        occupation: 'Fitness & Nutrition Coach',
+        location: 'Gariahat, South Kolkata',
+        address: '5/2 Hindustan Park, Gariahat, Kolkata - 700029',
+        email: 'sneha.majumder@farm2flow.in',
+        phone: '+91 98355 66778',
+        icon: '🏃‍♀️'
+      },
+      {
+        id: 'consumer-9',
+        name: 'Kaushik Chakraborty',
+        occupation: 'Hostel Mess Contractor',
+        location: 'Dum Dum Cantonment, Kolkata',
+        address: '18 Gorabazar, Dum Dum, Kolkata - 700028',
+        email: 'kaushik.chakraborty@farm2flow.in',
+        phone: '+91 98366 77889',
+        icon: '👨‍🍳'
+      },
+      {
+        id: 'consumer-10',
+        name: 'Ritu Kothari',
+        occupation: 'Boutique Cafe Owner',
+        location: 'Park Street, Kolkata',
+        address: '77A Park Street, 3rd Floor, Kolkata - 700016',
+        email: 'ritu.kothari@farm2flow.in',
+        phone: '+91 98377 88990',
+        icon: '☕'
+      },
+      {
+        id: 'consumer-11',
+        name: 'Subrata Dutta',
+        occupation: 'Housing Society Secretary',
+        location: 'Rajarhat, Action Area 2',
+        address: 'Greenwood Sonata, Major Arterial Road, Kolkata - 700135',
+        email: 'subrata.dutta@farm2flow.in',
+        phone: '+91 98388 99001',
+        icon: '🏘️'
+      },
+      {
+        id: 'consumer-12',
+        name: 'Moumita Das',
+        occupation: 'Ayurveda Wellness Practitioner',
+        location: 'Shyambazar, North Kolkata',
+        address: '104 Bidhan Sarani, Shyambazar, Kolkata - 700004',
+        email: 'moumita.das@farm2flow.in',
+        phone: '+91 98399 00112',
+        icon: '🌿'
+      },
+      {
+        id: 'consumer-13',
+        name: 'Vikram Mehta',
+        occupation: 'Retail Fresh Mart Lead',
+        location: 'Howrah AC Market',
+        address: '16 Grand Trunk Road, Howrah - 711101',
+        email: 'vikram.mehta@farm2flow.in',
+        phone: '+91 98400 11223',
+        icon: '🏪'
+      },
+      {
+        id: 'consumer-14',
+        name: 'Tanushree Bhattacharya',
+        occupation: 'Culinary Blogger',
+        location: 'Tollygunge, South Kolkata',
+        address: '32 Deshapran Sasmal Road, Tollygunge, Kolkata - 700033',
+        email: 'tanushree.b@farm2flow.in',
+        phone: '+91 98411 22334',
+        icon: '🥗'
+      },
+      {
+        id: 'consumer-15',
+        name: 'Indranil Roychowdhury',
+        occupation: 'Family Grocery Planner',
+        location: 'Kankurgachi, East Kolkata',
+        address: 'P-12 CIT Road, Scheme VI-M, Kankurgachi, Kolkata - 700054',
+        email: 'indranil.rc@farm2flow.in',
+        phone: '+91 98422 33445',
+        icon: '🛒'
       }
     ],
     farmer: [
       {
         id: 'farmer-1',
         name: 'Ramesh Ghosh',
-        occupation: 'Vegetable Farmer',
+        occupation: 'Vegetable Farmer (Tomato/Brinjal)',
         location: 'Hooghly (Singur)',
         address: 'Singur Vegetable Cluster, Hooghly, WB',
         email: 'ramesh.farmer@farm2flow.in',
@@ -75,7 +199,7 @@ export default function LoginPage() {
       {
         id: 'farmer-2',
         name: 'Subhash Mondal',
-        occupation: 'Paddy Cultivator',
+        occupation: 'Paddy & Grain Cultivator',
         location: 'Burdwan (Shaktigarh)',
         address: 'Paddy & Cereal Mandi Yard, Purba Bardhaman, WB',
         email: 'subhash.farmer@farm2flow.in',
@@ -91,6 +215,126 @@ export default function LoginPage() {
         email: 'animesh.farmer@farm2flow.in',
         phone: '+91 98333 77890',
         icon: '🌱'
+      },
+      {
+        id: 'farmer-4',
+        name: 'Bimal Halder',
+        occupation: 'Potato Specialist',
+        location: 'Tarakeswar, Hooghly',
+        address: 'Tarakeswar Cold Storage Belt, Hooghly, WB',
+        email: 'bimal.halder@farm2flow.in',
+        phone: '+91 98313 11540',
+        icon: '🥔'
+      },
+      {
+        id: 'farmer-5',
+        name: 'Vasantrao Patil',
+        occupation: 'Onion & Pomegranate Grower',
+        location: 'Lasalgaon Mandi, Nashik, MH',
+        address: 'Lasalgaon APMC Market, Nashik, Maharashtra',
+        email: 'vasant.patil@farm2flow.in',
+        phone: '+91 94222 31089',
+        icon: '🧅'
+      },
+      {
+        id: 'farmer-6',
+        name: 'Basavaraj Gowda',
+        occupation: 'Tomato & Capsicum Grower',
+        location: 'Kolar APMC Mandi, Karnataka',
+        address: 'Kolar Vegetable Cluster, Kolar, Karnataka',
+        email: 'basavaraj.gowda@farm2flow.in',
+        phone: '+91 98450 12890',
+        icon: '🍅'
+      },
+      {
+        id: 'farmer-7',
+        name: 'Ramkishore Yadav',
+        occupation: 'Cold Store Potato Producer',
+        location: 'Khandauli, Agra, UP',
+        address: 'Agra Potato Consortium, Khandauli, Uttar Pradesh',
+        email: 'ramkishore.yadav@farm2flow.in',
+        phone: '+91 94120 78231',
+        icon: '🥔'
+      },
+      {
+        id: 'farmer-8',
+        name: 'Gurpreet Singh',
+        occupation: 'Wheat & Grain Cultivator',
+        location: 'Khanna Mandi, Ludhiana, Punjab',
+        address: 'Malwa Progressive Farmers Yard, Khanna, Punjab',
+        email: 'gurpreet.singh@farm2flow.in',
+        phone: '+91 98140 55102',
+        icon: '🌾'
+      },
+      {
+        id: 'farmer-9',
+        name: 'Chander Mohan Thakur',
+        occupation: 'Highland Apple Orchardist',
+        location: 'Kotkhai, Shimla, HP',
+        address: 'Shimla Valley Apple Union, Kotkhai, Himachal Pradesh',
+        email: 'chander.thakur@farm2flow.in',
+        phone: '+91 94180 55190',
+        icon: '🍎'
+      },
+      {
+        id: 'farmer-10',
+        name: 'K. Venkata Rao',
+        occupation: 'Mirchi & Chilli Producer',
+        location: 'Guntur Mirchi Yard, Andhra Pradesh',
+        address: 'Guntur Spices Yard, Guntur, Andhra Pradesh',
+        email: 'venkata.rao@farm2flow.in',
+        phone: '+91 98481 22910',
+        icon: '🌶️'
+      },
+      {
+        id: 'farmer-11',
+        name: 'Bhawani Singh Rathore',
+        occupation: 'Mustard & Oilseed Grower',
+        location: 'Kumher Mandi, Bharatpur, Rajasthan',
+        address: 'Bharatpur Oilseeds Collective, Kumher, Rajasthan',
+        email: 'bhawani.rathore@farm2flow.in',
+        phone: '+91 94140 19820',
+        icon: '🌼'
+      },
+      {
+        id: 'farmer-12',
+        name: 'Pravinbhai Patel',
+        occupation: 'White Onion & Garlic Grower',
+        location: 'Mahuva APMC, Bhavnagar, Gujarat',
+        address: 'Saurashtra Onion Guild, Mahuva, Gujarat',
+        email: 'pravin.patel@farm2flow.in',
+        phone: '+91 98251 99014',
+        icon: '🧅'
+      },
+      {
+        id: 'farmer-13',
+        name: 'Prabhat Mondal',
+        occupation: 'Cauliflower & Cabbage Grower',
+        location: 'Bongaon, North 24 Parganas, WB',
+        address: 'Bongaon Border Agri Hub, North 24 Parganas, WB',
+        email: 'prabhat.mondal@farm2flow.in',
+        phone: '+91 98314 66778',
+        icon: '🥦'
+      },
+      {
+        id: 'farmer-14',
+        name: 'Debabrata Das',
+        occupation: 'Exotic Vegetable & Greens Grower',
+        location: 'Baruipur, South 24 Parganas, WB',
+        address: 'Baruipur Horticulture Green Belt, South 24 Parganas, WB',
+        email: 'debabrata.das@farm2flow.in',
+        phone: '+91 98315 88990',
+        icon: '🥬'
+      },
+      {
+        id: 'farmer-15',
+        name: 'Manoj Mandal',
+        occupation: 'Aromatic Fragrant Rice Grower',
+        location: 'Katihar Mandi, Bihar',
+        address: 'Kosi Seemanchal Grain Yard, Katihar, Bihar',
+        email: 'manoj.mandal@farm2flow.in',
+        phone: '+91 98351 22901',
+        icon: '🍚'
       }
     ]
   };
@@ -618,18 +862,45 @@ export default function LoginPage() {
                 />
               </div>
 
-              {/* Address */}
+              {/* Address with Map Selector */}
               <div>
-                <label className="font-extrabold text-slate-700 block mb-0.5">Home / Farm Address *</label>
-                <input
-                  type="text"
-                  required
-                  value={regAddress}
-                  onChange={e => setRegAddress(e.target.value)}
-                  placeholder="e.g. Singur Green Belt, Hooghly, West Bengal - 712409"
-                  className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white"
-                />
+                <div className="flex items-center justify-between mb-0.5">
+                  <label className="font-extrabold text-slate-700">
+                    {regRole === 'farmer' ? 'Farm / Mandi Address *' : 'Home / Delivery Address *'}
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => setIsRegMapOpen(true)}
+                    className="text-[11px] font-black text-emerald-700 hover:text-emerald-800 hover:underline flex items-center gap-1 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200"
+                  >
+                    <span className="material-symbols-outlined text-[14px]">map</span>
+                    <span>Pick from Map</span>
+                  </button>
+                </div>
+                <div className="relative">
+                  <input
+                    type="text"
+                    required
+                    value={regAddress}
+                    onChange={e => setRegAddress(e.target.value)}
+                    placeholder={
+                      regRole === 'farmer'
+                        ? 'e.g. Singur Vegetable Belt, Hooghly, West Bengal - 712409'
+                        : 'e.g. AD-Block, Sector 1, Salt Lake, Kolkata - 700064'
+                    }
+                    className="w-full pl-3 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setIsRegMapOpen(true)}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-lg bg-emerald-100 hover:bg-emerald-200 text-emerald-800 flex items-center justify-center transition-colors"
+                    title="Open Map Location Picker"
+                  >
+                    <span className="material-symbols-outlined text-[16px]">pin_drop</span>
+                  </button>
+                </div>
               </div>
+
 
               {/* DOB & Phone Grid */}
               <div className="grid grid-cols-2 gap-2">
@@ -705,6 +976,18 @@ export default function LoginPage() {
           </div>
         </div>
       )}
+
+      {/* InDrive Interactive Map Modal for Registration (Both Farmer & Buyer) */}
+      <InDriveMapModal
+        isOpen={isRegMapOpen}
+        userRole={regRole}
+        currentLocationName={regAddress}
+        onClose={() => setIsRegMapOpen(false)}
+        onSelectLocation={(loc: LocationData) => {
+          setRegAddress(loc.address);
+        }}
+      />
     </div>
   );
 }
+

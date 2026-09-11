@@ -74,6 +74,21 @@ export interface OrderItem {
   subtotal: number;
 }
 
+export interface CartItem {
+  id: string; // produceId
+  produceId: string;
+  cropName: string;
+  variety: string;
+  grade: string;
+  farmerName: string;
+  farmerLocation: string;
+  pricePerKg: number; // Farmer demanded rate
+  quantityKg: number; // Selected order quantity
+  maxAvailableKg: number; // Max stock available
+  image?: string;
+}
+
+
 export interface Order {
   id: string;
   orderNumber: string;
