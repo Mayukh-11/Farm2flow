@@ -312,8 +312,10 @@ export default function FarmerPage() {
                   <p className="text-on-surface-variant">Buyer: <strong className="text-on-surface">{ord.buyerName}</strong></p>
                   <p className="text-on-surface-variant">Destination: {ord.destination}</p>
                   <div className="flex justify-between items-center pt-2 border-t border-outline-variant text-[13px] font-bold text-on-surface">
-                    <span>{t.orderValue}</span>
-                    <span className="text-primary text-[15px]">₹{ord.totalAmount.toLocaleString()}</span>
+                    <span>{t.orderValue} (Direct Farm Payout)</span>
+                    <span className="text-primary text-[15px]">
+                      ₹{(ord.farmerPayoutAmount ?? ord.totalAmount).toLocaleString()}
+                    </span>
                   </div>
                 </div>
               ))}

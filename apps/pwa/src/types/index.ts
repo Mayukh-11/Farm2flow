@@ -84,6 +84,9 @@ export interface Order {
   totalQuantityKg: number;
   totalAmount: number;
   savingsRealized: number;
+  platformFeePerKg?: number;
+  totalPlatformFee?: number;
+  farmerPayoutAmount?: number;
   status: 'Confirmed' | 'Produce Collected' | 'In Transit' | 'Delivered';
   expectedDelivery: string;
   createdAt: string;

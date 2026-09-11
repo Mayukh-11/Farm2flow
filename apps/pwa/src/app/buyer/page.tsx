@@ -632,9 +632,14 @@ export default function BuyerPage() {
 
                     <div className="flex justify-between items-center pt-2 border-t border-slate-100">
                       <div>
-                        <span className="text-[10px] text-slate-400 font-bold block leading-none">TOTAL INVOICE</span>
+                        <span className="text-[10px] text-slate-400 font-bold block leading-none">TOTAL PAID (INCL. ₹3/KG ESCROW)</span>
                         <span className="text-[17px] font-black text-slate-900">₹{ord.totalAmount.toLocaleString()}</span>
                       </div>
+                      {ord.totalPlatformFee && (
+                        <span className="text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-1 rounded-md">
+                          Platform Fee: ₹{ord.totalPlatformFee.toLocaleString()}
+                        </span>
+                      )}
                       {ord.savingsRealized && (
                         <div className="text-[11px] text-emerald-800 font-black bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-xl text-center">
                           💰 Saved: ₹{ord.savingsRealized.toLocaleString()}

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { SmartMatchResult, Order } from '@/types';
-import { findSmartMatches, createOrderFromMatch, getStoredProduce } from '@/services/api';
+import { findSmartMatches, createOrderFromMatch, getStoredProduce, PLATFORM_CONVENIENCE_FEE_PER_KG } from '@/services/api';
 
 import { getAllCatalogCrops } from '@/data/cropCatalog';
 import { PanIndiaSeller, updatePanIndiaSellerStock } from '@/data/panIndiaSellers';
@@ -75,7 +75,8 @@ export const BuyerSmartMatchModal: React.FC<BuyerSmartMatchModalProps> = ({
       // If a specific seller was chosen directly from the Map, prioritize matching with them
       if (selectedSeller && selectedSeller.crop.toLowerCase() === crop.toLowerCase()) {
         const matchedKg = Math.min(selectedSeller.quantityKg, requiredKg);
-        const totalCost = matchedKg * selectedSeller.pricePerKg;
+        const farmerBaseCost = matchedKg * selectedSeller.pricePerKg;
+        const totalWithFee = farmerBaseCost + (matchedKg * PLATFORM_CONVENIENCE_FEE_PER_KG);
         const result: SmartMatchResult = {
           requirementId: `req-${Date.now()}`,
           cropName: selectedSeller.crop,
@@ -96,13 +97,18 @@ export const BuyerSmartMatchModal: React.FC<BuyerSmartMatchModalProps> = ({
               verified: selectedSeller.verified
             }
           ],
-          estimatedTotalCost: totalCost,
+          estimatedTotalCost: totalWithFee,
           savingsVsMiddlemenPct: 22
         };
         setMatchResult(result);
       } else {
         const res = findSmartMatches(crop, requiredKg);
-        setMatchResult(res);
+        // Include platform convenience fee in consumer's order value
+        const totalWithFee = res.estimatedTotalCost + (res.fulfilledKg * PLATFORM_CONVENIENCE_FEE_PER_KG);
+        setMatchResult({
+          ...res,
+          estimatedTotalCost: totalWithFee
+        });
       }
       setIsSearching(false);
     }, 400);
@@ -317,15 +323,29 @@ export const BuyerSmartMatchModal: React.FC<BuyerSmartMatchModalProps> = ({
               )}
             </div>
 
-            {/* Summary metrics */}
-            <div className="bg-surface-container-low p-3 rounded-xl border border-outline-variant flex justify-between items-center text-label-md">
-              <div>
-                <p className="text-[11px] text-on-surface-variant">Total Quantity Matched</p>
-                <p className="font-extrabold text-on-surface">{matchResult.fulfilledKg.toLocaleString()} / {matchResult.requestedKg.toLocaleString()} kg</p>
+            {/* Summary metrics with consumer convenience fee breakdown */}
+            <div className="bg-surface-container-low p-3.5 rounded-xl border border-outline-variant flex flex-col gap-2 text-label-md">
+              <div className="flex justify-between items-center pb-2 border-b border-outline-variant/60 text-[12px]">
+                <span className="text-on-surface-variant font-medium">Farm Produce Cost ({matchResult.fulfilledKg} kg)</span>
+                <span className="font-bold text-on-surface">
+                  ₹{(matchResult.estimatedTotalCost - (matchResult.fulfilledKg * PLATFORM_CONVENIENCE_FEE_PER_KG)).toLocaleString()}
+                </span>
               </div>
-              <div className="text-right">
-                <p className="text-[11px] text-on-surface-variant">Estimated Order Value</p>
-                <p className="font-extrabold text-primary text-headline-sm">₹{matchResult.estimatedTotalCost.toLocaleString()}</p>
+              <div className="flex justify-between items-center text-[11px] text-emerald-800 bg-emerald-50 px-2 py-1 rounded-md font-bold">
+                <span className="flex items-center gap-1">
+                  <span className="material-symbols-outlined text-[14px]">shield</span>
+                  <span>Platform Convenience & Escrow (+₹{PLATFORM_CONVENIENCE_FEE_PER_KG}/kg)</span>
+                </span>
+                <span>+₹{(matchResult.fulfilledKg * PLATFORM_CONVENIENCE_FEE_PER_KG).toLocaleString()}</span>
+              </div>
+              <div className="flex justify-between items-center pt-1 text-[13px]">
+                <div>
+                  <p className="text-[10px] text-on-surface-variant font-bold uppercase">Total Consumer Payable</p>
+                  <p className="text-[11px] text-emerald-700 font-bold">Verified Zero Middlemen Dispatch</p>
+                </div>
+                <div className="text-right">
+                  <p className="font-black text-primary text-headline-sm leading-tight">₹{matchResult.estimatedTotalCost.toLocaleString()}</p>
+                </div>
               </div>
             </div>
 

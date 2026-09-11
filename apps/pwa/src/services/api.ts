@@ -250,12 +250,21 @@ export const findSmartMatches = (cropName: string, requiredKg: number): SmartMat
   };
 };
 
+export const PLATFORM_CONVENIENCE_FEE_PER_KG = 3;
+
 export const createOrderFromMatch = (
   matchResult: SmartMatchResult, 
   buyerName: string = 'Kolkata Wholesale Mandi',
   paymentMethod: 'Cash on Delivery' | 'Card Payment' | 'Online (UPI/QR)' = 'Cash on Delivery',
   destination: string = 'Salt Lake, Kolkata'
 ): Order => {
+  // Farmer payout is calculated strictly from farmer's demanded price
+  const farmerTotalPayout = matchResult.suppliers.reduce((acc, s) => acc + s.matchedKg * s.pricePerKg, 0);
+  
+  // Platform collects extra ₹3/kg convenience fee from consumer
+  const platformFee = matchResult.fulfilledKg * PLATFORM_CONVENIENCE_FEE_PER_KG;
+  const consumerTotalAmount = farmerTotalPayout + platformFee;
+
   const newOrder: Order = {
     id: `ord-${Date.now()}`,
     orderNumber: `FF-${Math.floor(1000 + Math.random() * 9000)}`,
@@ -267,11 +276,15 @@ export const createOrderFromMatch = (
       farmerName: s.farmerName,
       cropName: `${matchResult.cropName} (${s.grade})`,
       quantityKg: s.matchedKg,
-      pricePerKg: s.pricePerKg,
-      subtotal: s.matchedKg * s.pricePerKg
+      // Consumer pays product price + ₹3/kg convenience fee
+      pricePerKg: s.pricePerKg + PLATFORM_CONVENIENCE_FEE_PER_KG,
+      subtotal: s.matchedKg * (s.pricePerKg + PLATFORM_CONVENIENCE_FEE_PER_KG)
     })),
     totalQuantityKg: matchResult.fulfilledKg,
-    totalAmount: matchResult.estimatedTotalCost,
+    totalAmount: consumerTotalAmount,
+    platformFeePerKg: PLATFORM_CONVENIENCE_FEE_PER_KG,
+    totalPlatformFee: platformFee,
+    farmerPayoutAmount: farmerTotalPayout, // Exact amount paid to farmer without the ₹3 fee
     savingsRealized: Math.round(matchResult.estimatedTotalCost * 0.18),
     status: 'Confirmed',
     expectedDelivery: 'Tomorrow, 2:30 PM',
