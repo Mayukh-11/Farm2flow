@@ -1,22 +1,27 @@
 # Dependencies
-node_modules
+**/node_modules/
+node_modules/
 .pnp
 .pnp.js
 
 # Testing
 /coverage
 
-# Next.js build output
+# Next.js build output across all apps
+**/.next/
 .next/
 out/
 build/
 dist/
 
-# Turbopack cache
-.turbo
-
-# Production
-.next
+# Turbopack & build cache
+**/.turbo/
+.turbo/
+**/.next/**
+**/*.tsbuildinfo
+*.tsbuildinfo
+next-env.d.ts
+**/next-env.d.ts
 
 # Misc
 .DS_Store
@@ -32,11 +37,8 @@ yarn-error.log*
 .env*.local
 .env
 
-# TypeScript
-*.tsbuildinfo
-next-env.d.ts
-
 # Python
+**/__pycache__/
 __pycache__/
 *.py[cod]
 *$py.class
