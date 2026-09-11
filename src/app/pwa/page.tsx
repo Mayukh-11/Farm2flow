@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { initialProduceList, mockForecasts, mockLogisticsData, mockImpactMetrics, initialOrders } from '@/data/mockData';
 
-export default function PwaClientPage() {
+function PwaContent() {
   const searchParams = useSearchParams();
   const roleParam = searchParams.get('role') as 'farmer' | 'fpo' | 'buyer' | null;
 
@@ -248,5 +248,13 @@ export default function PwaClientPage() {
         </nav>
       </div>
     </div>
+  );
+}
+
+export default function PwaClientPage() {
+  return (
+    <Suspense fallback={<div className="p-4 text-center">Loading Farm2Flow...</div>}>
+      <PwaContent />
+    </Suspense>
   );
 }

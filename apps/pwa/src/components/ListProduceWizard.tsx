@@ -1,12 +1,15 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Produce } from '@/types';
 import { getAllCatalogCrops, CatalogCropItem } from '@/data/cropCatalog';
+import { parseAgriculturalVoice, INDIAN_CROPS } from '@/services/voiceParser';
 
 interface ListProduceWizardProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: (newProduce: Produce) => void;
   initialCrop?: string;
+  initialQuantity?: number;
+  initialPrice?: number;
   language?: 'EN' | 'BN' | 'HI';
 }
 
@@ -15,13 +18,15 @@ export const ListProduceWizard: React.FC<ListProduceWizardProps> = ({
   onClose,
   onSuccess,
   initialCrop = 'Tomato',
+  initialQuantity,
+  initialPrice,
   language = 'EN'
 }) => {
   const [step, setStep] = React.useState<1 | 2 | 3>(1);
   const [selectedCrop, setSelectedCrop] = React.useState(initialCrop);
-  const [quantityKg, setQuantityKg] = React.useState<number>(800);
+  const [quantityKg, setQuantityKg] = React.useState<number>(initialQuantity || 800);
   const [grade, setGrade] = React.useState<'Grade A' | 'Grade B' | 'Standard'>('Grade A');
-  const [expectedPrice, setExpectedPrice] = React.useState<number>(30);
+  const [expectedPrice, setExpectedPrice] = React.useState<number>(initialPrice || 30);
   const [harvestDate, setHarvestDate] = React.useState<string>('2026-09-04');
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [successMsg, setSuccessMsg] = React.useState('');
@@ -29,16 +34,19 @@ export const ListProduceWizard: React.FC<ListProduceWizardProps> = ({
   // Voice fill state inside wizard
   const [isWizardListening, setIsWizardListening] = useState(false);
   const [voiceNotice, setVoiceNotice] = useState('');
+  const [lastParsedInfo, setLastParsedInfo] = useState<{ crop?: string; qty?: number; price?: number } | null>(null);
   const wizardRecRef = useRef<any>(null);
+  const silenceTimerRef = useRef<any>(null);
 
   useEffect(() => {
-    if (initialCrop) {
-      setSelectedCrop(initialCrop);
-    }
-  }, [initialCrop]);
+    if (initialCrop) setSelectedCrop(initialCrop);
+    if (initialQuantity) setQuantityKg(initialQuantity);
+    if (initialPrice) setExpectedPrice(initialPrice);
+  }, [initialCrop, initialQuantity, initialPrice]);
 
   useEffect(() => {
     return () => {
+      if (silenceTimerRef.current) clearTimeout(silenceTimerRef.current);
       if (wizardRecRef.current) {
         try {
           wizardRecRef.current.abort();
@@ -49,20 +57,161 @@ export const ListProduceWizard: React.FC<ListProduceWizardProps> = ({
     };
   }, []);
 
+  // Selected wizard voice recognition dialect
+  const [wizardVoiceLang, setWizardVoiceLang] = useState<'AUTO' | 'BN' | 'HI' | 'EN'>('AUTO');
+
   const getLanguageTag = (lang: string) => {
     if (lang === 'BN') return 'bn-IN';
     if (lang === 'HI') return 'hi-IN';
     return 'en-IN';
   };
 
+  // Direct Execution: If user said "List 400 grams of rice" / "চাল ৪০০ গ্রাম বিক্রি করো", directly list it!
+  const executeDirectListing = (cropToUse: string, qtyToUse: number, priceToUse?: number, detectedLang: 'EN' | 'BN' | 'HI' = 'EN') => {
+    let activeFarmerName = 'Ramesh Ghosh';
+    let activeFarmerLocation = 'Hooghly (Singur)';
+    if (typeof window !== 'undefined') {
+      try {
+        const session = JSON.parse(localStorage.getItem('farm2flow_user_session') || '{}');
+        if (session.name) activeFarmerName = session.name;
+        if (session.location) activeFarmerLocation = session.location;
+      } catch (err) {}
+    }
+
+    const defaultPrice = priceToUse || 30;
+    const finalQty = qtyToUse || 0.4;
+    const varietyName = customCatalogCrops.find(c => c.name.toLowerCase() === cropToUse.toLowerCase())?.variety || 'Farm Fresh';
+
+    const created: Produce = {
+      id: `prod-${Date.now().toString().slice(-4)}`,
+      farmerId: `f-${Date.now().toString().slice(-3)}`,
+      farmerName: activeFarmerName,
+      farmerLocation: activeFarmerLocation,
+      cropName: cropToUse.trim(),
+      variety: varietyName,
+      grade: 'Grade A',
+      quantityKg: finalQty,
+      expectedPricePerKg: defaultPrice,
+      marketSuggestedPriceMin: Math.max(10, Math.round(defaultPrice * 0.9)),
+      marketSuggestedPriceMax: Math.round(defaultPrice * 1.15),
+      harvestDate,
+      demandStatus: 'High',
+      demandForecastPct: 20,
+      status: 'Available',
+      fpoVerified: true,
+      createdAt: new Date().toISOString()
+    };
+
+    setIsSubmitting(true);
+    const qtyLabel = finalQty < 1 ? `${Math.round(finalQty * 1000)}g` : `${finalQty} kg`;
+    const noticeSuccess = detectedLang === 'BN'
+      ? `✓ সরাসরি তালিকাভুক্ত: ${cropToUse} ${finalQty < 1 ? `${Math.round(finalQty * 1000)} গ্রাম` : `${finalQty} কেজি`} (₹${defaultPrice}/কেজি)`
+      : detectedLang === 'HI'
+      ? `✓ सीधा दर्ज हुआ: ${cropToUse} ${finalQty < 1 ? `${Math.round(finalQty * 1000)} ग्राम` : `${finalQty} किलो`} (₹${defaultPrice}/किलो)`
+      : `✓ Directly Listed: ${cropToUse} ${qtyLabel} at ₹${defaultPrice}/kg!`;
+
+    setVoiceNotice(noticeSuccess);
+    setSuccessMsg(noticeSuccess);
+
+    // Speak voice confirmation in native language
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      try {
+        window.speechSynthesis.cancel();
+        const spokenMsg = detectedLang === 'BN'
+          ? `${cropToUse} ${finalQty < 1 ? `${Math.round(finalQty * 1000)} গ্রাম` : `${finalQty} কেজি`} সরাসরি বিক্রির জন্য তালিকাভুক্ত করা হয়েছে`
+          : detectedLang === 'HI'
+          ? `${cropToUse} ${finalQty < 1 ? `${Math.round(finalQty * 1000)} ग्राम` : `${finalQty} किलो`} सीधे बेचने के लिए दर्ज कर दिया गया है`
+          : `${cropToUse} ${qtyLabel} has been directly listed for direct sale.`;
+        
+        const utter = new SpeechSynthesisUtterance(spokenMsg);
+        utter.lang = detectedLang === 'BN' ? 'bn-IN' : detectedLang === 'HI' ? 'hi-IN' : 'en-IN';
+        utter.rate = 0.95;
+        window.speechSynthesis.speak(utter);
+      } catch (err) {}
+    }
+
+    setTimeout(() => {
+      onSuccess(created);
+      setIsSubmitting(false);
+      setSuccessMsg('');
+      setStep(1);
+      onClose();
+    }, 1400);
+  };
+
+  const applyVoiceInput = (spokenText: string) => {
+    const parsed = parseAgriculturalVoice(spokenText);
+    const chips: string[] = [];
+
+    // Prioritize recognized crop from neural parser, or direct match against INDIAN_CROPS
+    let resolvedCrop = parsed.crop;
+    let resolvedCropLocal = parsed.cropLocalName;
+
+    if (!resolvedCrop) {
+      // Fallback matching for single spoken words (like "payaz", "pyaz", "onion", "aloo", "tamatar", etc.)
+      const cleanWord = spokenText.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "").trim();
+      const directMatch = INDIAN_CROPS.find(c =>
+        c.standardName.toLowerCase() === cleanWord ||
+        c.aliases.some(a => a.toLowerCase() === cleanWord || cleanWord.includes(a.toLowerCase()))
+      );
+      if (directMatch) {
+        resolvedCrop = directMatch.standardName;
+        resolvedCropLocal = (language === 'BN' ? directMatch.bengaliName : language === 'HI' ? directMatch.hindiName : directMatch.standardName);
+      }
+    }
+
+    if (resolvedCrop) {
+      setSelectedCrop(resolvedCrop);
+      chips.push(`Crop: ${resolvedCropLocal || resolvedCrop}`);
+    }
+
+    if (parsed.quantityKg) {
+      setQuantityKg(parsed.quantityKg);
+      chips.push(`Qty: ${parsed.quantityKg < 1 ? `${Math.round(parsed.quantityKg * 1000)}g (${parsed.quantityKg}kg)` : `${parsed.quantityKg} kg`}`);
+    }
+    if (parsed.pricePerKg) {
+      setExpectedPrice(parsed.pricePerKg);
+      chips.push(`Price: ₹${parsed.pricePerKg}`);
+    }
+
+    const cropFound = resolvedCrop || selectedCrop;
+    const qtyFound = parsed.quantityKg || (parsed.intent === 'sell' && !parsed.quantityKg ? quantityKg : undefined);
+    const priceFound = parsed.pricePerKg || expectedPrice;
+
+    setLastParsedInfo({
+      crop: cropFound,
+      qty: qtyFound,
+      price: priceFound
+    });
+
+    // Check if this is an explicit command to directly list or sell
+    const hasExplicitListingDirective = /\b(list|listing|sell|bikri|bikroy|bech|bechna|becho|বিক্রি|বিক্রয়|বেচা|বেচব|তালিকা|बेचना|बेचें|बिक्री|दर्ज|डालो)\b/i.test(spokenText) ||
+      parsed.intent === 'sell';
+
+    if (hasExplicitListingDirective && resolvedCrop && qtyFound) {
+      // Direct listing action as requested by speaker!
+      executeDirectListing(resolvedCrop, qtyFound, priceFound, parsed.detectedLang);
+      return;
+    }
+
+    if (chips.length > 0) {
+      setVoiceNotice(`✓ Auto-filled: ${chips.join(' • ')}`);
+      // Auto-advance if crop and quantity identified
+      if (resolvedCrop && parsed.quantityKg && step === 1) {
+        setStep(2);
+      }
+    } else {
+      setVoiceNotice(`Heard: "${spokenText}" (Say: "Onion" / "Payaz" / "List 400 grams of rice")`);
+    }
+  };
+
   // Voice input support for filling wizard fields
   const toggleWizardSpeech = () => {
     if (isWizardListening) {
+      if (silenceTimerRef.current) clearTimeout(silenceTimerRef.current);
       try {
         wizardRecRef.current?.stop();
-      } catch (e) {
-        // ignore
-      }
+      } catch (e) {}
       setIsWizardListening(false);
       return;
     }
@@ -70,7 +219,7 @@ export const ListProduceWizard: React.FC<ListProduceWizardProps> = ({
     if (typeof window !== 'undefined') {
       const SpeechRec = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
       if (!SpeechRec) {
-        setVoiceNotice('Voice recognition not supported on this browser. Please use Chrome or Edge.');
+        setVoiceNotice('Voice recognition not supported on this browser. You can tap the sample voice pills below.');
         return;
       }
 
@@ -78,23 +227,31 @@ export const ListProduceWizard: React.FC<ListProduceWizardProps> = ({
         if (wizardRecRef.current) {
           try {
             wizardRecRef.current.abort();
-          } catch (e) {
-            // ignore
-          }
+          } catch (e) {}
         }
 
         const rec = new SpeechRec();
-        rec.continuous = false;
+        rec.continuous = true;
         rec.interimResults = true;
-        rec.maxAlternatives = 1;
-        rec.lang = getLanguageTag(language);
+        rec.maxAlternatives = 3;
+
+        // Dialect setup
+        let targetLang = 'en-IN';
+        if (wizardVoiceLang === 'BN' || (wizardVoiceLang === 'AUTO' && language === 'BN')) {
+          targetLang = 'bn-IN';
+        } else if (wizardVoiceLang === 'HI' || (wizardVoiceLang === 'AUTO' && language === 'HI')) {
+          targetLang = 'hi-IN';
+        }
+        rec.lang = targetLang;
 
         rec.onstart = () => {
           setIsWizardListening(true);
-          setVoiceNotice('🎤 Listening... Speak crop name or amount (e.g. "Cauliflower" or "500 kg at 30 rupees")');
+          setVoiceNotice('🎤 Listening... Speak command (e.g. "Payaz" / "Onion" / "List 400 grams of rice")');
         };
 
         rec.onresult = (event: any) => {
+          if (silenceTimerRef.current) clearTimeout(silenceTimerRef.current);
+
           let finalTrans = '';
           let interimTrans = '';
           for (let i = event.resultIndex; i < event.results.length; ++i) {
@@ -106,56 +263,25 @@ export const ListProduceWizard: React.FC<ListProduceWizardProps> = ({
           }
           const text = (finalTrans || interimTrans).trim();
           if (!text) return;
-          
-          setVoiceNotice(`Heard: "${text}"`);
 
-          const lower = text.toLowerCase();
+          applyVoiceInput(text);
 
-          // Multi-language crop detection (English, Bengali, Hindi)
-          if (lower.includes('tomato') || lower.includes('টমেটো') || lower.includes('टमाटर')) setSelectedCrop('Tomato');
-          else if (lower.includes('potato') || lower.includes('alu') || lower.includes('aaloo') || lower.includes('আলু') || lower.includes('आलू')) setSelectedCrop('Potato');
-          else if (lower.includes('onion') || lower.includes('pyaj') || lower.includes('peyaj') || lower.includes('পেঁয়াজ') || lower.includes('प्याज')) setSelectedCrop('Onion');
-          else if (lower.includes('rice') || lower.includes('chawal') || lower.includes('dhan') || lower.includes('চাল') || lower.includes('ধান') || lower.includes('चावल')) setSelectedCrop('Rice');
-          else if (lower.includes('wheat') || lower.includes('gehu') || lower.includes('gom') || lower.includes('গম') || lower.includes('गेहूं')) setSelectedCrop('Wheat');
-          else if (lower.includes('mango') || lower.includes('aam') || lower.includes('আম') || lower.includes('आम')) setSelectedCrop('Mango');
-          else if (lower.includes('cauliflower') || lower.includes('phool') || lower.includes('phulkopi') || lower.includes('ফুলকপি') || lower.includes('गोभी')) setSelectedCrop('Cauliflower');
-          else {
-            // Take spoken word directly as custom crop name if in step 1
-            const cleaned = text.replace(/sell|list|kilo|kg|rupees|taka|rs|বিক্রি|টাকা|किलो|रुपये/gi, '').trim();
-            if (cleaned.length >= 2) {
-              setSelectedCrop(cleaned.charAt(0).toUpperCase() + cleaned.slice(1));
-            }
-          }
-
-          // Check for numbers / quantity
-          const numbers = text.match(/\d+/g);
-          if (numbers && numbers.length > 0) {
-            const val = parseInt(numbers[0], 10);
-            if (val >= 50 && val <= 10000) {
-              setQuantityKg(val);
-            } else if (val > 0 && val < 50) {
-              setExpectedPrice(val);
-            }
-            if (numbers.length > 1) {
-              const secondVal = parseInt(numbers[1], 10);
-              if (secondVal < 100) setExpectedPrice(secondVal);
-            }
-          }
-
-          // Check for grade
-          if (lower.includes('grade a')) setGrade('Grade A');
-          if (lower.includes('grade b')) setGrade('Grade B');
+          // Auto-stop after 1.8s of silence
+          silenceTimerRef.current = setTimeout(() => {
+            try { rec.stop(); } catch (e) {}
+            setIsWizardListening(false);
+          }, 1800);
         };
 
         rec.onerror = (event: any) => {
-          console.warn('Wizard speech error:', event.error);
-          setIsWizardListening(false);
-          if (event.error === 'not-allowed') {
+          if (event.error === 'no-speech') {
+            setVoiceNotice('🎤 Still listening... Speak your crop or listing command.');
+          } else if (event.error === 'not-allowed') {
+            setIsWizardListening(false);
             setVoiceNotice('Microphone access was blocked. Please allow mic permission in your browser.');
-          } else if (event.error === 'no-speech') {
-            setVoiceNotice('No speech detected. Tap the mic and speak clearly.');
           } else {
-            setVoiceNotice(`Voice status: ${event.error}. You can also type directly in the box.`);
+            setIsWizardListening(false);
+            setVoiceNotice(`Voice status: ${event.error}. You can also type or use test pills below.`);
           }
         };
 
@@ -168,7 +294,7 @@ export const ListProduceWizard: React.FC<ListProduceWizardProps> = ({
       } catch (err: any) {
         console.error('Wizard speech start error:', err);
         setIsWizardListening(false);
-        setVoiceNotice('Could not start microphone. You can type in the box directly.');
+        setVoiceNotice('Could not start microphone. You can tap the sample voice pills below.');
       }
     }
   };
@@ -254,11 +380,16 @@ export const ListProduceWizard: React.FC<ListProduceWizardProps> = ({
               type="button"
               onClick={toggleWizardSpeech}
               title="Voice Autofill"
-              className={`p-2 rounded-full transition-all ${
-                isWizardListening ? 'bg-red-600 text-white animate-pulse' : 'bg-surface-container-high text-primary hover:bg-surface-container'
+              className={`px-3 py-1.5 rounded-full text-[12px] font-bold flex items-center gap-1.5 transition-all shadow-xs ${
+                isWizardListening 
+                  ? 'bg-red-600 text-white ring-2 ring-red-400 animate-pulse' 
+                  : 'bg-emerald-50 text-emerald-800 border border-emerald-300 hover:bg-emerald-100'
               }`}
             >
-              <span className="material-symbols-outlined text-[20px]">mic</span>
+              <span className="material-symbols-outlined text-[18px]">
+                {isWizardListening ? 'graphic_eq' : 'mic'}
+              </span>
+              <span>{isWizardListening ? 'Listening...' : 'Voice Fill'}</span>
             </button>
             <button onClick={onClose} className="w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high">
               <span className="material-symbols-outlined text-[20px]">close</span>
@@ -266,12 +397,122 @@ export const ListProduceWizard: React.FC<ListProduceWizardProps> = ({
           </div>
         </div>
 
-        {/* Voice Feedback Banner inside form */}
-        {voiceNotice && (
-          <div className="bg-emerald-50 border border-emerald-200 text-emerald-900 p-2.5 rounded-xl text-[12px] font-bold">
-            {voiceNotice}
+        {/* Dynamic Voice Feedback & Equalizer Banner */}
+        {isWizardListening && (
+          <div className="bg-red-50 border border-red-200 text-red-900 p-3 rounded-2xl flex items-center justify-between shadow-xs animate-in fade-in duration-200">
+            <div className="flex items-center gap-2.5">
+              <div className="flex items-center gap-0.5">
+                <span className="w-1 h-3 bg-red-600 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
+                <span className="w-1 h-5 bg-red-600 rounded-full animate-bounce [animation-delay:-0.15s]"></span>
+                <span className="w-1 h-4 bg-red-600 rounded-full animate-bounce"></span>
+                <span className="w-1 h-6 bg-red-600 rounded-full animate-bounce [animation-delay:-0.2s]"></span>
+                <span className="w-1 h-3 bg-red-600 rounded-full animate-bounce [animation-delay:-0.1s]"></span>
+              </div>
+              <div>
+                <p className="text-[12px] font-extrabold text-red-900 leading-tight">Listening in Indian Languages...</p>
+                <p className="text-[11px] text-red-700 font-medium">Say crop, kg/quintal, & rate (e.g. "500 kg Tomato at 30 rupees")</p>
+              </div>
+            </div>
+            <button 
+              type="button" 
+              onClick={toggleWizardSpeech}
+              className="text-[11px] font-bold bg-white text-red-700 px-2.5 py-1 rounded-lg border border-red-200 shadow-xs"
+            >
+              Done
+            </button>
           </div>
         )}
+
+        {/* Voice Feedback Banner & Recognized Entities */}
+        {voiceNotice && !isWizardListening && (
+          <div className="bg-emerald-50 border border-emerald-200 text-emerald-900 p-2.5 rounded-xl text-[12px] font-bold flex flex-col gap-1.5 shadow-xs">
+            <div className="flex items-center gap-1.5">
+              <span className="material-symbols-outlined text-[16px] text-emerald-700">check_circle</span>
+              <span>{voiceNotice}</span>
+            </div>
+          </div>
+        )}
+
+        {/* Dialect Selector Bar */}
+        <div className="flex items-center justify-between bg-surface-container-low px-3 py-1.5 rounded-xl border border-outline-variant text-[11px] font-bold -mt-1">
+          <span className="text-on-surface-variant flex items-center gap-1">
+            <span className="material-symbols-outlined text-[14px]">translate</span>
+            Dialect:
+          </span>
+          <div className="flex items-center gap-1">
+            <button
+              type="button"
+              onClick={() => setWizardVoiceLang('AUTO')}
+              className={`px-2 py-0.5 rounded-md transition-all ${wizardVoiceLang === 'AUTO' ? 'bg-primary text-white shadow-xs' : 'bg-white text-on-surface-variant border border-outline-variant'}`}
+            >
+              Auto
+            </button>
+            <button
+              type="button"
+              onClick={() => setWizardVoiceLang('BN')}
+              className={`px-2 py-0.5 rounded-md transition-all ${wizardVoiceLang === 'BN' ? 'bg-primary text-white shadow-xs' : 'bg-white text-on-surface-variant border border-outline-variant'}`}
+            >
+              বাংলা
+            </button>
+            <button
+              type="button"
+              onClick={() => setWizardVoiceLang('HI')}
+              className={`px-2 py-0.5 rounded-md transition-all ${wizardVoiceLang === 'HI' ? 'bg-primary text-white shadow-xs' : 'bg-white text-on-surface-variant border border-outline-variant'}`}
+            >
+              हिन्दी
+            </button>
+            <button
+              type="button"
+              onClick={() => setWizardVoiceLang('EN')}
+              className={`px-2 py-0.5 rounded-md transition-all ${wizardVoiceLang === 'EN' ? 'bg-primary text-white shadow-xs' : 'bg-white text-on-surface-variant border border-outline-variant'}`}
+            >
+              English
+            </button>
+          </div>
+        </div>
+
+        {/* 1-Click Voice Test Pills (Includes Direct Listing for 400g Rice in English, Bengali, Hindi) */}
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 -mt-1 text-[10px] font-bold scrollbar-none">
+          <span className="text-on-surface-variant shrink-0 flex items-center gap-0.5">
+            <span className="material-symbols-outlined text-[12px]">bolt</span>
+            Direct List:
+          </span>
+          <button
+            type="button"
+            onClick={() => applyVoiceInput("list 400 grams of rice")}
+            className="shrink-0 bg-emerald-50 hover:bg-emerald-100 text-emerald-900 border border-emerald-300 px-2 py-0.5 rounded-md transition-all active:scale-95 flex items-center gap-1"
+          >
+            🌾 "List 400g rice"
+          </button>
+          <button
+            type="button"
+            onClick={() => applyVoiceInput("৪০০ গ্রাম চাল বিক্রি করো")}
+            className="shrink-0 bg-emerald-50 hover:bg-emerald-100 text-emerald-900 border border-emerald-300 px-2 py-0.5 rounded-md transition-all active:scale-95 flex items-center gap-1"
+          >
+            🇧🇩 "৪০০ গ্রাম চাল বিক্রি করো"
+          </button>
+          <button
+            type="button"
+            onClick={() => applyVoiceInput("400 ग्राम चावल बेचना है")}
+            className="shrink-0 bg-emerald-50 hover:bg-emerald-100 text-emerald-900 border border-emerald-300 px-2 py-0.5 rounded-md transition-all active:scale-95 flex items-center gap-1"
+          >
+            🇮🇳 "400 ग्राम चावल बेचना है"
+          </button>
+          <button
+            type="button"
+            onClick={() => applyVoiceInput("PAYAZ")}
+            className="shrink-0 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 px-2 py-0.5 rounded-md transition-all active:scale-95 flex items-center gap-1"
+          >
+            🧅 "PAYAZ" (Onion)
+          </button>
+          <button
+            type="button"
+            onClick={() => applyVoiceInput("Tomato 500 kg at 30 rupees")}
+            className="shrink-0 bg-surface-container-low hover:bg-emerald-50 text-emerald-800 border border-outline-variant px-2 py-0.5 rounded-md transition-all active:scale-95"
+          >
+            🗣️ "Tomato 500 kg @ ₹30"
+          </button>
+        </div>
 
         {/* Step Progress Bar */}
         <div className="flex gap-1.5 h-1.5 w-full bg-surface-container-high rounded-full overflow-hidden">
@@ -442,30 +683,10 @@ export const ListProduceWizard: React.FC<ListProduceWizardProps> = ({
               </div>
             )}
 
-            {/* STEP 3: Quality, Expected Price, Harvest Date */}
+            {/* STEP 3: Expected Price, Harvest Date */}
             {step === 3 && (
               <div className="flex flex-col gap-3">
-                <label className="text-[14px] font-bold text-on-surface">Step 3: Quality, Price & Date</label>
-
-                <div>
-                  <label className="text-[12px] font-bold text-on-surface-variant">Quality Grade</label>
-                  <div className="grid grid-cols-3 gap-2 mt-1">
-                    {(['Grade A', 'Grade B', 'Standard'] as const).map(g => (
-                      <button
-                        key={g}
-                        type="button"
-                        onClick={() => setGrade(g)}
-                        className={`py-2 rounded-xl text-[12px] font-bold border transition-colors ${
-                          grade === g
-                            ? 'bg-primary-container text-on-primary border-primary'
-                            : 'bg-surface-container-lowest text-on-surface border-outline-variant'
-                        }`}
-                      >
-                        {g}
-                      </button>
-                    ))}
-                  </div>
-                </div>
+                <label className="text-[14px] font-bold text-on-surface">Step 3: Price & Date</label>
 
                 <div>
                   <label className="text-[12px] font-bold text-on-surface-variant">Expected Price per Kg (₹)</label>

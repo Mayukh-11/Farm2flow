@@ -25,6 +25,8 @@ export default function FarmerPage() {
   // Modal Visibility States
   const [isHelpOpen, setIsHelpOpen] = useState(false);
   const [isListWizardOpen, setIsListWizardOpen] = useState(false);
+  const [wizardInitialQuantity, setWizardInitialQuantity] = useState<number | undefined>(undefined);
+  const [wizardInitialPrice, setWizardInitialPrice] = useState<number | undefined>(undefined);
 
   // Active Bottom Navigation Tab for Farmer
   const [farmerTab, setFarmerTab] = useState<'home' | 'market' | 'sell' | 'orders' | 'profile'>('home');
@@ -385,10 +387,13 @@ export default function FarmerPage() {
           isOpen={isHelpOpen}
           language={language}
           onDetectedLanguage={(newLang) => setLanguage(newLang)}
+          onProduceCreated={handleProduceCreated}
           onClose={() => setIsHelpOpen(false)}
           onSelectAction={(actionKey, params) => {
             if (actionKey === 'sell') {
               if (params?.crop) setSelectedCrop(params.crop);
+              setWizardInitialQuantity(params?.quantity);
+              setWizardInitialPrice(params?.price);
               setIsListWizardOpen(true);
             }
             if (actionKey === 'prices' || actionKey === 'market') setFarmerTab('market');
@@ -399,6 +404,8 @@ export default function FarmerPage() {
         <ListProduceWizard
           isOpen={isListWizardOpen}
           initialCrop={selectedCrop}
+          initialQuantity={wizardInitialQuantity}
+          initialPrice={wizardInitialPrice}
           language={language}
           onClose={() => setIsListWizardOpen(false)}
           onSuccess={handleProduceCreated}

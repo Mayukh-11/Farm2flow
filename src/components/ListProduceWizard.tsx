@@ -179,28 +179,7 @@ export const ListProduceWizard: React.FC<ListProduceWizardProps> = ({
             {/* STEP 3: Quality, Expected Price, Harvest Date */}
             {step === 3 && (
               <div className="flex flex-col gap-3">
-                <label className="text-label-md font-bold text-on-surface">Step 3: Quality, Price & Date</label>
-
-                {/* Quality Select */}
-                <div>
-                  <label className="text-body-sm text-[12px] text-on-surface-variant">Quality Grade</label>
-                  <div className="grid grid-cols-3 gap-2 mt-1">
-                    {(['Grade A', 'Grade B', 'Standard'] as const).map(g => (
-                      <button
-                        key={g}
-                        type="button"
-                        onClick={() => setGrade(g)}
-                        className={`py-2 rounded-lg text-label-sm font-bold border transition-colors ${
-                          grade === g
-                            ? 'bg-primary-container text-on-primary border-primary'
-                            : 'bg-surface-container-lowest text-on-surface border-outline-variant'
-                        }`}
-                      >
-                        {g}
-                      </button>
-                    ))}
-                  </div>
-                </div>
+                <label className="text-label-md font-bold text-on-surface">Step 3: Price & Date</label>
 
                 {/* Expected Price */}
                 <div>
