@@ -282,8 +282,37 @@ export const createOrderFromMatch = (
   };
 
   if (typeof window !== 'undefined') {
+    // 1. Save new Order in history
     const existingOrders = JSON.parse(localStorage.getItem(STORAGE_KEYS.ORDERS) || JSON.stringify(initialOrders));
     localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify([newOrder, ...existingOrders]));
+
+    // 2. REAL-TIME INVENTORY DEDUCTION
+    // For each supplier fulfilled in this order, reduce stock immediately
+    const currentProduce = getStoredProduce();
+    let produceChanged = false;
+
+    const updatedProduce = currentProduce.map(item => {
+      const matchSupplier = matchResult.suppliers.find(s => s.produceId === item.id || s.produceId === `live-${item.id}`);
+      if (matchSupplier) {
+        produceChanged = true;
+        const newQty = Math.max(0, item.quantityKg - matchSupplier.matchedKg);
+        return {
+          ...item,
+          quantityKg: newQty,
+          status: (newQty === 0 ? 'Sold Out' : item.status) as any
+        };
+      }
+      return item;
+    });
+
+    if (produceChanged) {
+      localStorage.setItem(STORAGE_KEYS.PRODUCE, JSON.stringify(updatedProduce));
+      window.dispatchEvent(
+        new CustomEvent('farm2flow_produce_updated', {
+          detail: { produceList: updatedProduce, purchasedOrder: newOrder }
+        })
+      );
+    }
   }
 
   return newOrder;

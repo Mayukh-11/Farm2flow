@@ -24,7 +24,7 @@ export interface Produce {
   harvestDate: string;
   demandStatus: 'High' | 'Moderate' | 'Steady';
   demandForecastPct: number;
-  status: 'Available' | 'Reserved' | 'Sold';
+  status: 'Available' | 'Reserved' | 'Sold' | 'Sold Out';
   fpoVerified: boolean;
   createdAt: string;
 }

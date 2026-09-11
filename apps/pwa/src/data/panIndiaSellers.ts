@@ -537,32 +537,71 @@ export const extractCoordinatesAndState = (locStr: string): { lat: number; lng: 
   return { lat: parseFloat(jitterLat.toFixed(4)), lng: parseFloat(jitterLng.toFixed(4)), state: 'West Bengal' };
 };
 
+const SELLERS_STOCK_STORAGE_KEY = 'farm2flow_pan_india_sellers_stock';
+
+export const getStoredPanIndiaSellers = (): PanIndiaSeller[] => {
+  if (typeof window === 'undefined') return PAN_INDIA_SELLERS;
+  const stored = localStorage.getItem(SELLERS_STOCK_STORAGE_KEY);
+  if (!stored) {
+    localStorage.setItem(SELLERS_STOCK_STORAGE_KEY, JSON.stringify(PAN_INDIA_SELLERS));
+    return PAN_INDIA_SELLERS;
+  }
+  try {
+    return JSON.parse(stored);
+  } catch {
+    return PAN_INDIA_SELLERS;
+  }
+};
+
+export const updatePanIndiaSellerStock = (sellerId: string, purchasedKg: number): PanIndiaSeller[] => {
+  const current = getStoredPanIndiaSellers();
+  const updated = current
+    .map(s => {
+      if (s.id === sellerId) {
+        const remainingKg = Math.max(0, s.quantityKg - purchasedKg);
+        return { ...s, quantityKg: remainingKg };
+      }
+      return s;
+    })
+    .filter(s => s.quantityKg > 0); // Completely hide when out of stock
+
+  if (typeof window !== 'undefined') {
+    localStorage.setItem(SELLERS_STOCK_STORAGE_KEY, JSON.stringify(updated));
+    window.dispatchEvent(new CustomEvent('farm2flow_sellers_stock_updated', { detail: { updatedSellers: updated } }));
+  }
+  return updated;
+};
+
 // Returns live dynamic combined list of base pan-India sellers + user-listed produce items
 export const getLivePanIndiaSellers = (userProduceItems: any[] = []): PanIndiaSeller[] => {
-  const dynamicFromProduce: PanIndiaSeller[] = userProduceItems.map(p => {
-    const geo = extractCoordinatesAndState(p.farmerLocation);
-    return {
-      id: `live-${p.id}`,
-      name: p.farmerName || 'Verified Local Farmer',
-      fpoOrCoop: p.variety ? `${p.variety} Direct Harvest` : 'Farm2Flow Direct Grower',
-      crop: p.cropName,
-      variety: p.variety || 'Farm Fresh',
-      grade: p.grade || 'Grade A',
-      quantityKg: p.quantityKg,
-      pricePerKg: p.expectedPricePerKg,
-      location: p.farmerLocation || 'Local Farm Cluster, WB',
-      state: geo.state,
-      lat: geo.lat,
-      lng: geo.lng,
-      harvestDate: p.harvestDate || 'Just Listed',
-      verified: p.fpoVerified ?? true,
-      phone: '+91 98310 44210',
-      rating: 5.0,
-      transitDaysToKolkata: geo.state === 'West Bengal' ? 0.3 : 2.0,
-      isUserListed: true
-    };
-  });
+  const dynamicFromProduce: PanIndiaSeller[] = userProduceItems
+    .filter(p => p.quantityKg > 0 && p.status !== 'Sold Out')
+    .map(p => {
+      const geo = extractCoordinatesAndState(p.farmerLocation);
+      return {
+        id: `live-${p.id}`,
+        name: p.farmerName || 'Verified Local Farmer',
+        fpoOrCoop: p.variety ? `${p.variety} Direct Harvest` : 'Farm2Flow Direct Grower',
+        crop: p.cropName,
+        variety: p.variety || 'Farm Fresh',
+        grade: p.grade || 'Grade A',
+        quantityKg: p.quantityKg,
+        pricePerKg: p.expectedPricePerKg,
+        location: p.farmerLocation || 'Local Farm Cluster, WB',
+        state: geo.state,
+        lat: geo.lat,
+        lng: geo.lng,
+        harvestDate: p.harvestDate || 'Just Listed',
+        verified: p.fpoVerified ?? true,
+        phone: '+91 98310 44210',
+        rating: 5.0,
+        transitDaysToKolkata: geo.state === 'West Bengal' ? 0.3 : 2.0,
+        isUserListed: true
+      };
+    });
+
+  const baseSellers = getStoredPanIndiaSellers().filter(s => s.quantityKg > 0);
 
   // Deduplicate by ID and put newest live listings at the top
-  return [...dynamicFromProduce, ...PAN_INDIA_SELLERS];
+  return [...dynamicFromProduce, ...baseSellers];
 };

@@ -40,21 +40,26 @@ export const PanIndiaBuyerMapModal: React.FC<PanIndiaBuyerMapModalProps> = ({
   const [mapStyle, setMapStyle] = useState<'streets' | 'satellite' | 'terrain'>('streets');
   const [showDirectLines, setShowDirectLines] = useState<boolean>(true);
 
-  // Listen to real-time events from farmer listings across tabs and current tab
+  // Listen to real-time events from farmer listings and stock reduction across tabs and current tab
   useEffect(() => {
     const handleProduceUpdated = (e: any) => {
       const updated = e.detail?.produceList || getStoredProduce();
       setLiveProduce([...updated]);
     };
 
+    const handleSellersStockUpdated = () => {
+      setLiveProduce(prev => [...prev]);
+    };
+
     const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === 'farm2flow_produce_items') {
+      if (e.key === 'farm2flow_produce_items' || e.key === 'farm2flow_pan_india_sellers_stock') {
         setLiveProduce(getStoredProduce());
       }
     };
 
     if (typeof window !== 'undefined') {
       window.addEventListener('farm2flow_produce_updated', handleProduceUpdated);
+      window.addEventListener('farm2flow_sellers_stock_updated', handleSellersStockUpdated);
       window.addEventListener('storage', handleStorageChange);
       // Refresh on open
       if (isOpen) {
@@ -65,6 +70,7 @@ export const PanIndiaBuyerMapModal: React.FC<PanIndiaBuyerMapModalProps> = ({
     return () => {
       if (typeof window !== 'undefined') {
         window.removeEventListener('farm2flow_produce_updated', handleProduceUpdated);
+        window.removeEventListener('farm2flow_sellers_stock_updated', handleSellersStockUpdated);
         window.removeEventListener('storage', handleStorageChange);
       }
     };

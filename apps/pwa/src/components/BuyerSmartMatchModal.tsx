@@ -3,7 +3,7 @@ import { SmartMatchResult, Order } from '@/types';
 import { findSmartMatches, createOrderFromMatch, getStoredProduce } from '@/services/api';
 
 import { getAllCatalogCrops } from '@/data/cropCatalog';
-import { PanIndiaSeller } from '@/data/panIndiaSellers';
+import { PanIndiaSeller, updatePanIndiaSellerStock } from '@/data/panIndiaSellers';
 
 interface BuyerSmartMatchModalProps {
   isOpen: boolean;
@@ -128,6 +128,15 @@ export const BuyerSmartMatchModal: React.FC<BuyerSmartMatchModalProps> = ({
         paymentLabel,
         buyerDestination
       );
+
+      // Real-time stock reduction for Pan-India Sellers if matched
+      matchResult.suppliers.forEach(supplier => {
+        if (supplier.produceId && !supplier.produceId.startsWith('prod-')) {
+          const sellerCleanId = supplier.produceId.replace('live-', '');
+          updatePanIndiaSellerStock(sellerCleanId, supplier.matchedKg);
+        }
+      });
+
       setIsProcessingPayment(false);
       setShowPaymentStep(false);
       setIsOnlinePaid(false);

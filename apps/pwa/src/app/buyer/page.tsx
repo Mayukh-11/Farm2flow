@@ -100,9 +100,13 @@ export default function BuyerPage() {
     setCartBadgeCount(prev => prev + 1);
   };
 
-  // Filter produce by category & search query
+  // Filter produce by category & search query (only show lots with available stock)
   const filteredProduce = useMemo(() => {
     return produceList.filter(item => {
+      // Must have available stock > 0
+      const hasStock = item.quantityKg > 0 && item.status !== 'Sold Out';
+      if (!hasStock) return false;
+
       const matchCat =
         selectedCategory === 'All'
           ? true
