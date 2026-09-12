@@ -4,6 +4,9 @@
     "gitDecoration.untrackedResourceForeground": "#22c55e",
     "gitDecoration.addedResourceForeground": "#22c55e",
     "gitDecoration.stageModifiedResourceForeground": "#22c55e",
-    "gitDecoration.stageDeletedResourceForeground": "#22c55e"
+    "gitDecoration.stageDeletedResourceForeground": "#22c55e",
+    "list.warningForeground": "#22c55e",
+    "editorWarning.foreground": "#22c55e",
+    "notificationsWarningIcon.foreground": "#22c55e"
   }
 }
