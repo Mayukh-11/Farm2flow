@@ -130,15 +130,15 @@ export const ConsumerCartDrawer: React.FC<ConsumerCartDrawerProps> = ({
             /* Items List & Price Summary */
             <>
               {/* Deliver To Banner (Flipkart Style) */}
-              <div className="bg-white rounded-2xl p-3 border border-slate-200 shadow-xs flex items-center justify-between">
+              <div className="bg-[#f4fcf6] rounded-2xl p-3 border border-emerald-300 shadow-xs flex items-center justify-between">
                 <div className="flex items-center gap-2 min-w-0">
-                  <span className="material-symbols-outlined text-[20px] text-emerald-600 shrink-0">location_on</span>
+                  <span className="material-symbols-outlined text-[20px] text-emerald-700 shrink-0">location_on</span>
                   <div className="min-w-0">
-                    <p className="text-[12px] font-bold text-slate-800 truncate">Deliver to: {buyerName}</p>
-                    <p className="text-[11px] text-slate-500 truncate">{buyerAddress}</p>
+                    <p className="text-[12px] font-bold text-emerald-950 truncate">Deliver to: {buyerName}</p>
+                    <p className="text-[11px] text-emerald-700/80 truncate">{buyerAddress}</p>
                   </div>
                 </div>
-                <span className="text-[11px] font-extrabold text-emerald-700 bg-emerald-50 px-2 py-1 rounded-lg shrink-0">
+                <span className="text-[11px] font-extrabold text-emerald-900 bg-emerald-200 px-2.5 py-1 rounded-lg shrink-0 border border-emerald-300">
                   Direct Farm Express
                 </span>
               </div>
@@ -154,11 +154,11 @@ export const ConsumerCartDrawer: React.FC<ConsumerCartDrawerProps> = ({
                   return (
                     <div
                       key={item.produceId}
-                      className="bg-white rounded-2xl p-3 border border-slate-200/80 shadow-xs flex flex-col gap-2.5 relative group"
+                      className="bg-[#f4fcf6] rounded-2xl p-3 border border-emerald-300 shadow-xs flex flex-col gap-2.5 relative group"
                     >
                       <div className="flex gap-3 items-center">
                         {/* Animated Crop Graphic */}
-                        <div className="w-18 h-18 rounded-xl bg-slate-100 overflow-hidden shrink-0 border border-slate-100">
+                        <div className="w-18 h-18 rounded-xl bg-emerald-950/20 overflow-hidden shrink-0 border border-emerald-200">
                           <img
                             src={photoUrl}
                             alt={item.cropName}
@@ -169,35 +169,35 @@ export const ConsumerCartDrawer: React.FC<ConsumerCartDrawerProps> = ({
                         {/* Details */}
                         <div className="flex-1 min-w-0">
                           <div className="flex items-start justify-between gap-1">
-                            <h4 className="font-extrabold text-slate-900 text-[14px] leading-tight truncate">
+                            <h4 className="font-extrabold text-emerald-950 text-[14px] leading-tight truncate">
                               {item.cropName}
                             </h4>
                             <button
                               onClick={() => removeFromCart(item.produceId)}
-                              className="text-slate-400 hover:text-rose-600 transition-colors p-0.5"
+                              className="text-emerald-700 hover:text-rose-600 transition-colors p-0.5"
                               title="Remove item"
                             >
                               <span className="material-symbols-outlined text-[18px]">delete</span>
                             </button>
                           </div>
                           
-                          <p className="text-[11px] text-slate-500 font-medium truncate">
-                            {item.variety} • <span className="text-emerald-700 font-bold">{item.grade}</span>
+                          <p className="text-[11px] text-emerald-800/80 font-medium truncate">
+                            {item.variety} • <span className="text-emerald-900 font-bold bg-emerald-200 px-1.5 py-0.2 rounded">{item.grade}</span>
                           </p>
 
-                          <p className="text-[10px] text-slate-600 font-medium mt-0.5 truncate">
+                          <p className="text-[10px] text-emerald-700 font-medium mt-0.5 truncate">
                             🧑‍🌾 {item.farmerName} ({item.farmerLocation})
                           </p>
 
                           <div className="flex items-center justify-between mt-1.5 pt-1">
                             <div className="flex items-baseline gap-1.5">
-                              <span className="text-[15px] font-black text-slate-900">
+                              <span className="text-[15px] font-black text-emerald-950">
                                 ₹{itemSubtotal.toLocaleString()}
                               </span>
-                              <span className="text-[11px] text-slate-400 line-through">
+                              <span className="text-[11px] text-emerald-600/70 line-through">
                                 ₹{Math.round(itemSubtotal * 1.25).toLocaleString()}
                               </span>
-                              <span className="text-[10px] text-emerald-700 font-extrabold">
+                              <span className="text-[10px] text-emerald-800 font-extrabold">
                                 (₹{itemConsumerRate}/kg)
                               </span>
                             </div>
@@ -206,20 +206,20 @@ export const ConsumerCartDrawer: React.FC<ConsumerCartDrawerProps> = ({
                       </div>
 
                       {/* Quantity Stepper (Flipkart Style: - [Qty kg] +) */}
-                      <div className="flex items-center justify-between pt-2 border-t border-slate-100 text-[11px]">
-                        <span className="text-slate-500 font-semibold">
-                          Max Available: <strong className="text-slate-700">{item.maxAvailableKg} kg</strong>
+                      <div className="flex items-center justify-between pt-2 border-t border-emerald-200 text-[11px]">
+                        <span className="text-emerald-700 font-semibold">
+                          Max Available: <strong className="text-emerald-950">{item.maxAvailableKg} kg</strong>
                         </span>
 
-                        <div className="flex items-center bg-slate-100 rounded-xl p-1 border border-slate-200">
+                        <div className="flex items-center bg-emerald-100 rounded-xl p-1 border border-emerald-300">
                           <button
                             onClick={() => updateCartQuantity(item.produceId, item.quantityKg - (item.quantityKg > 10 ? 5 : 1))}
-                            className="w-7 h-7 rounded-lg bg-white hover:bg-slate-200 active:scale-95 text-slate-800 flex items-center justify-center font-black transition-all shadow-2xs"
+                            className="w-7 h-7 rounded-lg bg-white hover:bg-emerald-200 active:scale-95 text-emerald-950 flex items-center justify-center font-black transition-all shadow-2xs"
                             title="Decrease quantity"
                           >
                             -
                           </button>
-                          <span className="px-3 text-[13px] font-black text-slate-900">
+                          <span className="px-3 text-[13px] font-black text-emerald-950">
                             {item.quantityKg} kg
                           </span>
                           <button
@@ -238,27 +238,27 @@ export const ConsumerCartDrawer: React.FC<ConsumerCartDrawerProps> = ({
               </div>
 
               {/* Price Details Breakdown (Flipkart Style) */}
-              <div className="bg-white rounded-2xl p-4 border border-slate-200 shadow-xs flex flex-col gap-2.5">
-                <h4 className="text-[13px] font-black text-slate-900 border-b border-slate-100 pb-2 uppercase tracking-wide">
+              <div className="bg-[#f4fcf6] rounded-2xl p-4 border border-emerald-300 shadow-xs flex flex-col gap-2.5">
+                <h4 className="text-[13px] font-black text-emerald-950 border-b border-emerald-200 pb-2 uppercase tracking-wide">
                   Price Details ({cart.length} {cart.length === 1 ? 'Item' : 'Items'})
                 </h4>
 
-                <div className="flex justify-between text-[12px] text-slate-600">
+                <div className="flex justify-between text-[12px] text-emerald-800">
                   <span>Total Harvest Weight</span>
-                  <span className="font-bold text-slate-800">{totalItemsCount} kg</span>
+                  <span className="font-bold text-emerald-950">{totalItemsCount} kg</span>
                 </div>
 
-                <div className="flex justify-between text-[12px] text-slate-600">
+                <div className="flex justify-between text-[12px] text-emerald-800">
                   <span>Direct Farm Produce Total</span>
-                  <span className="font-bold text-slate-800">₹{farmerBaseTotal.toLocaleString()}</span>
+                  <span className="font-bold text-emerald-950">₹{farmerBaseTotal.toLocaleString()}</span>
                 </div>
 
-                <div className="flex justify-between text-[12px] text-slate-600">
+                <div className="flex justify-between text-[12px] text-emerald-800">
                   <span className="flex items-center gap-1">
                     <span>Convenience & Logistics Fee</span>
-                    <span className="text-[10px] text-slate-400">(₹3/kg)</span>
+                    <span className="text-[10px] text-emerald-600">(₹3/kg)</span>
                   </span>
-                  <span className="font-bold text-slate-800">₹{totalConvenienceFee.toLocaleString()}</span>
+                  <span className="font-bold text-emerald-950">₹{totalConvenienceFee.toLocaleString()}</span>
                 </div>
 
                 <div className="flex justify-between text-[12px] text-emerald-700 font-bold">
@@ -271,33 +271,33 @@ export const ConsumerCartDrawer: React.FC<ConsumerCartDrawerProps> = ({
                   <span className="uppercase">Free</span>
                 </div>
 
-                <div className="pt-2.5 border-t border-dashed border-slate-200 flex justify-between items-center">
+                <div className="pt-2.5 border-t border-dashed border-emerald-300 flex justify-between items-center">
                   <div>
-                    <span className="text-[14px] font-black text-slate-900 block">Total Amount</span>
-                    <span className="text-[10px] text-slate-500 font-medium">Inclusive of all direct farm charges</span>
+                    <span className="text-[14px] font-black text-emerald-950 block">Total Amount</span>
+                    <span className="text-[10px] text-emerald-700 font-medium">Inclusive of all direct farm charges</span>
                   </div>
                   <div className="text-right">
                     <span className="text-[18px] font-black text-emerald-700 block leading-tight">
                       ₹{consumerGrandTotal.toLocaleString()}
                     </span>
-                    <span className="text-[10px] text-slate-400 line-through">
+                    <span className="text-[10px] text-emerald-600/70 line-through">
                       ₹{estimatedMarketRetailPrice.toLocaleString()}
                     </span>
                   </div>
                 </div>
 
-                <div className="bg-emerald-50 text-emerald-800 text-[11px] font-extrabold p-2.5 rounded-xl border border-emerald-200 text-center">
+                <div className="bg-emerald-100 text-emerald-950 text-[11px] font-extrabold p-2.5 rounded-xl border border-emerald-300 text-center">
                   🎉 You will save ₹{totalSavings.toLocaleString()} on this direct farm order!
                 </div>
               </div>
             </>
           ) : (
             /* Checkout & Multi-item Payment Selection */
-            <div className="bg-white rounded-2xl p-4 border border-slate-200 shadow-xs flex flex-col gap-4 animate-in slide-in-from-bottom-2 duration-200">
-              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+            <div className="bg-[#f4fcf6] rounded-2xl p-4 border border-emerald-300 shadow-xs flex flex-col gap-4 animate-in slide-in-from-bottom-2 duration-200">
+              <div className="flex items-center justify-between border-b border-emerald-200 pb-3">
                 <div>
-                  <h3 className="text-[15px] font-black text-slate-900">Select Payment Method</h3>
-                  <p className="text-[11px] text-slate-500 font-medium">Order all {cart.length} harvest items altogether</p>
+                  <h3 className="text-[15px] font-black text-emerald-950">Select Payment Method</h3>
+                  <p className="text-[11px] text-emerald-700/80 font-medium">Order all {cart.length} harvest items altogether</p>
                 </div>
                 <button
                   onClick={() => setShowCheckoutStep(false)}
@@ -308,14 +308,14 @@ export const ConsumerCartDrawer: React.FC<ConsumerCartDrawerProps> = ({
               </div>
 
               {/* Order Quick Summary Header */}
-              <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 text-[12px] flex justify-between items-center">
+              <div className="bg-emerald-100/70 p-3 rounded-xl border border-emerald-200 text-[12px] flex justify-between items-center">
                 <div>
-                  <span className="text-slate-500 font-medium block">Total Payable</span>
-                  <span className="text-[16px] font-black text-slate-900">
+                  <span className="text-emerald-800 font-medium block">Total Payable</span>
+                  <span className="text-[16px] font-black text-emerald-950">
                     ₹{consumerGrandTotal.toLocaleString()}
                   </span>
                 </div>
-                <span className="text-[11px] font-black bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-full">
+                <span className="text-[11px] font-black bg-emerald-200 text-emerald-950 px-2.5 py-1 rounded-full border border-emerald-300">
                   {totalItemsCount} kg Total
                 </span>
               </div>
@@ -329,8 +329,8 @@ export const ConsumerCartDrawer: React.FC<ConsumerCartDrawerProps> = ({
                   }}
                   className={`p-2.5 rounded-xl border flex flex-col items-center justify-center gap-1 transition-all ${
                     selectedPayment === 'cash'
-                      ? 'border-emerald-600 bg-emerald-50/80 text-emerald-950 font-black shadow-xs ring-2 ring-emerald-500/20'
-                      : 'border-slate-200 bg-white hover:bg-slate-50 text-slate-600 font-medium'
+                      ? 'border-emerald-600 bg-emerald-200 text-emerald-950 font-black shadow-xs ring-2 ring-emerald-500/20'
+                      : 'border-emerald-200 bg-white hover:bg-emerald-50 text-emerald-800 font-medium'
                   }`}
                 >
                   <span className="material-symbols-outlined text-[24px] text-emerald-700">payments</span>
@@ -345,11 +345,11 @@ export const ConsumerCartDrawer: React.FC<ConsumerCartDrawerProps> = ({
                   }}
                   className={`p-2.5 rounded-xl border flex flex-col items-center justify-center gap-1 transition-all ${
                     selectedPayment === 'card'
-                      ? 'border-emerald-600 bg-emerald-50/80 text-emerald-950 font-black shadow-xs ring-2 ring-emerald-500/20'
-                      : 'border-slate-200 bg-white hover:bg-slate-50 text-slate-600 font-medium'
+                      ? 'border-emerald-600 bg-emerald-200 text-emerald-950 font-black shadow-xs ring-2 ring-emerald-500/20'
+                      : 'border-emerald-200 bg-white hover:bg-emerald-50 text-emerald-800 font-medium'
                   }`}
                 >
-                  <span className="material-symbols-outlined text-[24px] text-blue-700">credit_card</span>
+                  <span className="material-symbols-outlined text-[24px] text-emerald-700">credit_card</span>
                   <span>Card</span>
                   <span className="text-[9px] opacity-75">(Debit/Credit)</span>
                 </button>
@@ -361,11 +361,11 @@ export const ConsumerCartDrawer: React.FC<ConsumerCartDrawerProps> = ({
                   }}
                   className={`p-2.5 rounded-xl border flex flex-col items-center justify-center gap-1 transition-all ${
                     selectedPayment === 'online'
-                      ? 'border-emerald-600 bg-emerald-50/80 text-emerald-950 font-black shadow-xs ring-2 ring-emerald-500/20'
-                      : 'border-slate-200 bg-white hover:bg-slate-50 text-slate-600 font-medium'
+                      ? 'border-emerald-600 bg-emerald-200 text-emerald-950 font-black shadow-xs ring-2 ring-emerald-500/20'
+                      : 'border-emerald-200 bg-white hover:bg-emerald-50 text-emerald-800 font-medium'
                   }`}
                 >
-                  <span className="material-symbols-outlined text-[24px] text-amber-600">qr_code_scanner</span>
+                  <span className="material-symbols-outlined text-[24px] text-emerald-700">qr_code_scanner</span>
                   <span>UPI / QR</span>
                   <span className="text-[9px] opacity-75">(Instant Scan)</span>
                 </button>
