@@ -27,6 +27,9 @@ export default function LoginPage() {
   const [regRole, setRegRole] = useState<'farmer' | 'buyer'>('farmer');
   const [regEmail, setRegEmail] = useState('');
   const [regPassword, setRegPassword] = useState('');
+  const [regHasEnam, setRegHasEnam] = useState(false);
+  const [regEnamId, setRegEnamId] = useState('');
+  const [regEnamPassword, setRegEnamPassword] = useState('');
   const [regError, setRegError] = useState('');
   const [regSuccess, setRegSuccess] = useState('');
   const [isRegistering, setIsRegistering] = useState(false);
@@ -357,7 +360,7 @@ export default function LoginPage() {
     return () => window.removeEventListener('farm2flow_accounts_updated', handleAccountsUpdated);
   }, []);
 
-  const handleProfileLogin = (profile: { id: string; name: string; location: string; address: string; email: string }, selectedRole: 'farmer' | 'buyer') => {
+  const handleProfileLogin = (profile: { id: string; name: string; location: string; address: string; email: string; isEnamVerified?: boolean; enamId?: string }, selectedRole: 'farmer' | 'buyer') => {
     setRole(selectedRole);
     setIdentifier(profile.email);
     setPassword('demo1234');
@@ -366,12 +369,15 @@ export default function LoginPage() {
     setError('');
 
     setTimeout(() => {
+      const isEnam = selectedRole === 'farmer' ? (profile.isEnamVerified ?? true) : false;
       const userSession = {
         identifier: profile.email,
         name: profile.name,
         location: profile.location,
         address: profile.address,
         role: selectedRole === 'buyer' ? 'consumer' : 'farmer',
+        isEnamVerified: isEnam,
+        enamId: profile.enamId || (isEnam ? 'ENAM-APMC-WB-712409' : undefined),
         token: `f2f-token-${profile.id}-${Date.now()}`
       };
       if (typeof window !== 'undefined') {
@@ -423,12 +429,20 @@ export default function LoginPage() {
       let profileLocation = registeredMatch?.location || demoMatch?.location || (selectedRole === 'buyer' ? 'Salt Lake, Kolkata' : 'Hooghly (Singur)');
       let profileAddress = registeredMatch?.address || demoMatch?.address || (selectedRole === 'buyer' ? 'AD-Block, Sector 1, Salt Lake, Kolkata - 700064' : 'Singur Vegetable Cluster, Hooghly, WB');
 
+      // For registered custom accounts: depends strictly on whether enamId was provided during registration!
+      // For demo farmers: default verified. For buyers: false.
+      const isEnamVerified = registeredMatch 
+        ? Boolean(registeredMatch.isEnamVerified)
+        : (selectedRole === 'farmer');
+
       const userSession = {
         identifier: identifier || (selectedRole === 'buyer' ? 'sourav.consumer@farm2flow.in' : 'ramesh.farmer@farm2flow.in'),
         name: profileName,
         location: profileLocation,
         address: profileAddress,
         role: selectedRole === 'buyer' ? 'consumer' : selectedRole,
+        isEnamVerified,
+        enamId: registeredMatch?.enamId || (isEnamVerified ? 'ENAM-APMC-WB-712409' : undefined),
         token: `f2f-token-${selectedRole}-${Date.now()}`
       };
 
@@ -476,6 +490,7 @@ export default function LoginPage() {
     setIsRegistering(true);
 
     try {
+      const hasEnamProvided = regHasEnam || Boolean(regEnamId.trim());
       const created = await registerNewAccount({
         name: regName.trim(),
         address: regAddress.trim(),
@@ -483,7 +498,9 @@ export default function LoginPage() {
         phone: regPhone.trim(),
         role: regRole,
         email: regEmail.trim() || undefined,
-        password: regPassword
+        password: regPassword,
+        enamId: hasEnamProvided ? (regEnamId.trim() || `ENAM-${Date.now().toString().slice(-6)}`) : undefined,
+        isEnamVerified: hasEnamProvided
       });
 
       setIsRegistering(false);
@@ -497,6 +514,8 @@ export default function LoginPage() {
           location: created.location,
           address: created.address,
           role: created.role === 'buyer' ? 'consumer' : 'farmer',
+          isEnamVerified: created.isEnamVerified || false,
+          enamId: created.enamId,
           token: `f2f-token-${created.id}-${Date.now()}`
         };
         if (typeof window !== 'undefined') {
@@ -952,6 +971,73 @@ export default function LoginPage() {
                   placeholder="alok.ghosh@example.com (optional)"
                   className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white"
                 />
+              </div>
+
+              {/* e-NAM Verification Details (Recommended) */}
+              <div className="bg-gradient-to-br from-emerald-50 to-teal-50/70 border border-emerald-300/80 rounded-2xl p-3.5 flex flex-col gap-2.5 shadow-2xs">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1.5">
+                    <span className="material-symbols-outlined text-emerald-700 text-[18px]">verified</span>
+                    <span className="font-extrabold text-[13px] text-emerald-950">e-NAM Verification Details</span>
+                  </div>
+                  <span className="text-[10px] font-black text-emerald-800 bg-emerald-200/80 border border-emerald-300 px-2 py-0.5 rounded-full uppercase tracking-wider">
+                    Recommended
+                  </span>
+                </div>
+
+                {/* Exact requested explanation text */}
+                <div className="text-[11px] text-slate-700 leading-relaxed bg-white/90 p-2.5 rounded-xl border border-emerald-200/70 shadow-2xs">
+                  <p className="font-semibold text-emerald-950 mb-0.5">Login ID and Password:</p>
+                  <p className="text-slate-600">
+                    A temporary login ID and password are sent to your registered email address upon initial registration. After APMC (Agricultural Produce Market Committee) verification and KYC completion, you receive a permanent login ID.
+                  </p>
+                </div>
+
+                {/* Optional Checkbox toggle */}
+                <label className="flex items-center gap-2 cursor-pointer pt-0.5">
+                  <input
+                    type="checkbox"
+                    checked={regHasEnam}
+                    onChange={e => setRegHasEnam(e.target.checked)}
+                    className="w-4 h-4 rounded text-emerald-700 focus:ring-emerald-600 border-slate-300"
+                  />
+                  <span className="text-[12px] font-bold text-emerald-950 select-none">
+                    Link my e-NAM / APMC Registered Account
+                  </span>
+                </label>
+
+                {/* e-NAM Credentials Input Fields (Visible if toggled or user types) */}
+                {(regHasEnam || regRole === 'farmer') && (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+                    <div>
+                      <label className="text-[11px] font-extrabold text-slate-700 block mb-0.5">
+                        e-NAM Login ID {regHasEnam ? '*' : '(Optional)'}
+                      </label>
+                      <input
+                        type="text"
+                        value={regEnamId}
+                        onChange={e => {
+                          setRegEnamId(e.target.value);
+                          if (e.target.value.trim().length > 0) setRegHasEnam(true);
+                        }}
+                        placeholder="e.g. WB-APMC-712409"
+                        className="w-full px-3 py-2 bg-white border border-emerald-200 rounded-xl font-bold text-slate-900 text-[12px] focus:outline-none focus:border-emerald-600"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[11px] font-extrabold text-slate-700 block mb-0.5">
+                        e-NAM Passcode / Auth Code
+                      </label>
+                      <input
+                        type="password"
+                        value={regEnamPassword}
+                        onChange={e => setRegEnamPassword(e.target.value)}
+                        placeholder="e-NAM APMC Password"
+                        className="w-full px-3 py-2 bg-white border border-emerald-200 rounded-xl font-bold text-slate-900 text-[12px] focus:outline-none focus:border-emerald-600"
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Password */}

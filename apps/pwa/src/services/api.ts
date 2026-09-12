@@ -20,6 +20,8 @@ export interface RegisteredAccount {
   role: 'farmer' | 'buyer';
   email?: string;
   password?: string;
+  enamId?: string;
+  isEnamVerified?: boolean;
   createdAt: string;
 }
 
@@ -45,6 +47,7 @@ export const syncRegisteredAccountsFromBackend = async (): Promise<RegisteredAcc
         const mergedMap = new Map<string, RegisteredAccount>();
         localAccounts.forEach(u => mergedMap.set(u.phone, u));
         serverUsers.forEach((u: any) => {
+          const existing = localAccounts.find(l => l.phone === u.phone);
           mergedMap.set(u.phone, {
             id: u.id,
             name: u.name,
@@ -54,6 +57,8 @@ export const syncRegisteredAccountsFromBackend = async (): Promise<RegisteredAcc
             phone: u.phone,
             role: u.role || 'buyer',
             email: u.email,
+            enamId: u.enam_id || existing?.enamId,
+            isEnamVerified: u.is_enam_verified !== undefined ? Boolean(u.is_enam_verified) : (existing?.isEnamVerified || Boolean(u.enam_id)),
             createdAt: u.created_at || new Date().toISOString()
           });
         });
@@ -75,11 +80,16 @@ export const registerNewAccount = async (account: {
   role: 'farmer' | 'buyer';
   email?: string;
   password: string;
+  enamId?: string;
+  isEnamVerified?: boolean;
 }): Promise<RegisteredAccount> => {
+  const isEnam = Boolean(account.enamId && account.enamId.trim().length > 0);
   const newAccount: RegisteredAccount = {
     ...account,
     id: `usr-${Date.now().toString().slice(-5)}`,
     location: account.address.includes(',') ? account.address.split(',').slice(-2, -1)[0].trim() : account.address,
+    enamId: account.enamId?.trim() || undefined,
+    isEnamVerified: account.isEnamVerified !== undefined ? account.isEnamVerified : isEnam,
     createdAt: new Date().toISOString()
   };
 
@@ -96,7 +106,7 @@ export const registerNewAccount = async (account: {
     fetch('http://localhost:8000/api/auth/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(account)
+      body: JSON.stringify(newAccount)
     }).catch(() => {});
   } catch {}
 

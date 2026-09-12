@@ -26,6 +26,8 @@ export default function FarmerPage() {
   const [currentLocation, setCurrentLocation] = useState<string>('Hooghly (Singur), West Bengal');
   const [farmerAddress, setFarmerAddress] = useState<string>('Singur Vegetable Cluster, Hooghly, WB');
   const [farmerPhone, setFarmerPhone] = useState<string>('+91 98310 44210');
+  const [isEnamVerified, setIsEnamVerified] = useState<boolean>(true);
+  const [enamId, setEnamId] = useState<string>('');
   
   // Modal Visibility States
   const [isHelpOpen, setIsHelpOpen] = useState(false);
@@ -55,6 +57,8 @@ export default function FarmerPage() {
         if (session.location) setCurrentLocation(session.location);
         if (session.address) setFarmerAddress(session.address);
         if (session.phone || session.identifier) setFarmerPhone(session.phone || session.identifier);
+        setIsEnamVerified(Boolean(session.isEnamVerified));
+        if (session.enamId) setEnamId(session.enamId);
       } catch (e) {}
     }
     setProduceList(getStoredProduce());
@@ -200,9 +204,16 @@ export default function FarmerPage() {
                   </div>
                   <div>
                     <h1 className="text-[16px] font-extrabold text-emerald-950 leading-tight">{farmerName}</h1>
-                    <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-900 bg-emerald-200 px-2 py-0.5 rounded-md mt-0.5">
-                      {t.verifiedFarmer}
-                    </span>
+                    {isEnamVerified ? (
+                      <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-900 bg-emerald-200 px-2 py-0.5 rounded-md mt-0.5">
+                        {t.verifiedFarmer}
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 text-[10px] font-bold text-slate-700 bg-slate-200/80 px-2 py-0.5 rounded-md mt-0.5 border border-slate-300">
+                        <span className="material-symbols-outlined text-[12px] text-slate-500">pending</span>
+                        <span>Direct Producer (Unverified)</span>
+                      </span>
+                    )}
                   </div>
                 </div>
                 <button 
@@ -365,25 +376,45 @@ export default function FarmerPage() {
                   <div className="min-w-0 flex-1">
                     <h2 className="text-[20px] font-black text-emerald-950 truncate leading-tight">{farmerName}</h2>
                     <p className="text-[12px] text-emerald-800/80 font-semibold mt-0.5">{t.farmerProfile || 'Agricultural Producer & Mandi Seller'}</p>
-                    <span className="inline-flex items-center gap-1 mt-1 text-[11px] font-extrabold text-emerald-900 bg-emerald-200/90 px-2.5 py-0.5 rounded-lg border border-emerald-300">
-                      Verified Producer • West Bengal Cluster
-                    </span>
+                    {isEnamVerified ? (
+                      <span className="inline-flex items-center gap-1 mt-1 text-[11px] font-extrabold text-emerald-900 bg-emerald-200/90 px-2.5 py-0.5 rounded-lg border border-emerald-300 shadow-2xs">
+                        <span className="material-symbols-outlined text-[13px] text-emerald-700">verified</span>
+                        <span>e-NAM Verified Producer • APMC Registered</span>
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 mt-1 text-[11px] font-bold text-slate-700 bg-slate-200/80 px-2.5 py-0.5 rounded-lg border border-slate-300">
+                        <span className="material-symbols-outlined text-[13px] text-slate-500">pending</span>
+                        <span>Producer (e-NAM Unverified)</span>
+                      </span>
+                    )}
                   </div>
                 </div>
 
                 {/* Details Card */}
                 <div className="space-y-2.5 text-[12px] text-emerald-900 bg-emerald-100/50 rounded-2xl p-4 border border-emerald-200/80">
                   <p className="flex items-baseline gap-1">
-                    <strong className="text-emerald-950 font-extrabold">Registered Phone::</strong>
+                    <strong className="text-emerald-950 font-extrabold">Registered Phone:</strong>
                     <span className="font-semibold text-emerald-900">{farmerPhone}</span>
                   </p>
                   <p className="flex items-baseline gap-1">
-                    <strong className="text-emerald-950 font-extrabold">Hub City::</strong>
+                    <strong className="text-emerald-950 font-extrabold">Hub City:</strong>
                     <span className="font-semibold text-emerald-900">{currentLocation}</span>
                   </p>
                   <p className="flex items-baseline gap-1">
-                    <strong className="text-emerald-950 font-extrabold">Receiving Address::</strong>
+                    <strong className="text-emerald-950 font-extrabold">Receiving Address:</strong>
                     <span className="font-semibold text-emerald-900">{farmerAddress}</span>
+                  </p>
+                  <p className="flex items-baseline gap-1">
+                    <strong className="text-emerald-950 font-extrabold">e-NAM Status:</strong>
+                    {isEnamVerified ? (
+                      <span className="font-bold text-emerald-800 bg-emerald-200/80 px-2 py-0.5 rounded-md text-[11px]">
+                        ✓ e-NAM Verified {enamId ? `(${enamId})` : ''}
+                      </span>
+                    ) : (
+                      <span className="font-bold text-slate-600 bg-slate-200 px-2 py-0.5 rounded-md text-[11px]">
+                        Not Verified (e-NAM details not linked)
+                      </span>
+                    )}
                   </p>
                 </div>
 
