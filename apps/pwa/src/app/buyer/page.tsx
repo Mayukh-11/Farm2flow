@@ -166,11 +166,11 @@ export default function BuyerPage() {
   }, [produceList, selectedCategory, searchQuery]);
 
   return (
-    <div className="bg-slate-950 text-slate-900 antialiased min-h-screen pb-28 font-sans selection:bg-emerald-500 selection:text-white">
-      <div className="max-w-[430px] mx-auto min-h-screen bg-[#fafbfc] flex flex-col relative shadow-2xl border-x border-slate-200/80">
+    <div className="bg-[#051c0e] text-slate-900 antialiased min-h-screen pb-28 font-sans selection:bg-emerald-500 selection:text-white">
+      <div className="max-w-[430px] mx-auto min-h-screen bg-[#f2fbf4] flex flex-col relative shadow-2xl border-x border-emerald-200/80">
         
         {/* TOP STATUS & BRAND HEADER */}
-        <header className="bg-white/80 backdrop-blur-xl border-b border-slate-100 sticky top-0 z-40 px-4 py-3">
+        <header className="bg-emerald-900/90 text-white backdrop-blur-xl border-b border-emerald-800 sticky top-0 z-40 px-4 py-3">
           <div className="flex justify-between items-center">
             {/* Logo and Brand */}
             <div className="flex items-center gap-2.5">
@@ -179,33 +179,33 @@ export default function BuyerPage() {
               </div>
               <div>
                 <div className="flex items-center gap-1.5">
-                  <span className="text-[17px] font-black text-slate-900 tracking-tight leading-none">Farm2Flow</span>
-                  <span className="text-[9px] bg-emerald-100 text-emerald-800 font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider border border-emerald-200/60">
+                  <span className="text-[17px] font-black text-white tracking-tight leading-none">Farm2Flow</span>
+                  <span className="text-[9px] bg-emerald-800 text-emerald-200 font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider border border-emerald-700">
                     Direct
                   </span>
                 </div>
                 <button
                   onClick={() => setIsMapOpen(true)}
-                  className="flex items-center gap-1 text-[11px] font-semibold text-slate-500 hover:text-emerald-700 transition-colors mt-0.5 text-left group"
+                  className="flex items-center gap-1 text-[11px] font-semibold text-emerald-200 hover:text-white transition-colors mt-0.5 text-left group"
                 >
-                  <span className="material-symbols-outlined text-[13px] text-emerald-600 group-hover:scale-110 transition-transform">location_on</span>
-                  <span className="truncate max-w-[160px] underline decoration-slate-300 underline-offset-2">{buyerLocation}</span>
-                  <span className="material-symbols-outlined text-[12px] text-slate-400">expand_more</span>
+                  <span className="material-symbols-outlined text-[13px] text-emerald-400 group-hover:scale-110 transition-transform">location_on</span>
+                  <span className="truncate max-w-[160px] underline decoration-emerald-700 underline-offset-2">{buyerLocation}</span>
+                  <span className="material-symbols-outlined text-[12px] text-emerald-300">expand_more</span>
                 </button>
               </div>
             </div>
 
             {/* Language Switcher & Cart Action */}
             <div className="flex items-center gap-2">
-              <div className="bg-slate-100/90 rounded-full p-0.5 flex text-[11px] border border-slate-200 font-bold shadow-xs">
+              <div className="bg-emerald-950/80 rounded-full p-0.5 flex text-[11px] border border-emerald-700/60 font-bold shadow-xs">
                 {(['EN', 'BN', 'HI'] as Language[]).map(lang => (
                   <button
                     key={lang}
                     onClick={() => setLanguage(lang)}
                     className={`px-2 py-0.5 rounded-full transition-all ${
                       language === lang
-                        ? 'bg-slate-900 text-white font-black shadow-xs'
-                        : 'text-slate-600 hover:text-slate-900'
+                        ? 'bg-emerald-600 text-white font-black shadow-xs'
+                        : 'text-emerald-300 hover:text-white'
                     }`}
                   >
                     {lang === 'BN' ? 'বাং' : lang === 'HI' ? 'हिं' : 'EN'}
@@ -216,13 +216,13 @@ export default function BuyerPage() {
               {/* Shopping Cart Button (Flipkart style) */}
               <button
                 onClick={() => setIsCartOpen(true)}
-                className="w-9 h-9 rounded-full bg-emerald-50 hover:bg-emerald-100 text-emerald-800 flex items-center justify-center transition-all relative border border-emerald-200 active:scale-95"
+                className="w-9 h-9 rounded-full bg-emerald-800 hover:bg-emerald-700 text-white flex items-center justify-center transition-all relative border border-emerald-700 active:scale-95"
                 aria-label="View Cart"
                 title="View Cart"
               >
                 <span className="material-symbols-outlined text-[20px]">shopping_cart</span>
                 {cartList.length > 0 && (
-                  <span className="absolute -top-1.5 -right-1.5 min-w-5 h-5 px-1 bg-rose-600 text-white text-[10px] font-black rounded-full flex items-center justify-center border-2 border-white shadow-sm animate-pulse">
+                  <span className="absolute -top-1.5 -right-1.5 min-w-5 h-5 px-1 bg-emerald-400 text-emerald-950 text-[10px] font-black rounded-full flex items-center justify-center border-2 border-emerald-900 shadow-sm animate-pulse">
                     {cartList.length}
                   </span>
                 )}
@@ -230,13 +230,13 @@ export default function BuyerPage() {
 
               <button
                 onClick={() => setBuyerTab('orders')}
-                className="w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-800 flex items-center justify-center transition-all relative border border-slate-200 active:scale-95"
+                className="w-9 h-9 rounded-full bg-emerald-800 hover:bg-emerald-700 text-emerald-100 flex items-center justify-center transition-all relative border border-emerald-700 active:scale-95"
                 aria-label="View Orders"
                 title="Track Orders"
               >
                 <span className="material-symbols-outlined text-[20px]">receipt_long</span>
                 {ordersList.length > 0 && (
-                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-slate-900 text-white text-[9px] font-black rounded-full flex items-center justify-center border-2 border-white shadow-xs">
+                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-emerald-400 text-emerald-950 text-[9px] font-black rounded-full flex items-center justify-center border-2 border-emerald-900 shadow-xs">
                     {ordersList.length}
                   </span>
                 )}
@@ -252,7 +252,7 @@ export default function BuyerPage() {
             <>
               {/* DRIBBLE-STYLE HERO SECTION WITH REAL FARM PHOTOGRAPHY & LUXURY BADGES */}
               <section className="p-4 pt-3">
-                <div className="relative rounded-[28px] overflow-hidden bg-gradient-to-br from-emerald-950 via-emerald-900 to-slate-900 text-white shadow-xl">
+                <div className="relative rounded-[28px] overflow-hidden bg-gradient-to-br from-emerald-950 via-green-950 to-emerald-900 text-white shadow-xl border border-emerald-800/60">
                   {/* Background Image with Overlay */}
                   <div className="absolute inset-0 z-0">
                     <img
@@ -314,21 +314,21 @@ export default function BuyerPage() {
 
               {/* DRIBBLE-STYLE PILL SEARCH BAR */}
               <section className="px-4 pb-2">
-                <div className="dribbble-search flex items-center px-4 py-2.5 gap-2.5 bg-white">
-                  <span className="material-symbols-outlined text-slate-400 text-[20px]">search</span>
+                <div className="dribbble-search flex items-center px-4 py-2.5 gap-2.5 bg-emerald-50/60 border border-emerald-200">
+                  <span className="material-symbols-outlined text-emerald-700 text-[20px]">search</span>
                   <input
                     type="text"
                     placeholder={t.searchPlaceholder || "Search fresh tomatoes, aromatic rice, potatoes..."}
                     value={searchQuery}
                     onChange={e => setSearchQuery(e.target.value)}
-                    className="flex-1 bg-transparent text-[13px] font-medium text-slate-800 placeholder-slate-400 outline-none"
+                    className="flex-1 bg-transparent text-[13px] font-medium text-emerald-950 placeholder-emerald-800/50 outline-none"
                   />
                   {searchQuery ? (
-                    <button onClick={() => setSearchQuery('')} className="text-slate-400 hover:text-slate-600">
+                    <button onClick={() => setSearchQuery('')} className="text-emerald-700 hover:text-emerald-950">
                       <span className="material-symbols-outlined text-[16px]">close</span>
                     </button>
                   ) : (
-                    <span className="text-[10px] uppercase font-extrabold tracking-wider bg-slate-100 text-slate-500 px-2 py-1 rounded-lg">
+                    <span className="text-[10px] uppercase font-extrabold tracking-wider bg-emerald-100 text-emerald-800 px-2 py-1 rounded-lg">
                       Filter
                     </span>
                   )}
@@ -338,7 +338,7 @@ export default function BuyerPage() {
               {/* CATEGORY PILL CAROUSEL */}
               <section className="px-4 py-2">
                 <div className="flex items-center justify-between mb-2.5">
-                  <h2 className="text-[15px] font-extrabold text-slate-900 tracking-tight">{t.categoriesTitle || 'Categories'}</h2>
+                  <h2 className="text-[15px] font-extrabold text-emerald-950 tracking-tight">{t.categoriesTitle || 'Categories'}</h2>
                   <span className="text-[11px] text-emerald-700 font-bold hover:underline cursor-pointer">
                     {filteredProduce.length} {t.lotsOnlineSuffix || 'lots online'}
                   </span>
@@ -354,7 +354,7 @@ export default function BuyerPage() {
                         className={`px-4 py-2 rounded-full text-[12px] font-bold whitespace-nowrap transition-all flex items-center gap-1.5 active:scale-95 ${
                           isSelected
                             ? 'dribbble-pill-active'
-                            : 'bg-white text-slate-700 border border-slate-200/80 hover:bg-slate-50 shadow-xs'
+                            : 'bg-emerald-50 text-emerald-900 border border-emerald-200/90 hover:bg-emerald-100 shadow-xs'
                         }`}
                       >
                         <span className="text-[14px]">{cat.icon}</span>
@@ -398,8 +398,8 @@ export default function BuyerPage() {
               <section className="px-4 py-2 flex flex-col gap-3">
                 <div className="flex justify-between items-center">
                   <div>
-                    <h2 className="text-[16px] font-extrabold text-slate-900 tracking-tight">{t.todayHarvestsTitle || 'Today’s Verified Harvests'}</h2>
-                    <p className="text-[11px] text-slate-500 font-medium">{t.todayHarvestsSub || 'Direct farm batches inspected for quality & weight'}</p>
+                    <h2 className="text-[16px] font-extrabold text-emerald-950 tracking-tight">{t.todayHarvestsTitle || 'Today’s Verified Harvests'}</h2>
+                    <p className="text-[11px] text-emerald-700/80 font-medium">{t.todayHarvestsSub || 'Direct farm batches inspected for quality & weight'}</p>
                   </div>
                   <button
                     onClick={() => setBuyerTab('browse')}
@@ -416,10 +416,10 @@ export default function BuyerPage() {
                     return (
                       <div
                         key={item.id}
-                        className="dribbble-card overflow-hidden flex flex-col group relative bg-white"
+                        className="dribbble-card overflow-hidden flex flex-col group relative bg-[#f4fcf6] border border-emerald-300"
                       >
                         {/* Crop Image Container */}
-                        <div className="relative w-full h-32 bg-slate-100 overflow-hidden">
+                        <div className="relative w-full h-32 bg-emerald-950/20 overflow-hidden">
                           <img
                             src={photoUrl}
                             alt={item.cropName}
@@ -429,7 +429,7 @@ export default function BuyerPage() {
 
                           {/* Top Badges */}
                           <div className="absolute top-2 left-2 flex items-center gap-1">
-                            <span className="text-[9px] font-black uppercase tracking-wider bg-white/95 text-emerald-900 px-2 py-0.5 rounded-full shadow-xs backdrop-blur-sm">
+                            <span className="text-[9px] font-black uppercase tracking-wider bg-emerald-900/90 text-white px-2 py-0.5 rounded-full shadow-xs backdrop-blur-sm">
                               {item.grade}
                             </span>
                           </div>
@@ -451,15 +451,15 @@ export default function BuyerPage() {
                         <div className="p-3 flex flex-col flex-1 justify-between gap-2">
                           <div>
                             <div className="flex items-center justify-between">
-                              <h3 className="font-extrabold text-slate-900 text-[14px] leading-snug">
+                              <h3 className="font-extrabold text-emerald-950 text-[14px] leading-snug">
                                 {item.cropName}
                               </h3>
-                              <div className="flex items-center gap-0.5 text-amber-500 text-[11px] font-black">
+                              <div className="flex items-center gap-0.5 text-emerald-600 text-[11px] font-black">
                                 <span>★</span>
-                                <span className="text-slate-700">4.9</span>
+                                <span className="text-emerald-900">4.9</span>
                               </div>
                             </div>
-                            <p className="text-[11px] text-slate-500 font-medium truncate">
+                            <p className="text-[11px] text-emerald-700/80 font-medium truncate">
                               {item.variety}
                             </p>
                             <p className="text-[10px] text-emerald-700 font-semibold flex items-center gap-0.5 mt-0.5 truncate">
@@ -469,14 +469,14 @@ export default function BuyerPage() {
                           </div>
 
                           {/* Price & Action Buttons (Add to Cart + Buy Now) */}
-                          <div className="pt-2 border-t border-slate-100 flex items-center justify-between gap-1.5">
+                          <div className="pt-2 border-t border-emerald-200/80 flex items-center justify-between gap-1.5">
                             <div>
-                              <span className="text-[9px] uppercase font-bold text-slate-400 block leading-none">
+                              <span className="text-[9px] uppercase font-bold text-emerald-600/70 block leading-none">
                                 {t.farmGatePriceLabel || 'Farm-Gate'}
                               </span>
-                              <div className="text-[14px] font-black text-slate-900 leading-tight">
+                              <div className="text-[14px] font-black text-emerald-950 leading-tight">
                                 ₹{item.expectedPricePerKg}
-                                <span className="text-[10px] font-semibold text-slate-500">/kg</span>
+                                <span className="text-[10px] font-semibold text-emerald-700">/kg</span>
                               </div>
                             </div>
 
@@ -484,10 +484,10 @@ export default function BuyerPage() {
                               {/* Flipkart Style Add to Cart Button */}
                               <button
                                 onClick={() => handleAddToCart(item, 10)}
-                                className="px-2 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-300 text-amber-900 font-extrabold text-[10px] flex items-center gap-0.5 active:scale-95 transition-all shadow-2xs"
-                                title="Add to Cart (Flipkart style)"
+                                className="px-2 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 text-emerald-900 font-extrabold text-[10px] flex items-center gap-0.5 active:scale-95 transition-all shadow-2xs"
+                                title="Add to Cart"
                               >
-                                <span className="material-symbols-outlined text-[14px] text-amber-700">add_shopping_cart</span>
+                                <span className="material-symbols-outlined text-[14px] text-emerald-700">add_shopping_cart</span>
                                 <span>Cart</span>
                               </button>
 
@@ -532,15 +532,15 @@ export default function BuyerPage() {
             <div className="p-4 flex flex-col gap-3">
               <div className="flex justify-between items-center">
                 <div>
-                  <h2 className="text-[18px] font-black text-slate-900">{t.exploreCatalogTitle || 'Explore Catalog'}</h2>
-                  <p className="text-[12px] text-slate-500 font-medium">{t.exploreCatalogSub || 'All active harvest batches from registered farmers'}</p>
+                  <h2 className="text-[18px] font-black text-emerald-950">{t.exploreCatalogTitle || 'Explore Catalog'}</h2>
+                  <p className="text-[12px] text-emerald-700/80 font-medium">{t.exploreCatalogSub || 'All active harvest batches from registered farmers'}</p>
                 </div>
                 <button
                   onClick={() => {
                     setSelectedMapCrop('All Crops');
                     setIsSellerMapOpen(true);
                   }}
-                  className="px-3 py-1.5 bg-emerald-100 text-emerald-800 border border-emerald-200 rounded-xl text-[11px] font-black flex items-center gap-1 hover:bg-emerald-200 transition-all shadow-xs"
+                  className="px-3 py-1.5 bg-emerald-100 text-emerald-800 border border-emerald-300 rounded-xl text-[11px] font-black flex items-center gap-1 hover:bg-emerald-200 transition-all shadow-xs"
                 >
                   <span className="material-symbols-outlined text-[14px]">map</span>
                   <span>{t.mapRadarBtn || 'Map Radar'}</span>
@@ -548,14 +548,14 @@ export default function BuyerPage() {
               </div>
 
               {/* Search in Browse */}
-              <div className="dribbble-search flex items-center px-4 py-2.5 gap-2.5 bg-white">
-                <span className="material-symbols-outlined text-slate-400 text-[20px]">search</span>
+              <div className="dribbble-search flex items-center px-4 py-2.5 gap-2.5 bg-[#f4fcf6] border border-emerald-300">
+                <span className="material-symbols-outlined text-emerald-700 text-[20px]">search</span>
                 <input
                   type="text"
                   placeholder={t.browseSearchPlaceholder || 'Search produce name, grade, location...'}
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
-                  className="flex-1 bg-transparent text-[13px] font-medium text-slate-800 placeholder-slate-400 outline-none"
+                  className="flex-1 bg-transparent text-[13px] font-medium text-emerald-950 placeholder-emerald-800/50 outline-none"
                 />
               </div>
 
@@ -566,10 +566,10 @@ export default function BuyerPage() {
                     <button
                       key={cat.id}
                       onClick={() => setSelectedCategory(cat.id)}
-                      className={`px-3 py-1.5 rounded-full text-[11px] font-bold whitespace-nowrap transition-all ${
+                      className={`px-3.5 py-1.5 rounded-full text-[11px] font-bold whitespace-nowrap transition-all ${
                         selectedCategory === cat.id
                           ? 'dribbble-pill-active'
-                          : 'bg-white text-slate-600 border border-slate-200'
+                          : 'bg-[#f4fcf6] text-emerald-900 border border-emerald-300 hover:bg-emerald-100'
                       }`}
                     >
                       {cat.icon} {cat.label}
@@ -585,39 +585,39 @@ export default function BuyerPage() {
                   return (
                     <div
                       key={item.id}
-                      className="dribbble-card p-3 flex gap-3 items-center bg-white"
+                      className="dribbble-card p-3 flex gap-3 items-center bg-[#f4fcf6] border border-emerald-300"
                     >
                       <img
                         src={photoUrl}
                         alt={item.cropName}
-                        className="w-20 h-20 rounded-2xl object-cover shrink-0 border border-slate-100 shadow-xs"
+                        className="w-20 h-20 rounded-2xl object-cover shrink-0 border border-emerald-200 shadow-xs"
                       />
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between">
-                          <h3 className="font-black text-slate-900 text-[15px] truncate">
+                          <h3 className="font-black text-emerald-950 text-[15px] truncate">
                             {item.cropName}
                           </h3>
-                          <span className="text-[10px] font-black bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-md">
+                          <span className="text-[10px] font-black bg-emerald-200 text-emerald-900 px-2 py-0.5 rounded-md">
                             {item.grade}
                           </span>
                         </div>
-                        <p className="text-[12px] text-slate-500 font-medium truncate">{item.variety}</p>
-                        <p className="text-[11px] text-slate-600 mt-0.5">
+                        <p className="text-[12px] text-emerald-800/80 font-medium truncate">{item.variety}</p>
+                        <p className="text-[11px] text-emerald-700 mt-0.5">
                           🧑‍🌾 {item.farmerName} • 📍 {item.farmerLocation}
                         </p>
-                        <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-100">
+                        <div className="flex items-center justify-between mt-2 pt-2 border-t border-emerald-200/80">
                           <div>
-                            <span className="text-[10px] text-slate-400 font-bold block leading-none">{t.availableLabel || 'AVAILABLE'}</span>
-                            <span className="text-[13px] font-extrabold text-slate-800">{item.quantityKg} kg</span>
+                            <span className="text-[10px] text-emerald-600/70 font-bold block leading-none">{t.availableLabel || 'AVAILABLE'}</span>
+                            <span className="text-[13px] font-extrabold text-emerald-950">{item.quantityKg} kg</span>
                           </div>
                           <div className="flex items-center gap-1.5">
-                            <span className="text-[15px] font-black text-emerald-700">₹{item.expectedPricePerKg}/kg</span>
+                            <span className="text-[15px] font-black text-emerald-800">₹{item.expectedPricePerKg}/kg</span>
                             <button
                               onClick={() => handleAddToCart(item, 10)}
-                              className="px-2.5 py-1.5 bg-amber-50 hover:bg-amber-100 border border-amber-300 text-amber-900 rounded-xl text-[11px] font-extrabold active:scale-95 transition-all shadow-2xs flex items-center gap-1"
-                              title="Add to Cart (Flipkart style)"
+                              className="px-2.5 py-1.5 bg-emerald-100 hover:bg-emerald-200 border border-emerald-300 text-emerald-950 rounded-xl text-[11px] font-extrabold active:scale-95 transition-all shadow-2xs flex items-center gap-1"
+                              title="Add to Cart"
                             >
-                              <span className="material-symbols-outlined text-[15px] text-amber-700">add_shopping_cart</span>
+                              <span className="material-symbols-outlined text-[15px] text-emerald-800">add_shopping_cart</span>
                               <span>Cart</span>
                             </button>
                             <button
@@ -633,7 +633,6 @@ export default function BuyerPage() {
                         </div>
                       </div>
                     </div>
-
                   );
                 })}
               </div>
@@ -645,22 +644,22 @@ export default function BuyerPage() {
             <div className="p-4 flex flex-col gap-3">
               <div className="flex justify-between items-center">
                 <div>
-                  <h2 className="text-[18px] font-black text-slate-900">{t.trackOrdersTitle || 'Active Orders'}</h2>
-                  <p className="text-[12px] text-slate-500 font-medium">{ordersList.length} {t.activeProcurementsSuffix || 'Active procurements'}</p>
+                  <h2 className="text-[18px] font-black text-emerald-950">{t.trackOrdersTitle || 'Active Orders'}</h2>
+                  <p className="text-[12px] text-emerald-700/80 font-medium">{ordersList.length} {t.activeProcurementsSuffix || 'Active procurements'}</p>
                 </div>
-                <span className="text-[11px] font-extrabold bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-full">
+                <span className="text-[11px] font-extrabold bg-emerald-200 text-emerald-900 px-2.5 py-1 rounded-full">
                   {t.verifiedDispatchBadge || 'Verified Dispatch'}
                 </span>
               </div>
 
               {ordersList.length === 0 ? (
-                <div className="bg-white rounded-3xl p-8 text-center border border-slate-200 flex flex-col items-center gap-3">
-                  <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center text-slate-400">
+                <div className="bg-[#f4fcf6] rounded-3xl p-8 text-center border border-emerald-300 flex flex-col items-center gap-3">
+                  <div className="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700">
                     <span className="material-symbols-outlined text-[32px]">receipt_long</span>
                   </div>
                   <div>
-                    <h3 className="text-[15px] font-bold text-slate-800">{t.noActiveOrders || 'No active orders yet'}</h3>
-                    <p className="text-[12px] text-slate-500 mt-1">
+                    <h3 className="text-[15px] font-bold text-emerald-950">{t.noActiveOrders || 'No active orders yet'}</h3>
+                    <p className="text-[12px] text-emerald-700 mt-1">
                       {t.noActiveOrdersSub || 'Run Smart Match to create your first direct farmer order!'}
                     </p>
                   </div>
@@ -675,47 +674,47 @@ export default function BuyerPage() {
                 ordersList.map(ord => (
                   <div
                     key={ord.id}
-                    className="dribbble-card p-4 flex flex-col gap-3 bg-white"
+                    className="dribbble-card p-4 flex flex-col gap-3 bg-[#f4fcf6] border border-emerald-300"
                   >
                     <div className="flex justify-between items-center">
                       <div>
-                        <span className="text-[10px] uppercase font-bold text-slate-400">{t.orderIdLabel || 'Order ID'}</span>
-                        <h4 className="font-black text-emerald-900 text-[14px]">{ord.orderNumber}</h4>
+                        <span className="text-[10px] uppercase font-bold text-emerald-700/70">{t.orderIdLabel || 'Order ID'}</span>
+                        <h4 className="font-black text-emerald-950 text-[14px]">{ord.orderNumber}</h4>
                       </div>
-                      <span className="bg-amber-100 text-amber-900 px-2.5 py-1 rounded-full text-[11px] font-extrabold border border-amber-200">
+                      <span className="bg-emerald-200 text-emerald-950 px-2.5 py-1 rounded-full text-[11px] font-extrabold border border-emerald-300">
                         {ord.status}
                       </span>
                     </div>
 
-                    <div className="bg-slate-50 rounded-xl p-3 text-[12px] text-slate-600 flex flex-col gap-1 border border-slate-100">
-                      <p><strong className="text-slate-800">{t.quantityLabel}:</strong> {ord.totalQuantityKg} kg</p>
-                      <p><strong className="text-slate-800">{t.destinationLabel}:</strong> {ord.destination}</p>
-                      <p><strong className="text-slate-800">{t.deliveryLabel}:</strong> {ord.expectedDelivery}</p>
+                    <div className="bg-emerald-100/60 rounded-xl p-3 text-[12px] text-emerald-950 flex flex-col gap-1 border border-emerald-200">
+                      <p><strong className="text-emerald-900">{t.quantityLabel}:</strong> {ord.totalQuantityKg} kg</p>
+                      <p><strong className="text-emerald-900">{t.destinationLabel}:</strong> {ord.destination}</p>
+                      <p><strong className="text-emerald-900">{t.deliveryLabel}:</strong> {ord.expectedDelivery}</p>
                       {ord.paymentMethod && (
                         <div className="flex items-center gap-1.5 mt-1">
-                          <strong className="text-slate-800">Payment:</strong>
-                          <span className="font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded text-[10px]">
+                          <strong className="text-emerald-900">Payment:</strong>
+                          <span className="font-bold text-emerald-800 bg-emerald-200 px-2 py-0.5 rounded text-[10px]">
                             {ord.paymentMethod}
                           </span>
-                          <span className="font-extrabold px-2 py-0.5 rounded text-[10px] bg-emerald-600 text-white">
+                          <span className="font-extrabold px-2 py-0.5 rounded text-[10px] bg-emerald-700 text-white">
                             {ord.paymentStatus || 'Paid'}
                           </span>
                         </div>
                       )}
                     </div>
 
-                    <div className="flex justify-between items-center pt-2 border-t border-slate-100">
+                    <div className="flex justify-between items-center pt-2 border-t border-emerald-200/80">
                       <div>
-                        <span className="text-[10px] text-slate-400 font-bold block leading-none">{t.totalPaidLabel || 'TOTAL PAID (INCL. ₹3/KG ESCROW)'}</span>
-                        <span className="text-[17px] font-black text-slate-900">₹{ord.totalAmount.toLocaleString()}</span>
+                        <span className="text-[10px] text-emerald-700/80 font-bold block leading-none">{t.totalPaidLabel || 'TOTAL PAID (INCL. ₹3/KG ESCROW)'}</span>
+                        <span className="text-[17px] font-black text-emerald-950">₹{ord.totalAmount.toLocaleString()}</span>
                       </div>
                       {ord.totalPlatformFee && (
-                        <span className="text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-1 rounded-md">
+                        <span className="text-[10px] font-bold text-emerald-800 bg-emerald-100 px-2 py-1 rounded-md">
                           {t.platformFeeLabel || 'Platform Fee'}: ₹{ord.totalPlatformFee.toLocaleString()}
                         </span>
                       )}
                       {ord.savingsRealized && (
-                        <div className="text-[11px] text-emerald-800 font-black bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-xl text-center">
+                        <div className="text-[11px] text-emerald-900 font-black bg-emerald-200 border border-emerald-300 px-3 py-1.5 rounded-xl text-center">
                           💰 {t.savedLabel || 'Saved'}: ₹{ord.savingsRealized.toLocaleString()}
                         </div>
                       )}
@@ -729,24 +728,24 @@ export default function BuyerPage() {
           {/* PROFILE TAB */}
           {buyerTab === 'profile' && (
             <div className="p-4 flex flex-col gap-3">
-              <div className="dribbble-card p-5 flex flex-col gap-4 bg-white">
+              <div className="dribbble-card p-5 flex flex-col gap-4 bg-[#f4fcf6] border border-emerald-300">
                 <div className="flex items-center gap-3">
-                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-emerald-700 to-teal-500 text-white font-black text-[20px] flex items-center justify-center shadow-md">
+                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-emerald-800 to-emerald-600 text-white font-black text-[20px] flex items-center justify-center shadow-md">
                     {buyerName.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase() || 'BY'}
                   </div>
                   <div>
-                    <h3 className="text-[17px] font-black text-slate-900">{buyerName}</h3>
-                    <p className="text-[12px] text-slate-500 font-medium">{t.consumerSubtitle || 'Household & Institutional Buyer'}</p>
-                    <span className="inline-block mt-1 text-[10px] font-black text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-md border border-emerald-200">
-                      ✓ {t.kycVerifiedBadge || 'KYC Verified'}
+                    <h3 className="text-[17px] font-black text-emerald-950">{buyerName}</h3>
+                    <p className="text-[12px] text-emerald-700/80 font-medium">{t.consumerSubtitle || 'Household & Institutional Buyer'}</p>
+                    <span className="inline-block mt-1 text-[10px] font-black text-emerald-900 bg-emerald-200 px-2 py-0.5 rounded-md border border-emerald-300">
+                      Verified Buyer • Kolkata Cluster
                     </span>
                   </div>
                 </div>
 
-                <div className="space-y-2 text-[12px] text-slate-600 bg-slate-50 rounded-xl p-3.5 border border-slate-100">
-                  <p><strong className="text-slate-800">{t.registeredPhoneLabel || 'Registered Phone'}:</strong> +91 98300 12345</p>
-                  <p><strong className="text-slate-800">{t.hubCityLabel || 'Hub City'}:</strong> {buyerLocation}</p>
-                  <p><strong className="text-slate-800">{t.receivingAddressLabel || 'Receiving Address'}:</strong> {buyerAddress}</p>
+                <div className="space-y-2 text-[12px] text-emerald-900 bg-emerald-100/60 rounded-2xl p-3.5 border border-emerald-200">
+                  <p><strong className="text-emerald-950">{t.registeredPhoneLabel || 'Registered Phone'}:</strong> +91 98300 12345</p>
+                  <p><strong className="text-emerald-950">{t.hubCityLabel || 'Hub City'}:</strong> {buyerLocation}</p>
+                  <p><strong className="text-emerald-950">{t.receivingAddressLabel || 'Receiving Address'}:</strong> {buyerAddress}</p>
                 </div>
 
                 <button
@@ -768,7 +767,7 @@ export default function BuyerPage() {
         </main>
 
         {/* BOTTOM NAVIGATION BAR */}
-        <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] bg-white/95 backdrop-blur-xl border-t border-slate-200 grid grid-cols-4 text-[11px] font-bold text-center py-2.5 z-40 shadow-xl px-2">
+        <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] bg-[#f2fbf4]/95 backdrop-blur-xl border-t border-emerald-300/80 grid grid-cols-4 text-[11px] font-bold text-center py-2.5 z-40 shadow-xl px-2">
           {[
             { id: 'home', icon: 'storefront', label: t.shopTab || 'Shop' },
             { id: 'browse', icon: 'explore', label: t.browseTab || 'Browse' },

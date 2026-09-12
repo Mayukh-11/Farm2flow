@@ -70,27 +70,27 @@ export const ConsumerCartDrawer: React.FC<ConsumerCartDrawerProps> = ({
       {/* Click outside to close */}
       <div className="flex-1" onClick={onClose} />
 
-      <div className="w-full max-w-[430px] bg-slate-50 h-full flex flex-col shadow-2xl border-l border-slate-200 animate-in slide-in-from-right duration-300">
+      <div className="w-full max-w-[430px] bg-[#f2fbf4] h-full flex flex-col shadow-2xl border-l border-emerald-300/80 animate-in slide-in-from-right duration-300">
         {/* Header - Flipkart style */}
-        <div className="p-4 bg-white border-b border-slate-200 flex items-center justify-between sticky top-0 z-10">
+        <div className="p-4 bg-emerald-900 text-white border-b border-emerald-800 flex items-center justify-between sticky top-0 z-10">
           <div className="flex items-center gap-2.5">
             <button
               onClick={onClose}
-              className="w-8 h-8 rounded-full flex items-center justify-center text-slate-600 hover:bg-slate-100 transition-all"
+              className="w-8 h-8 rounded-full flex items-center justify-center text-emerald-200 hover:bg-emerald-800 transition-all"
             >
               <span className="material-symbols-outlined text-[22px]">arrow_back</span>
             </button>
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-[17px] font-black text-slate-900 leading-none">
+                <h2 className="text-[17px] font-black text-white leading-none">
                   My Cart
                 </h2>
-                <span className="bg-emerald-100 text-emerald-800 text-[11px] font-extrabold px-2 py-0.5 rounded-full">
+                <span className="bg-emerald-800 text-emerald-200 text-[11px] font-extrabold px-2 py-0.5 rounded-full border border-emerald-700">
                   {cart.length} {cart.length === 1 ? 'Item' : 'Items'}
                 </span>
               </div>
-              <p className="text-[11px] text-slate-500 font-medium mt-0.5 truncate max-w-[240px]">
-                Deliver to: <span className="font-bold text-slate-700">{buyerAddress || 'Salt Lake, Kolkata'}</span>
+              <p className="text-[11px] text-emerald-300 font-medium mt-0.5 truncate max-w-[240px]">
+                Deliver to: <span className="font-bold text-white">{buyerAddress || 'Salt Lake, Kolkata'}</span>
               </p>
             </div>
           </div>
@@ -520,7 +520,7 @@ export const ConsumerCartDrawer: React.FC<ConsumerCartDrawerProps> = ({
 
         {/* BOTTOM STICKY BAR (Flipkart style 'PLACE ORDER' / 'CONTINUE') */}
         {cart.length > 0 && !showCheckoutStep && (
-          <div className="p-3.5 bg-white border-t border-slate-200 flex items-center justify-between shadow-lg sticky bottom-0 z-10">
+          <div className="p-3.5 bg-[#f2fbf4] border-t border-emerald-300/80 flex items-center justify-between shadow-lg sticky bottom-0 z-10">
             <div>
               <span className="text-[18px] font-black text-slate-900 block leading-tight">
                 ₹{consumerGrandTotal.toLocaleString()}

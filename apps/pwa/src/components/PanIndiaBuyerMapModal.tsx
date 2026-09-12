@@ -444,22 +444,22 @@ export const PanIndiaBuyerMapModal: React.FC<PanIndiaBuyerMapModalProps> = ({
       <div className="w-full max-w-[920px] h-[95vh] sm:h-[720px] bg-surface rounded-none sm:rounded-3xl border border-outline-variant shadow-2xl flex flex-col overflow-hidden">
         
         {/* Top Header Bar */}
-        <div className="p-3.5 sm:p-4 bg-surface-container-lowest border-b border-outline-variant flex items-center justify-between shrink-0">
+        <div className="p-3.5 sm:p-4 bg-emerald-900 text-white border-b border-emerald-800 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-2.5">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-emerald-600 to-emerald-900 text-white flex items-center justify-center shadow-md">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-emerald-600 to-green-500 text-white flex items-center justify-center shadow-md">
               <span className="material-symbols-outlined text-[24px]">public</span>
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-[17px] font-extrabold text-on-surface leading-tight">
+                <h2 className="text-[17px] font-extrabold text-white leading-tight">
                   Pan-India Direct Sellers Map
                 </h2>
-                <span className="text-[10px] bg-emerald-100 text-emerald-800 font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider">
+                <span className="text-[10px] bg-emerald-800 text-emerald-200 font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider border border-emerald-700">
                   Live Mandi Network
                 </span>
               </div>
-              <p className="text-[11px] text-on-surface-variant font-medium">
-                Sourcing destination: <strong className="text-primary">{buyerCityName}</strong> • {filteredSellers.length} verified producers available
+              <p className="text-[11px] text-emerald-200/90 font-medium">
+                Sourcing destination: <strong className="text-emerald-300">{buyerCityName}</strong> • {filteredSellers.length} verified producers available
               </p>
             </div>
           </div>
@@ -483,7 +483,7 @@ export const PanIndiaBuyerMapModal: React.FC<PanIndiaBuyerMapModalProps> = ({
 
             <button
               onClick={handleResetPanIndiaView}
-              className="px-2.5 py-1.5 bg-surface-container text-on-surface hover:bg-surface-container-high rounded-xl text-[11px] font-bold border border-outline-variant flex items-center gap-1"
+              className="px-2.5 py-1.5 bg-emerald-800 text-white hover:bg-emerald-700 rounded-xl text-[11px] font-bold border border-emerald-700 flex items-center gap-1"
               title="Fit entire India map view"
             >
               <span className="material-symbols-outlined text-[16px]">crop_free</span>
@@ -492,7 +492,7 @@ export const PanIndiaBuyerMapModal: React.FC<PanIndiaBuyerMapModalProps> = ({
 
             <button 
               onClick={onClose}
-              className="w-9 h-9 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors"
+              className="w-9 h-9 rounded-full flex items-center justify-center text-emerald-200 hover:text-white hover:bg-emerald-800 transition-colors"
             >
               <span className="material-symbols-outlined text-[22px]">close</span>
             </button>

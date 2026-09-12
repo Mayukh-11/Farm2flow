@@ -1,0 +1,9 @@
+{
+  "workbench.colorCustomizations": {
+    "gitDecoration.modifiedResourceForeground": "#22c55e",
+    "gitDecoration.untrackedResourceForeground": "#22c55e",
+    "gitDecoration.addedResourceForeground": "#22c55e",
+    "gitDecoration.stageModifiedResourceForeground": "#22c55e",
+    "gitDecoration.stageDeletedResourceForeground": "#22c55e"
+  }
+}

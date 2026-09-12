@@ -104,8 +104,8 @@ export default function FarmerPage() {
   const priceEst = getPriceEstimate(selectedCrop);
 
   return (
-    <div className="bg-slate-950 text-on-surface antialiased min-h-screen pb-28 font-sans">
-      <div className="max-w-[430px] mx-auto min-h-screen bg-slate-50 flex flex-col relative shadow-2xl border-x border-slate-200/80">
+    <div className="bg-[#051c0e] text-on-surface antialiased min-h-screen pb-28 font-sans">
+      <div className="max-w-[430px] mx-auto min-h-screen bg-[#f2fbf4] flex flex-col relative shadow-2xl border-x border-emerald-200/80">
         
         {/* Offline Simulation / Connection Banner */}
         <div className={`px-4 py-2 text-[11px] font-bold flex items-center justify-between transition-colors ${
@@ -133,33 +133,33 @@ export default function FarmerPage() {
         )}
 
         {/* Top Navigation Bar: Farmer Dedicated Header */}
-        <header className="bg-white/90 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-40 transition-all shadow-xs">
+        <header className="bg-emerald-900/95 text-white backdrop-blur-md border-b border-emerald-800 sticky top-0 z-40 transition-all shadow-md">
           <div className="flex justify-between items-center w-full px-4 h-14">
             <div className="flex items-center gap-2.5">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-900 to-emerald-700 text-white flex items-center justify-center shadow-sm">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-700 via-emerald-600 to-green-500 text-white flex items-center justify-center shadow-sm">
                 <span className="material-symbols-outlined text-[22px]">agriculture</span>
               </div>
               <div className="flex flex-col">
                 <div className="flex items-center gap-1.5">
-                  <span className="text-[17px] font-black text-emerald-950 leading-tight tracking-tight">{t.appTitle}</span>
-                  <span className="text-[9px] bg-emerald-100 text-emerald-800 font-extrabold px-1.5 py-0.5 rounded-md uppercase border border-emerald-300/60">
+                  <span className="text-[17px] font-black text-white leading-tight tracking-tight">{t.appTitle}</span>
+                  <span className="text-[9px] bg-emerald-800 text-emerald-200 font-extrabold px-1.5 py-0.5 rounded-md uppercase border border-emerald-700">
                     Farmer
                   </span>
                 </div>
-                <span className="text-[10px] text-slate-500 font-bold">{t.tagline}</span>
+                <span className="text-[10px] text-emerald-200/80 font-bold">{t.tagline}</span>
               </div>
             </div>
 
             <div className="flex items-center gap-2">
-              <div className="bg-slate-100/90 rounded-full p-0.5 flex text-[11px] border border-slate-200 font-bold shadow-xs">
-                <button onClick={() => setLanguage('EN')} className={`px-2 py-0.5 rounded-full transition-all ${language === 'EN' ? 'bg-emerald-800 text-white font-black shadow-xs' : 'text-slate-600 hover:text-slate-900'}`}>EN</button>
-                <button onClick={() => setLanguage('BN')} className={`px-2 py-0.5 rounded-full transition-all ${language === 'BN' ? 'bg-emerald-800 text-white font-black shadow-xs' : 'text-slate-600 hover:text-slate-900'}`}>বাংলা</button>
-                <button onClick={() => setLanguage('HI')} className={`px-2 py-0.5 rounded-full transition-all ${language === 'HI' ? 'bg-emerald-800 text-white font-black shadow-xs' : 'text-slate-600 hover:text-slate-900'}`}>हिन्दी</button>
+              <div className="bg-emerald-950/80 rounded-full p-0.5 flex text-[11px] border border-emerald-700/60 font-bold shadow-xs">
+                <button onClick={() => setLanguage('EN')} className={`px-2 py-0.5 rounded-full transition-all ${language === 'EN' ? 'bg-emerald-600 text-white font-black shadow-xs' : 'text-emerald-300 hover:text-white'}`}>EN</button>
+                <button onClick={() => setLanguage('BN')} className={`px-2 py-0.5 rounded-full transition-all ${language === 'BN' ? 'bg-emerald-600 text-white font-black shadow-xs' : 'text-emerald-300 hover:text-white'}`}>বাংলা</button>
+                <button onClick={() => setLanguage('HI')} className={`px-2 py-0.5 rounded-full transition-all ${language === 'HI' ? 'bg-emerald-600 text-white font-black shadow-xs' : 'text-emerald-300 hover:text-white'}`}>हिन्दी</button>
               </div>
 
               <button 
                 onClick={() => setIsHelpOpen(true)}
-                className="w-9 h-9 rounded-full flex items-center justify-center bg-emerald-50 text-emerald-800 border border-emerald-200 hover:bg-emerald-100 active:scale-95 transition-transform"
+                className="w-9 h-9 rounded-full flex items-center justify-center bg-emerald-800 text-emerald-100 border border-emerald-700 hover:bg-emerald-700 active:scale-95 transition-transform"
                 title={t.voiceAssistant}
               >
                 <span className="material-symbols-outlined text-[20px]">mic</span>
@@ -169,18 +169,18 @@ export default function FarmerPage() {
         </header>
 
         {/* Location & Mandi Status Bar (Clickable Map Picker like Consumer) */}
-        <section className="bg-surface-container-low px-4 py-2 flex items-center justify-between border-b border-outline-variant text-[11px]">
+        <section className="bg-emerald-50 px-4 py-2 flex items-center justify-between border-b border-emerald-200 text-[11px]">
           <button
             type="button"
             onClick={() => setIsLocationMapOpen(true)}
-            className="flex items-center gap-1.5 font-bold text-on-surface hover:text-primary max-w-[280px] text-left group transition-colors"
+            className="flex items-center gap-1.5 font-bold text-emerald-950 hover:text-emerald-800 max-w-[280px] text-left group transition-colors"
             title="Click to change farm/mandi location on map"
           >
-            <span className="material-symbols-outlined text-[18px] text-primary group-hover:scale-110 transition-transform">location_on</span>
-            <span className="truncate underline decoration-outline-variant underline-offset-2">{currentLocation}</span>
-            <span className="material-symbols-outlined text-[14px] text-slate-400">expand_more</span>
+            <span className="material-symbols-outlined text-[18px] text-emerald-700 group-hover:scale-110 transition-transform">location_on</span>
+            <span className="truncate underline decoration-emerald-300 underline-offset-2">{currentLocation}</span>
+            <span className="material-symbols-outlined text-[14px] text-emerald-600">expand_more</span>
           </button>
-          <div className="bg-surface-container-lowest px-2 py-0.5 rounded-full border border-outline-variant font-bold text-primary-container shrink-0">
+          <div className="bg-emerald-200/80 px-2 py-0.5 rounded-full border border-emerald-300 font-bold text-emerald-900 shrink-0">
             {t.mandiOpen}
           </div>
         </section>
@@ -191,21 +191,21 @@ export default function FarmerPage() {
           {farmerTab === 'home' && (
             <>
               {/* Farmer Profile Info */}
-              <div className="flex items-center justify-between bg-surface-container-lowest p-3 rounded-xl border border-outline-variant">
+              <div className="flex items-center justify-between bg-[#f4fcf6] p-3 rounded-2xl border border-emerald-300 shadow-xs">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-primary-fixed-dim text-primary font-extrabold text-base flex items-center justify-center border-2 border-primary">
+                  <div className="w-10 h-10 rounded-full bg-emerald-200 text-emerald-900 font-extrabold text-base flex items-center justify-center border-2 border-emerald-600">
                     {farmerName.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || 'FM'}
                   </div>
                   <div>
-                    <h1 className="text-[16px] font-extrabold text-on-surface leading-tight">{farmerName}</h1>
-                    <span className="inline-flex items-center gap-1 text-[10px] font-bold text-primary-container bg-primary-fixed px-2 py-0.5 rounded-md mt-0.5">
+                    <h1 className="text-[16px] font-extrabold text-emerald-950 leading-tight">{farmerName}</h1>
+                    <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-900 bg-emerald-200 px-2 py-0.5 rounded-md mt-0.5">
                       {t.verifiedFarmer}
                     </span>
                   </div>
                 </div>
                 <button 
                   onClick={() => setIsListWizardOpen(true)}
-                  className="bg-primary-container text-on-primary px-3 py-1.5 rounded-lg text-[12px] font-bold shadow-xs flex items-center gap-1 active:scale-95"
+                  className="bg-emerald-700 text-white hover:bg-emerald-800 px-3 py-1.5 rounded-xl text-[12px] font-bold shadow-xs flex items-center gap-1 active:scale-95"
                 >
                   <span className="material-symbols-outlined text-[16px]">add</span>
                   <span>{t.sellNav}</span>
@@ -213,10 +213,10 @@ export default function FarmerPage() {
               </div>
 
               {/* High Demand Opportunity Card */}
-              <section className="bg-surface-container-lowest rounded-xl border-2 border-primary-container p-4 shadow-xs flex flex-col gap-3">
-                <div className="flex items-center justify-between pb-2 border-b border-outline-variant">
-                  <span className="text-[11px] text-secondary font-bold uppercase tracking-wider">{t.highDemandOpp}</span>
-                  <span className="bg-emerald-100 text-primary-container px-2.5 py-0.5 rounded-full text-[11px] font-bold">
+              <section className="bg-[#f4fcf6] rounded-2xl border-2 border-emerald-500 p-4 shadow-xs flex flex-col gap-3">
+                <div className="flex items-center justify-between pb-2 border-b border-emerald-200">
+                  <span className="text-[11px] text-emerald-800 font-bold uppercase tracking-wider">{t.highDemandOpp}</span>
+                  <span className="bg-emerald-200 text-emerald-900 px-2.5 py-0.5 rounded-full text-[11px] font-bold">
                     {t.demandSurge}
                   </span>
                 </div>
@@ -390,7 +390,7 @@ export default function FarmerPage() {
         </main>
 
         {/* Farmer Bottom Navigation */}
-        <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] bg-surface-container-lowest/95 backdrop-blur-md border-t border-outline-variant grid grid-cols-5 text-[11px] font-bold text-center py-2 z-40 shadow-lg px-2">
+        <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] bg-[#f2fbf4]/95 backdrop-blur-md border-t border-emerald-300/80 grid grid-cols-5 text-[11px] font-bold text-center py-2 z-40 shadow-lg px-2">
           {[
             { id: 'home', icon: 'home', label: t.homeNav },
             { id: 'market', icon: 'analytics', label: t.marketNav },
