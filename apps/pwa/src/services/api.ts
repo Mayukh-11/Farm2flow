@@ -275,7 +275,7 @@ export const createOrderFromMatch = (
     items: matchResult.suppliers.map(s => ({
       produceId: s.produceId,
       farmerName: s.farmerName,
-      cropName: `${matchResult.cropName} (${s.grade})`,
+      cropName: matchResult.cropName,
       quantityKg: s.matchedKg,
       // Consumer pays product price + ₹3/kg convenience fee
       pricePerKg: s.pricePerKg + PLATFORM_CONVENIENCE_FEE_PER_KG,
@@ -343,9 +343,30 @@ export const getOrders = (): Order[] => {
   }
 };
 
-export const getCart = (): CartItem[] => {
+// Helper to get active user cart storage key (individual account personalization)
+export const getActiveUserIdentifier = (): string => {
+  if (typeof window === 'undefined') return 'guest';
+  try {
+    const sessionStr = localStorage.getItem('farm2flow_user_session');
+    if (sessionStr) {
+      const session = JSON.parse(sessionStr);
+      return session.identifier || session.email || session.phone || session.name || 'guest';
+    }
+  } catch {}
+  return 'guest';
+};
+
+export const getCartStorageKey = (userId?: string): string => {
+  const user = userId || getActiveUserIdentifier();
+  // Sanitize key for safe local storage
+  const cleanKey = user.replace(/[^a-zA-Z0-9_-]/g, '_').toLowerCase();
+  return `${STORAGE_KEYS.CART}_${cleanKey}`;
+};
+
+export const getCart = (userId?: string): CartItem[] => {
   if (typeof window === 'undefined') return [];
-  const stored = localStorage.getItem(STORAGE_KEYS.CART);
+  const key = getCartStorageKey(userId);
+  const stored = localStorage.getItem(key);
   if (!stored) return [];
   try {
     return JSON.parse(stored);
@@ -354,16 +375,18 @@ export const getCart = (): CartItem[] => {
   }
 };
 
-export const saveCart = (cart: CartItem[]): CartItem[] => {
+export const saveCart = (cart: CartItem[], userId?: string): CartItem[] => {
   if (typeof window !== 'undefined') {
-    localStorage.setItem(STORAGE_KEYS.CART, JSON.stringify(cart));
-    window.dispatchEvent(new CustomEvent('farm2flow_cart_updated', { detail: { cart } }));
+    const key = getCartStorageKey(userId);
+    localStorage.setItem(key, JSON.stringify(cart));
+    const activeUser = userId || getActiveUserIdentifier();
+    window.dispatchEvent(new CustomEvent('farm2flow_cart_updated', { detail: { cart, userId: activeUser } }));
   }
   return cart;
 };
 
-export const addToCart = (item: CartItem): CartItem[] => {
-  const cart = getCart();
+export const addToCart = (item: CartItem, userId?: string): CartItem[] => {
+  const cart = getCart(userId);
   const existingIndex = cart.findIndex(c => c.produceId === item.produceId);
   let updated: CartItem[];
   if (existingIndex > -1) {
@@ -376,13 +399,13 @@ export const addToCart = (item: CartItem): CartItem[] => {
   } else {
     updated = [item, ...cart];
   }
-  return saveCart(updated);
+  return saveCart(updated, userId);
 };
 
-export const updateCartQuantity = (produceId: string, quantityKg: number): CartItem[] => {
-  const cart = getCart();
+export const updateCartQuantity = (produceId: string, quantityKg: number, userId?: string): CartItem[] => {
+  const cart = getCart(userId);
   if (quantityKg <= 0) {
-    return removeFromCart(produceId);
+    return removeFromCart(produceId, userId);
   }
   const updated = cart.map(item => {
     if (item.produceId === produceId) {
@@ -393,19 +416,21 @@ export const updateCartQuantity = (produceId: string, quantityKg: number): CartI
     }
     return item;
   });
-  return saveCart(updated);
+  return saveCart(updated, userId);
 };
 
-export const removeFromCart = (produceId: string): CartItem[] => {
-  const cart = getCart();
+export const removeFromCart = (produceId: string, userId?: string): CartItem[] => {
+  const cart = getCart(userId);
   const updated = cart.filter(c => c.produceId !== produceId);
-  return saveCart(updated);
+  return saveCart(updated, userId);
 };
 
-export const clearCart = (): void => {
+export const clearCart = (userId?: string): void => {
   if (typeof window !== 'undefined') {
-    localStorage.removeItem(STORAGE_KEYS.CART);
-    window.dispatchEvent(new CustomEvent('farm2flow_cart_updated', { detail: { cart: [] } }));
+    const key = getCartStorageKey(userId);
+    localStorage.removeItem(key);
+    const activeUser = userId || getActiveUserIdentifier();
+    window.dispatchEvent(new CustomEvent('farm2flow_cart_updated', { detail: { cart: [], userId: activeUser } }));
   }
 };
 
@@ -432,7 +457,7 @@ export const createOrderFromCart = (
     items: cartItems.map(item => ({
       produceId: item.produceId,
       farmerName: item.farmerName,
-      cropName: `${item.cropName} (${item.grade})`,
+      cropName: item.cropName,
       quantityKg: item.quantityKg,
       // Consumer price = farmer demanded rate + ₹3/kg convenience fee
       pricePerKg: item.pricePerKg + PLATFORM_CONVENIENCE_FEE_PER_KG,

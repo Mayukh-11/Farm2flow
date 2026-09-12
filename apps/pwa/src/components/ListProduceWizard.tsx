@@ -676,7 +676,7 @@ export const ListProduceWizard: React.FC<ListProduceWizardProps> = ({
                     onClick={() => setStep(3)}
                     className="flex-1 py-3 bg-primary-container text-on-primary rounded-xl text-[14px] font-bold hover:bg-primary transition-colors flex items-center justify-center gap-2"
                   >
-                    <span>Set Quality & Price</span>
+                    <span>Set Price & Date</span>
                     <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
                   </button>
                 </div>

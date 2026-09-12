@@ -658,8 +658,7 @@ export const PanIndiaBuyerMapModal: React.FC<PanIndiaBuyerMapModalProps> = ({
                   <div><strong>State:</strong> {selectedSeller.state}</div>
                   <div><strong>Rate:</strong> <span className="font-extrabold text-emerald-700 text-[13px]">₹{selectedSeller.pricePerKg}</span>/kg</div>
                   <div><strong>Volume:</strong> {selectedSeller.quantityKg.toLocaleString()} kg</div>
-                  <div><strong>Transit:</strong> ~{selectedSeller.transitDaysToKolkata} Days</div>
-                  <div><strong>Grade:</strong> {selectedSeller.grade}</div>
+                  <div className="col-span-2"><strong>Transit:</strong> ~{selectedSeller.transitDaysToKolkata} Days Direct Dispatch</div>
                 </div>
 
                 <div className="flex gap-2 pt-1">

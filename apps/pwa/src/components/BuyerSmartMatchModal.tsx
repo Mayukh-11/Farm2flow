@@ -11,6 +11,7 @@ interface BuyerSmartMatchModalProps {
   onOrderCreated: (order: Order) => void;
   buyerName?: string;
   buyerDestination?: string;
+  buyerIdentifier?: string;
   initialCrop?: string;
   selectedSeller?: PanIndiaSeller | null;
 }
@@ -23,6 +24,7 @@ export const BuyerSmartMatchModal: React.FC<BuyerSmartMatchModalProps> = ({
   onOrderCreated,
   buyerName = 'Sourav Mukherjee',
   buyerDestination = 'Salt Lake, Kolkata',
+  buyerIdentifier,
   initialCrop = 'Tomato',
   selectedSeller = null
 }) => {
@@ -381,13 +383,16 @@ export const BuyerSmartMatchModal: React.FC<BuyerSmartMatchModalProps> = ({
                         maxAvailableKg: supplier.availableKg,
                         image: getCropPhoto(matchResult.cropName)
                       };
-                      addToCart(itemToAdd);
+                      addToCart(itemToAdd, buyerIdentifier);
                     });
 
                     // Trigger alert and close
                     window.dispatchEvent(
                       new CustomEvent('farm2flow_cart_updated', {
-                        detail: { message: `Added ${matchResult.fulfilledKg} kg ${matchResult.cropName} to Cart!` }
+                        detail: {
+                          message: `Added ${matchResult.fulfilledKg} kg ${matchResult.cropName} to Cart!`,
+                          userId: buyerIdentifier
+                        }
                       })
                     );
                     onClose();

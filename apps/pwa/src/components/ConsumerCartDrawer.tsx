@@ -15,6 +15,7 @@ interface ConsumerCartDrawerProps {
   cart: CartItem[];
   buyerName: string;
   buyerAddress: string;
+  buyerIdentifier?: string;
   onOrderPlaced: (order: Order) => void;
 }
 
@@ -26,6 +27,7 @@ export const ConsumerCartDrawer: React.FC<ConsumerCartDrawerProps> = ({
   cart,
   buyerName,
   buyerAddress,
+  buyerIdentifier,
   onOrderPlaced,
 }) => {
   const [showCheckoutStep, setShowCheckoutStep] = useState(false);
@@ -97,7 +99,7 @@ export const ConsumerCartDrawer: React.FC<ConsumerCartDrawerProps> = ({
 
           {cart.length > 0 && !showCheckoutStep && (
             <button
-              onClick={() => clearCart()}
+              onClick={() => clearCart(buyerIdentifier)}
               className="text-[11px] font-bold text-rose-600 hover:text-rose-700 hover:bg-rose-50 px-2 py-1 rounded-lg transition-colors"
             >
               Clear Cart
@@ -173,7 +175,7 @@ export const ConsumerCartDrawer: React.FC<ConsumerCartDrawerProps> = ({
                               {item.cropName}
                             </h4>
                             <button
-                              onClick={() => removeFromCart(item.produceId)}
+                              onClick={() => removeFromCart(item.produceId, buyerIdentifier)}
                               className="text-emerald-700 hover:text-rose-600 transition-colors p-0.5"
                               title="Remove item"
                             >
@@ -182,7 +184,7 @@ export const ConsumerCartDrawer: React.FC<ConsumerCartDrawerProps> = ({
                           </div>
                           
                           <p className="text-[11px] text-emerald-800/80 font-medium truncate">
-                            {item.variety} • <span className="text-emerald-900 font-bold bg-emerald-200 px-1.5 py-0.2 rounded">{item.grade}</span>
+                            {item.variety}
                           </p>
 
                           <p className="text-[10px] text-emerald-700 font-medium mt-0.5 truncate">
@@ -213,7 +215,7 @@ export const ConsumerCartDrawer: React.FC<ConsumerCartDrawerProps> = ({
 
                         <div className="flex items-center bg-emerald-100 rounded-xl p-1 border border-emerald-300">
                           <button
-                            onClick={() => updateCartQuantity(item.produceId, item.quantityKg - (item.quantityKg > 10 ? 5 : 1))}
+                            onClick={() => updateCartQuantity(item.produceId, item.quantityKg - (item.quantityKg > 10 ? 5 : 1), buyerIdentifier)}
                             className="w-7 h-7 rounded-lg bg-white hover:bg-emerald-200 active:scale-95 text-emerald-950 flex items-center justify-center font-black transition-all shadow-2xs"
                             title="Decrease quantity"
                           >
@@ -223,7 +225,7 @@ export const ConsumerCartDrawer: React.FC<ConsumerCartDrawerProps> = ({
                             {item.quantityKg} kg
                           </span>
                           <button
-                            onClick={() => updateCartQuantity(item.produceId, item.quantityKg + (item.quantityKg >= 10 ? 5 : 1))}
+                            onClick={() => updateCartQuantity(item.produceId, item.quantityKg + (item.quantityKg >= 10 ? 5 : 1), buyerIdentifier)}
                             disabled={item.quantityKg >= item.maxAvailableKg}
                             className="w-7 h-7 rounded-lg bg-emerald-700 hover:bg-emerald-800 disabled:opacity-40 active:scale-95 text-white flex items-center justify-center font-black transition-all shadow-2xs"
                             title="Increase quantity"

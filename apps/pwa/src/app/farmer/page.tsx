@@ -25,6 +25,7 @@ export default function FarmerPage() {
   const [farmerName, setFarmerName] = useState<string>('Ramesh Ghosh');
   const [currentLocation, setCurrentLocation] = useState<string>('Hooghly (Singur), West Bengal');
   const [farmerAddress, setFarmerAddress] = useState<string>('Singur Vegetable Cluster, Hooghly, WB');
+  const [farmerPhone, setFarmerPhone] = useState<string>('+91 98310 44210');
   
   // Modal Visibility States
   const [isHelpOpen, setIsHelpOpen] = useState(false);
@@ -53,6 +54,7 @@ export default function FarmerPage() {
         if (session.name) setFarmerName(session.name);
         if (session.location) setCurrentLocation(session.location);
         if (session.address) setFarmerAddress(session.address);
+        if (session.phone || session.identifier) setFarmerPhone(session.phone || session.identifier);
       } catch (e) {}
     }
     setProduceList(getStoredProduce());
@@ -133,57 +135,57 @@ export default function FarmerPage() {
         )}
 
         {/* Top Navigation Bar: Farmer Dedicated Header */}
-        <header className="bg-emerald-900/95 text-white backdrop-blur-md border-b border-emerald-800 sticky top-0 z-40 transition-all shadow-md">
-          <div className="flex justify-between items-center w-full px-4 h-14">
-            <div className="flex items-center gap-2.5">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-700 via-emerald-600 to-green-500 text-white flex items-center justify-center shadow-sm">
-                <span className="material-symbols-outlined text-[22px]">agriculture</span>
+        <header className="bg-emerald-900 text-white border-b border-emerald-800 sticky top-0 z-40 px-3.5 py-2.5">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2 min-w-0">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-600 to-green-500 text-white flex items-center justify-center shrink-0 shadow-md">
+                <span className="material-symbols-outlined text-[20px]">agriculture</span>
               </div>
-              <div className="flex flex-col">
-                <div className="flex items-center gap-1.5">
-                  <span className="text-[17px] font-black text-white leading-tight tracking-tight">{t.appTitle}</span>
-                  <span className="text-[9px] bg-emerald-800 text-emerald-200 font-extrabold px-1.5 py-0.5 rounded-md uppercase border border-emerald-700">
-                    Farmer
-                  </span>
-                </div>
-                <span className="text-[10px] text-emerald-200/80 font-bold">{t.tagline}</span>
+              <div className="flex items-center gap-1.5 min-w-0">
+                <span className="text-[16px] font-black text-white tracking-tight leading-none">{t.appTitle}</span>
+                <span className="text-[8px] bg-emerald-800 text-emerald-200 font-extrabold px-1.5 py-0.5 rounded-full uppercase tracking-wider border border-emerald-700 shrink-0">
+                  Farmer
+                </span>
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
-              <div className="bg-emerald-950/80 rounded-full p-0.5 flex text-[11px] border border-emerald-700/60 font-bold shadow-xs">
-                <button onClick={() => setLanguage('EN')} className={`px-2 py-0.5 rounded-full transition-all ${language === 'EN' ? 'bg-emerald-600 text-white font-black shadow-xs' : 'text-emerald-300 hover:text-white'}`}>EN</button>
-                <button onClick={() => setLanguage('BN')} className={`px-2 py-0.5 rounded-full transition-all ${language === 'BN' ? 'bg-emerald-600 text-white font-black shadow-xs' : 'text-emerald-300 hover:text-white'}`}>বাংলা</button>
-                <button onClick={() => setLanguage('HI')} className={`px-2 py-0.5 rounded-full transition-all ${language === 'HI' ? 'bg-emerald-600 text-white font-black shadow-xs' : 'text-emerald-300 hover:text-white'}`}>हिन्दी</button>
+            <div className="flex items-center gap-1.5 shrink-0">
+              <div className="bg-emerald-950/90 rounded-full p-0.5 flex text-[10px] border border-emerald-700/60 font-bold shadow-xs">
+                <button onClick={() => setLanguage('EN')} className={`px-1.5 py-0.5 rounded-full transition-all ${language === 'EN' ? 'bg-emerald-500 text-emerald-950 font-black shadow-xs' : 'text-emerald-300 hover:text-white'}`}>EN</button>
+                <button onClick={() => setLanguage('BN')} className={`px-1.5 py-0.5 rounded-full transition-all ${language === 'BN' ? 'bg-emerald-500 text-emerald-950 font-black shadow-xs' : 'text-emerald-300 hover:text-white'}`}>বাং</button>
+                <button onClick={() => setLanguage('HI')} className={`px-1.5 py-0.5 rounded-full transition-all ${language === 'HI' ? 'bg-emerald-500 text-emerald-950 font-black shadow-xs' : 'text-emerald-300 hover:text-white'}`}>हिं</button>
               </div>
 
               <button 
                 onClick={() => setIsHelpOpen(true)}
-                className="w-9 h-9 rounded-full flex items-center justify-center bg-emerald-800 text-emerald-100 border border-emerald-700 hover:bg-emerald-700 active:scale-95 transition-transform"
+                className="w-8 h-8 rounded-full flex items-center justify-center bg-emerald-800 text-emerald-100 border border-emerald-700 hover:bg-emerald-700 active:scale-95 transition-transform shrink-0"
                 title={t.voiceAssistant}
               >
-                <span className="material-symbols-outlined text-[20px]">mic</span>
+                <span className="material-symbols-outlined text-[18px]">mic</span>
               </button>
             </div>
           </div>
-        </header>
 
-        {/* Location & Mandi Status Bar (Clickable Map Picker like Consumer) */}
-        <section className="bg-emerald-50 px-4 py-2 flex items-center justify-between border-b border-emerald-200 text-[11px]">
-          <button
-            type="button"
-            onClick={() => setIsLocationMapOpen(true)}
-            className="flex items-center gap-1.5 font-bold text-emerald-950 hover:text-emerald-800 max-w-[280px] text-left group transition-colors"
-            title="Click to change farm/mandi location on map"
-          >
-            <span className="material-symbols-outlined text-[18px] text-emerald-700 group-hover:scale-110 transition-transform">location_on</span>
-            <span className="truncate underline decoration-emerald-300 underline-offset-2">{currentLocation}</span>
-            <span className="material-symbols-outlined text-[14px] text-emerald-600">expand_more</span>
-          </button>
-          <div className="bg-emerald-200/80 px-2 py-0.5 rounded-full border border-emerald-300 font-bold text-emerald-900 shrink-0">
-            {t.mandiOpen}
+          {/* Sub-bar: Farm / Mandi Location Bar */}
+          <div className="mt-2 pt-2 border-t border-emerald-800/80 flex items-center justify-between text-[11px]">
+            <button
+              type="button"
+              onClick={() => setIsLocationMapOpen(true)}
+              className="flex items-center gap-1.5 font-bold text-emerald-200 hover:text-white transition-colors min-w-0 text-left group"
+              title="Click to change farm/mandi location on map"
+            >
+              <span className="material-symbols-outlined text-[15px] text-emerald-400 shrink-0 group-hover:scale-110 transition-transform">location_on</span>
+              <span className="text-emerald-300/80 font-normal shrink-0">Farm Mandi:</span>
+              <span className="truncate max-w-[220px] font-extrabold text-white underline decoration-emerald-500/50 underline-offset-2">
+                {currentLocation}
+              </span>
+              <span className="material-symbols-outlined text-[14px] text-emerald-400 shrink-0">expand_more</span>
+            </button>
+            <span className="text-[10px] font-bold text-emerald-300 bg-emerald-950/70 px-2 py-0.5 rounded-full border border-emerald-700/60 shrink-0">
+              {t.mandiOpen || 'Mandi Live'}
+            </span>
           </div>
-        </section>
+        </header>
 
 
         {/* MAIN FARMER CONTENT */}
@@ -295,7 +297,7 @@ export default function FarmerPage() {
                         className="w-14 h-14 rounded-xl object-cover border border-slate-100 shadow-xs shrink-0"
                       />
                       <div>
-                        <h4 className="font-bold text-on-surface text-[15px]">{item.cropName} ({item.grade})</h4>
+                        <h4 className="font-bold text-on-surface text-[15px]">{item.cropName}</h4>
                         <p className="text-[12px] text-on-surface-variant">{item.farmerLocation} • {item.variety}</p>
                       </div>
                     </div>
@@ -353,36 +355,51 @@ export default function FarmerPage() {
           )}
 
           {farmerTab === 'profile' && (
-            <div className="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant flex flex-col gap-3 text-[13px]">
-              <h3 className="text-[16px] font-bold text-on-surface">{t.farmerProfile}</h3>
-              <p><strong>Name:</strong> {farmerName}</p>
-              <p><strong>{t.mobile}:</strong> +91 98310 44210</p>
-              <div className="flex items-center justify-between">
-                <p><strong>{t.location}:</strong> {currentLocation}</p>
-                <button
-                  type="button"
-                  onClick={() => setIsLocationMapOpen(true)}
-                  className="text-[11px] font-extrabold text-primary hover:underline bg-primary/10 px-2 py-0.5 rounded-lg flex items-center gap-0.5"
-                >
-                  <span className="material-symbols-outlined text-[14px]">map</span>
-                  <span>Change on Map</span>
-                </button>
-              </div>
-              <p><strong>Address:</strong> {farmerAddress}</p>
-              <p><strong>{t.verification}:</strong> NABARD / e-NAM Verified ✓</p>
+            <div className="flex flex-col gap-4">
+              <div className="bg-[#f4fcf6] rounded-3xl p-5 border border-emerald-300 shadow-sm flex flex-col gap-4">
+                {/* Profile Header */}
+                <div className="flex items-center gap-3.5">
+                  <div className="w-14 h-14 rounded-2xl bg-emerald-700 text-white font-black text-[20px] flex items-center justify-center shadow-md shrink-0">
+                    {farmerName.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase() || 'FM'}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <h2 className="text-[20px] font-black text-emerald-950 truncate leading-tight">{farmerName}</h2>
+                    <p className="text-[12px] text-emerald-800/80 font-semibold mt-0.5">{t.farmerProfile || 'Agricultural Producer & Mandi Seller'}</p>
+                    <span className="inline-flex items-center gap-1 mt-1 text-[11px] font-extrabold text-emerald-900 bg-emerald-200/90 px-2.5 py-0.5 rounded-lg border border-emerald-300">
+                      Verified Producer • West Bengal Cluster
+                    </span>
+                  </div>
+                </div>
 
-              <div className="pt-2 border-t border-outline-variant">
-                <button 
+                {/* Details Card */}
+                <div className="space-y-2.5 text-[12px] text-emerald-900 bg-emerald-100/50 rounded-2xl p-4 border border-emerald-200/80">
+                  <p className="flex items-baseline gap-1">
+                    <strong className="text-emerald-950 font-extrabold">Registered Phone::</strong>
+                    <span className="font-semibold text-emerald-900">{farmerPhone}</span>
+                  </p>
+                  <p className="flex items-baseline gap-1">
+                    <strong className="text-emerald-950 font-extrabold">Hub City::</strong>
+                    <span className="font-semibold text-emerald-900">{currentLocation}</span>
+                  </p>
+                  <p className="flex items-baseline gap-1">
+                    <strong className="text-emerald-950 font-extrabold">Receiving Address::</strong>
+                    <span className="font-semibold text-emerald-900">{farmerAddress}</span>
+                  </p>
+                </div>
+
+                {/* Styled Sign Out Button */}
+                <button
                   type="button"
                   onClick={() => {
                     if (typeof window !== 'undefined') {
                       localStorage.removeItem('farm2flow_user_session');
                       window.location.href = '/login';
                     }
-                  }} 
-                  className="text-secondary font-bold hover:underline block py-1 text-left w-full cursor-pointer"
+                  }}
+                  className="w-full py-3.5 bg-rose-50 hover:bg-rose-100/80 active:scale-98 text-rose-600 font-black rounded-2xl text-[13px] border border-rose-200/80 transition-all flex items-center justify-center gap-2 shadow-2xs"
                 >
-                  {t.signOut}
+                  <span className="material-symbols-outlined text-[18px]">logout</span>
+                  <span>← Back to Login / Sign Out</span>
                 </button>
               </div>
             </div>

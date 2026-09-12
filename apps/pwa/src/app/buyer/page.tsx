@@ -27,6 +27,7 @@ export default function BuyerPage() {
   const [isSellerMapOpen, setIsSellerMapOpen] = useState(false);
   const [selectedMapCrop, setSelectedMapCrop] = useState<string>('All Crops');
   const [selectedSellerForMatch, setSelectedSellerForMatch] = useState<PanIndiaSeller | null>(null);
+  const [buyerIdentifier, setBuyerIdentifier] = useState<string>('guest');
   const [buyerName, setBuyerName] = useState<string>('Sourav Mukherjee');
   const [buyerLocation, setBuyerLocation] = useState<string>('Salt Lake, Kolkata');
   const [buyerAddress, setBuyerAddress] = useState<string>('AD-Block, Sector 1, Salt Lake, Kolkata - 700064');
@@ -44,6 +45,7 @@ export default function BuyerPage() {
   ];
 
   useEffect(() => {
+    let currentUserId = 'guest';
     // Auth Guard: Check session
     if (typeof window !== 'undefined') {
       const sessionStr = localStorage.getItem('farm2flow_user_session');
@@ -53,6 +55,8 @@ export default function BuyerPage() {
       }
       try {
         const session = JSON.parse(sessionStr);
+        currentUserId = session.identifier || session.email || session.phone || session.name || 'guest';
+        setBuyerIdentifier(currentUserId);
         if (session.name) setBuyerName(session.name);
         if (session.location) setBuyerLocation(session.location);
         if (session.address) setBuyerAddress(session.address);
@@ -60,7 +64,7 @@ export default function BuyerPage() {
     }
     setProduceList(getStoredProduce());
     setOrdersList(getOrders());
-    setCartList(getCart());
+    setCartList(getCart(currentUserId));
 
     const handleProduceUpdated = (e: any) => {
       if (e?.detail?.produceList) {
@@ -71,10 +75,12 @@ export default function BuyerPage() {
     };
 
     const handleCartUpdated = (e: any) => {
-      if (e?.detail?.cart) {
-        setCartList(e.detail.cart);
-      } else {
-        setCartList(getCart());
+      if (!e?.detail?.userId || e.detail.userId === currentUserId) {
+        if (e?.detail?.cart) {
+          setCartList(e.detail.cart);
+        } else {
+          setCartList(getCart(currentUserId));
+        }
       }
     };
 
@@ -82,8 +88,8 @@ export default function BuyerPage() {
       if (e.key === 'farm2flow_produce_items') {
         setProduceList(getStoredProduce());
       }
-      if (e.key === 'farm2flow_consumer_cart') {
-        setCartList(getCart());
+      if (e.key && e.key.startsWith('farm2flow_consumer_cart')) {
+        setCartList(getCart(currentUserId));
       }
     };
 
@@ -112,7 +118,7 @@ export default function BuyerPage() {
       maxAvailableKg: produce.quantityKg,
       image: getCropPhoto(produce.cropName)
     };
-    const updated = addToCart(itemToAdd);
+    const updated = addToCart(itemToAdd, buyerIdentifier);
     setCartList(updated);
     setCartAddedToast(`Added ${produce.cropName} to your Cart!`);
     setTimeout(() => {
@@ -122,7 +128,7 @@ export default function BuyerPage() {
 
   const handleOrderCreated = (newOrder: Order) => {
     setOrdersList(getOrders());
-    setCartList(getCart());
+    setCartList(getCart(buyerIdentifier));
     setBuyerTab('orders');
   };
 
@@ -170,41 +176,32 @@ export default function BuyerPage() {
       <div className="max-w-[430px] mx-auto min-h-screen bg-[#f2fbf4] flex flex-col relative shadow-2xl border-x border-emerald-200/80">
         
         {/* TOP STATUS & BRAND HEADER */}
-        <header className="bg-emerald-900/90 text-white backdrop-blur-xl border-b border-emerald-800 sticky top-0 z-40 px-4 py-3">
-          <div className="flex justify-between items-center">
+        <header className="bg-emerald-900 text-white border-b border-emerald-800 sticky top-0 z-40 px-3.5 py-2.5">
+          <div className="flex items-center justify-between gap-2">
             {/* Logo and Brand */}
-            <div className="flex items-center gap-2.5">
-              <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-700 via-emerald-600 to-green-500 text-white flex items-center justify-center shadow-md shadow-emerald-700/20">
-                <span className="material-symbols-outlined text-[24px]">eco</span>
+            <div className="flex items-center gap-2 min-w-0">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-600 to-green-500 text-white flex items-center justify-center shrink-0 shadow-md">
+                <span className="material-symbols-outlined text-[20px]">eco</span>
               </div>
-              <div>
-                <div className="flex items-center gap-1.5">
-                  <span className="text-[17px] font-black text-white tracking-tight leading-none">Farm2Flow</span>
-                  <span className="text-[9px] bg-emerald-800 text-emerald-200 font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider border border-emerald-700">
-                    Direct
-                  </span>
-                </div>
-                <button
-                  onClick={() => setIsMapOpen(true)}
-                  className="flex items-center gap-1 text-[11px] font-semibold text-emerald-200 hover:text-white transition-colors mt-0.5 text-left group"
-                >
-                  <span className="material-symbols-outlined text-[13px] text-emerald-400 group-hover:scale-110 transition-transform">location_on</span>
-                  <span className="truncate max-w-[160px] underline decoration-emerald-700 underline-offset-2">{buyerLocation}</span>
-                  <span className="material-symbols-outlined text-[12px] text-emerald-300">expand_more</span>
-                </button>
+              <div className="flex items-center gap-1.5 min-w-0">
+                <span className="text-[16px] font-black text-white tracking-tight leading-none">Farm2Flow</span>
+                <span className="text-[8px] bg-emerald-800 text-emerald-200 font-extrabold px-1.5 py-0.5 rounded-full uppercase tracking-wider border border-emerald-700 shrink-0">
+                  Direct
+                </span>
               </div>
             </div>
 
-            {/* Language Switcher & Cart Action */}
-            <div className="flex items-center gap-2">
-              <div className="bg-emerald-950/80 rounded-full p-0.5 flex text-[11px] border border-emerald-700/60 font-bold shadow-xs">
+            {/* Actions: Language Switcher + Cart + Orders */}
+            <div className="flex items-center gap-1.5 shrink-0">
+              {/* Language Switcher */}
+              <div className="bg-emerald-950/90 rounded-full p-0.5 flex text-[10px] border border-emerald-700/60 font-bold shadow-xs">
                 {(['EN', 'BN', 'HI'] as Language[]).map(lang => (
                   <button
                     key={lang}
                     onClick={() => setLanguage(lang)}
-                    className={`px-2 py-0.5 rounded-full transition-all ${
+                    className={`px-1.5 py-0.5 rounded-full transition-all ${
                       language === lang
-                        ? 'bg-emerald-600 text-white font-black shadow-xs'
+                        ? 'bg-emerald-500 text-emerald-950 font-black shadow-xs'
                         : 'text-emerald-300 hover:text-white'
                     }`}
                   >
@@ -213,35 +210,55 @@ export default function BuyerPage() {
                 ))}
               </div>
 
-              {/* Shopping Cart Button (Flipkart style) */}
+              {/* Shopping Cart Button */}
               <button
                 onClick={() => setIsCartOpen(true)}
-                className="w-9 h-9 rounded-full bg-emerald-800 hover:bg-emerald-700 text-white flex items-center justify-center transition-all relative border border-emerald-700 active:scale-95"
+                className="w-8 h-8 rounded-full bg-emerald-800 hover:bg-emerald-700 text-white flex items-center justify-center transition-all relative border border-emerald-700 active:scale-95 shrink-0"
                 aria-label="View Cart"
                 title="View Cart"
               >
-                <span className="material-symbols-outlined text-[20px]">shopping_cart</span>
+                <span className="material-symbols-outlined text-[18px]">shopping_cart</span>
                 {cartList.length > 0 && (
-                  <span className="absolute -top-1.5 -right-1.5 min-w-5 h-5 px-1 bg-emerald-400 text-emerald-950 text-[10px] font-black rounded-full flex items-center justify-center border-2 border-emerald-900 shadow-sm animate-pulse">
+                  <span className="absolute -top-1.5 -right-1.5 min-w-4 h-4 px-1 bg-emerald-400 text-emerald-950 text-[9px] font-black rounded-full flex items-center justify-center border border-emerald-900 shadow-xs animate-pulse">
                     {cartList.length}
                   </span>
                 )}
               </button>
 
+              {/* Track Orders Button */}
               <button
                 onClick={() => setBuyerTab('orders')}
-                className="w-9 h-9 rounded-full bg-emerald-800 hover:bg-emerald-700 text-emerald-100 flex items-center justify-center transition-all relative border border-emerald-700 active:scale-95"
+                className="w-8 h-8 rounded-full bg-emerald-800 hover:bg-emerald-700 text-emerald-100 flex items-center justify-center transition-all relative border border-emerald-700 active:scale-95 shrink-0"
                 aria-label="View Orders"
                 title="Track Orders"
               >
-                <span className="material-symbols-outlined text-[20px]">receipt_long</span>
+                <span className="material-symbols-outlined text-[18px]">receipt_long</span>
                 {ordersList.length > 0 && (
-                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-emerald-400 text-emerald-950 text-[9px] font-black rounded-full flex items-center justify-center border-2 border-emerald-900 shadow-xs">
+                  <span className="absolute -top-1.5 -right-1.5 min-w-4 h-4 px-1 bg-emerald-400 text-emerald-950 text-[9px] font-black rounded-full flex items-center justify-center border border-emerald-900 shadow-xs">
                     {ordersList.length}
                   </span>
                 )}
               </button>
             </div>
+          </div>
+
+          {/* Sub-bar: Delivery Location Picker */}
+          <div className="mt-2 pt-2 border-t border-emerald-800/80 flex items-center justify-between text-[11px]">
+            <button
+              onClick={() => setIsMapOpen(true)}
+              className="flex items-center gap-1.5 font-bold text-emerald-200 hover:text-white transition-colors min-w-0 text-left group"
+              title="Click to change delivery address"
+            >
+              <span className="material-symbols-outlined text-[15px] text-emerald-400 shrink-0 group-hover:scale-110 transition-transform">location_on</span>
+              <span className="text-emerald-300/80 font-normal shrink-0">Deliver to:</span>
+              <span className="truncate max-w-[220px] font-extrabold text-white underline decoration-emerald-500/50 underline-offset-2">
+                {buyerLocation}
+              </span>
+              <span className="material-symbols-outlined text-[14px] text-emerald-400 shrink-0">expand_more</span>
+            </button>
+            <span className="text-[10px] font-bold text-emerald-400 bg-emerald-950/70 px-2 py-0.5 rounded-full border border-emerald-700/60 shrink-0">
+              Fresh Today
+            </span>
           </div>
         </header>
 
@@ -430,7 +447,7 @@ export default function BuyerPage() {
                           {/* Top Badges */}
                           <div className="absolute top-2 left-2 flex items-center gap-1">
                             <span className="text-[9px] font-black uppercase tracking-wider bg-emerald-900/90 text-white px-2 py-0.5 rounded-full shadow-xs backdrop-blur-sm">
-                              {item.grade}
+                              Direct Farm
                             </span>
                           </div>
 
@@ -597,9 +614,6 @@ export default function BuyerPage() {
                           <h3 className="font-black text-emerald-950 text-[15px] truncate">
                             {item.cropName}
                           </h3>
-                          <span className="text-[10px] font-black bg-emerald-200 text-emerald-900 px-2 py-0.5 rounded-md">
-                            {item.grade}
-                          </span>
                         </div>
                         <p className="text-[12px] text-emerald-800/80 font-medium truncate">{item.variety}</p>
                         <p className="text-[11px] text-emerald-700 mt-0.5">
@@ -852,6 +866,7 @@ export default function BuyerPage() {
           cart={cartList}
           buyerName={buyerName}
           buyerAddress={buyerAddress || buyerLocation}
+          buyerIdentifier={buyerIdentifier}
           onOrderPlaced={handleOrderCreated}
         />
 
@@ -864,6 +879,7 @@ export default function BuyerPage() {
           onOrderCreated={handleOrderCreated}
           buyerName={buyerName}
           buyerDestination={buyerAddress || buyerLocation}
+          buyerIdentifier={buyerIdentifier}
           initialCrop={selectedMapCrop !== 'All Crops' ? selectedMapCrop : 'Tomato'}
           selectedSeller={selectedSellerForMatch}
         />

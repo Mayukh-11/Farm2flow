@@ -11,6 +11,8 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [role, setRole] = useState<'farmer' | 'buyer'>('farmer');
   const [rememberMe, setRememberMe] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showProfiles, setShowProfiles] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [registeredAccounts, setRegisteredAccounts] = useState<RegisteredAccount[]>([]);
@@ -520,228 +522,284 @@ export default function LoginPage() {
   const activeCustomAccounts = registeredAccounts.filter(a => a.role === role);
 
   return (
-    <div className="min-h-screen transition-colors duration-500 flex flex-col justify-center items-center p-3 sm:p-4 bg-gradient-to-br from-emerald-950 via-green-950 to-stone-950">
-      {/* Dynamic Background Glow Halo */}
-      <div className="absolute w-[450px] h-[450px] rounded-full blur-3xl pointer-events-none transition-all duration-700 opacity-25 bg-emerald-500 -top-20 -left-20" />
-
-      {/* Main Login Card with Clean Dynamic Colorful Theme */}
-      <div className="relative w-full max-w-[430px] bg-gradient-to-b from-[#f4fcf6] to-[#ebf9ef] rounded-3xl p-6 shadow-2xl flex flex-col gap-5 border-2 border-emerald-300/80">
-        
-        {/* Header with Colorful Brand Identity */}
-        <div className="flex flex-col items-center text-center gap-2">
-          <div className="w-14 h-14 rounded-2xl flex items-center justify-center shadow-md transition-all duration-500 text-white bg-gradient-to-tr from-emerald-800 to-green-600 shadow-emerald-900/30">
-            <span className="material-symbols-outlined text-[32px]">
+    <div
+      className="min-h-screen relative flex flex-col justify-center items-center p-4 sm:p-6 bg-cover bg-center transition-all duration-700 select-none overflow-x-hidden"
+      style={{
+        backgroundImage: isFarmerTheme
+          ? "linear-gradient(rgba(10, 35, 18, 0.40), rgba(8, 28, 14, 0.60)), url('/login-bg.jpg')"
+          : "linear-gradient(rgba(8, 30, 60, 0.25), rgba(4, 18, 40, 0.45)), url('/consumer-login-bg.jpg')"
+      }}
+    >
+      {/* Top Floating Brand & Role Switcher */}
+      <div className="w-full max-w-[390px] flex items-center justify-between mb-4 z-10 px-1">
+        <div className="flex items-center gap-2">
+          <div className={`w-8 h-8 rounded-xl flex items-center justify-center text-white shadow-lg backdrop-blur-md border ${
+            isFarmerTheme
+              ? 'bg-emerald-600/80 border-emerald-300/40 shadow-emerald-950/40'
+              : 'bg-blue-600/80 border-blue-300/40 shadow-blue-950/40'
+          }`}>
+            <span className="material-symbols-outlined text-[18px]">
               {isFarmerTheme ? 'agriculture' : 'storefront'}
             </span>
           </div>
-          <div>
-            <div className="flex items-center justify-center gap-1.5">
-              <h1 className="text-[24px] font-black text-slate-900 tracking-tight">Farm2Flow</h1>
-              <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full text-white bg-emerald-700">
-                {isFarmerTheme ? 'Kisan Edition' : 'Consumer Depot'}
-              </span>
-            </div>
-            <p className="text-[12px] text-emerald-800/80 font-bold">
-              {isFarmerTheme ? 'Direct Farm-to-Mandi Flow' : 'Direct Fresh Agricultural Sourcing'}
-            </p>
-          </div>
+          <span className="text-[17px] font-black text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] tracking-tight">
+            Farm2Flow
+          </span>
         </div>
 
-        {/* Dynamic Role Switcher (Unified Green Theme) */}
+        {/* Role Pill Switcher */}
+        <div className="flex items-center bg-black/35 backdrop-blur-md p-1 rounded-full border border-white/20 shadow-inner">
+          <button
+            type="button"
+            onClick={() => setRole('farmer')}
+            className={`px-3 py-1 rounded-full text-[11px] font-extrabold transition-all duration-300 ${
+              isFarmerTheme
+                ? 'bg-gradient-to-r from-lime-500 to-emerald-600 text-white shadow-md'
+                : 'text-white/80 hover:text-white'
+            }`}
+          >
+            🌾 Farmer
+          </button>
+          <button
+            type="button"
+            onClick={() => setRole('buyer')}
+            className={`px-3 py-1 rounded-full text-[11px] font-extrabold transition-all duration-300 ${
+              !isFarmerTheme
+                ? 'bg-gradient-to-r from-sky-400 to-blue-600 text-white shadow-md'
+                : 'text-white/80 hover:text-white'
+            }`}
+          >
+            🛍️ Consumer
+          </button>
+        </div>
+      </div>
+
+      {/* Glassmorphism Frosted Card */}
+      <div
+        className="relative w-full max-w-[390px] rounded-[36px] p-7 sm:p-8 flex flex-col gap-6 text-white z-10 transition-all duration-500 shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-white/35"
+        style={{
+          background: isFarmerTheme
+            ? 'rgba(255, 255, 255, 0.14)'
+            : 'rgba(255, 255, 255, 0.16)',
+          backdropFilter: 'blur(28px)',
+          WebkitBackdropFilter: 'blur(28px)',
+          boxShadow: isFarmerTheme
+            ? '0 25px 50px -12px rgba(0, 0, 0, 0.55), inset 0 1px 1px 0 rgba(255, 255, 255, 0.55)'
+            : '0 25px 50px -12px rgba(0, 0, 0, 0.55), inset 0 1px 1px 0 rgba(255, 255, 255, 0.55)'
+        }}
+      >
+        {/* Card Header Title */}
         <div className="flex flex-col gap-1.5">
-          <div className="flex items-center justify-between text-[11px] font-black uppercase tracking-wider text-emerald-800/70">
-            <span>Select Experience</span>
-            <span className="text-emerald-700">
-              {isFarmerTheme ? '🌾 Farmer View' : '🛍️ Consumer View'}
-            </span>
-          </div>
-
-          <div className="grid grid-cols-2 gap-1.5 p-1 bg-emerald-50/80 rounded-2xl border border-emerald-200/60">
-            <button
-              type="button"
-              onClick={() => setRole('farmer')}
-              className={`py-2.5 rounded-xl text-[13px] font-extrabold flex items-center justify-center gap-1.5 transition-all duration-300 ${
-                isFarmerTheme
-                  ? 'bg-emerald-800 text-white shadow-md scale-102'
-                  : 'text-emerald-900/70 hover:text-emerald-950 hover:bg-emerald-100/60'
-              }`}
-            >
-              <span>🌾 Farmer</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => setRole('buyer')}
-              className={`py-2.5 rounded-xl text-[13px] font-extrabold flex items-center justify-center gap-1.5 transition-all duration-300 ${
-                !isFarmerTheme
-                  ? 'bg-emerald-700 text-white shadow-md scale-102'
-                  : 'text-emerald-900/70 hover:text-emerald-950 hover:bg-emerald-100/60'
-              }`}
-            >
-              <span>🏪 Consumer</span>
-            </button>
-          </div>
+          <h2 className="text-[34px] font-black text-white tracking-tight leading-tight drop-shadow-sm">
+            Login
+          </h2>
+          <p className="text-[13px] text-white/85 font-medium leading-snug">
+            Welcome back please login to your {isFarmerTheme ? 'farmer' : 'consumer'} account
+          </p>
         </div>
 
-        {/* 1-Click Real Person Profiles Box */}
-        <div className="p-3.5 rounded-2xl border flex flex-col gap-2.5 transition-colors duration-300 bg-emerald-50/70 border-emerald-200">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-black uppercase tracking-wider text-emerald-900">
-              {isFarmerTheme ? '🌾 Verified Farmers (With Address)' : '👨‍💼 Verified Consumers (With Address)'}
-            </span>
-            <span className="text-[10px] font-extrabold px-2 py-0.2 rounded-full bg-emerald-200 text-emerald-900">
-              1-Click
-            </span>
-          </div>
-
-          <div className="flex flex-col gap-2 max-h-[185px] overflow-y-auto no-scrollbar pr-0.5">
-            {/* Custom Newly Registered Users */}
-            {activeCustomAccounts.map(account => (
-              <button
-                key={account.id}
-                type="button"
-                onClick={() => handleProfileLogin({
-                  id: account.id,
-                  name: account.name,
-                  location: account.location,
-                  address: account.address,
-                  email: account.email || `${account.phone}@farm2flow.in`
-                }, role)}
-                className="p-2.5 bg-white rounded-xl border flex items-start gap-2 text-left transition-all active:scale-98 shadow-xs hover:shadow-md border-emerald-300 hover:border-emerald-600"
-              >
-                <span className="text-2xl mt-0.5">{role === 'farmer' ? '🌾' : '👨‍💼'}</span>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between">
-                    <p className="font-black text-[13px] text-slate-900 truncate">{account.name}</p>
-                    <span className="text-[9px] font-bold bg-amber-100 text-amber-900 px-1.5 py-0.2 rounded shrink-0">New User</span>
-                  </div>
-                  <p className="text-[10px] font-bold text-slate-500">Ph: {account.phone} • DOB: {account.dob}</p>
-                  <p className="text-[10px] text-slate-600 font-medium truncate mt-0.5">
-                    📍 {account.address}
-                  </p>
-                </div>
-              </button>
-            ))}
-
-            {/* Default Verified Real Person Profiles */}
-            {(role === 'farmer' ? DEMO_PROFILES.farmer : DEMO_PROFILES.buyer).map(profile => (
-              <button
-                key={profile.id}
-                type="button"
-                onClick={() => handleProfileLogin(profile, role)}
-                className="p-2.5 bg-white rounded-xl border flex items-start gap-2 text-left transition-all active:scale-98 shadow-xs hover:shadow-md border-emerald-200 hover:border-emerald-600 hover:bg-emerald-50/40"
-              >
-                <span className="text-2xl shrink-0 mt-0.5">{profile.icon}</span>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between">
-                    <p className="font-black text-[13px] text-slate-900 truncate">{profile.name}</p>
-                    <span className="text-[10px] font-extrabold px-1.5 py-0.2 rounded shrink-0 text-emerald-800 bg-emerald-100">
-                      Fast Login
-                    </span>
-                  </div>
-                  <p className="text-[11px] font-bold text-emerald-700">
-                    {profile.occupation}
-                  </p>
-                  <p className="text-[10px] text-slate-500 font-medium truncate mt-0.5">
-                    📍 {profile.address}
-                  </p>
-                </div>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Standard Login Credentials Form */}
-        <form onSubmit={handleSubmit} className="flex flex-col gap-3.5">
+        {/* Credentials Form */}
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           {error && (
-            <div className="bg-red-50 text-red-800 text-[12px] p-3 rounded-xl border border-red-200 font-bold">
+            <div className="bg-rose-500/25 border border-rose-400/60 text-white text-[12px] p-3 rounded-2xl font-bold backdrop-blur-md animate-in fade-in">
               {error}
             </div>
           )}
 
-          {/* Phone / Email Input */}
-          <div>
-            <label className="text-[12px] font-bold text-slate-700">Phone Number or Email</label>
-            <div className="relative mt-1">
-              <span className="absolute left-3.5 top-3.5 text-slate-400 material-symbols-outlined text-[18px]">person</span>
-              <input
-                type="text"
-                value={identifier}
-                onChange={e => setIdentifier(e.target.value)}
-                placeholder={isFarmerTheme ? "Phone / email (e.g. +91 98310 44210)" : "Phone / email (e.g. +91 98300 12345)"}
-                className="w-full pl-10 pr-4 py-3 bg-slate-50 border rounded-xl text-[13px] font-bold text-slate-900 focus:outline-none focus:bg-white transition-all shadow-xs border-slate-200 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20"
-              />
-            </div>
+          {/* User Name Input with Profile Icon */}
+          <div className="relative">
+            <input
+              type="text"
+              value={identifier}
+              onChange={e => setIdentifier(e.target.value)}
+              placeholder="User Name"
+              className="w-full h-[52px] pl-5 pr-12 bg-white/10 hover:bg-white/15 focus:bg-white/20 border border-white/35 focus:border-white/80 rounded-2xl text-[14px] text-white placeholder-white/60 font-medium focus:outline-none transition-all duration-200 shadow-inner"
+            />
+            <span className="absolute right-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-[20px] text-white/70 pointer-events-none">
+              person
+            </span>
           </div>
 
-          {/* Password Input */}
-          <div>
-            <label className="text-[12px] font-bold text-slate-700">Password</label>
-            <div className="relative mt-1">
-              <span className="absolute left-3.5 top-3.5 text-slate-400 material-symbols-outlined text-[18px]">lock</span>
-              <input
-                type="password"
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-                placeholder="••••••••"
-                className="w-full pl-10 pr-4 py-3 bg-slate-50 border rounded-xl text-[13px] font-bold text-slate-900 focus:outline-none focus:bg-white transition-all shadow-xs border-slate-200 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20"
-              />
-            </div>
+          {/* Password Input with Eye Toggle Icon */}
+          <div className="relative">
+            <input
+              type={showPassword ? 'text' : 'password'}
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              placeholder="Password"
+              className="w-full h-[52px] pl-5 pr-12 bg-white/10 hover:bg-white/15 focus:bg-white/20 border border-white/35 focus:border-white/80 rounded-2xl text-[14px] text-white placeholder-white/60 font-medium focus:outline-none transition-all duration-200 shadow-inner"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white transition-colors"
+              title={showPassword ? 'Hide Password' : 'Show Password'}
+            >
+              <span className="material-symbols-outlined text-[20px]">
+                {showPassword ? 'visibility_off' : 'visibility'}
+              </span>
+            </button>
           </div>
 
-          {/* Remember Me */}
-          <div className="flex items-center justify-between text-[12px] text-slate-600 font-bold">
-            <label className="flex items-center gap-2 cursor-pointer select-none">
+          {/* Remember Me Checkbox Row */}
+          <div className="flex items-center justify-between text-[13px] text-white/90 font-medium px-0.5">
+            <label className="flex items-center gap-2.5 cursor-pointer select-none">
               <input
                 type="checkbox"
                 checked={rememberMe}
                 onChange={e => setRememberMe(e.target.checked)}
-                className="w-4 h-4 rounded border-slate-300 text-emerald-700 accent-emerald-700"
+                className={`w-4 h-4 rounded border-white/40 bg-white/10 focus:ring-0 ${
+                  isFarmerTheme ? 'accent-emerald-500' : 'accent-blue-500'
+                }`}
               />
-              <span>Remember login</span>
+              <span>Remember me</span>
             </label>
-            <button
-              type="button"
-              onClick={() => alert("Default demo password for all accounts is: demo1234")}
-              className="font-extrabold hover:underline text-emerald-800"
-            >
-              Demo credentials?
-            </button>
           </div>
 
-          {/* Sign In Button */}
+          {/* Quick 1-Click Fast Sign In Profiles Strip */}
+          <div className="flex flex-col gap-2 pt-1">
+            <div className="flex items-center justify-between px-0.5">
+              <span className="text-[11px] font-black uppercase tracking-wider text-white/90 flex items-center gap-1">
+                <span className="material-symbols-outlined text-[15px] text-amber-300">bolt</span>
+                <span>Fast Sign In ({isFarmerTheme ? 'Farmers' : 'Consumers'})</span>
+              </span>
+              <button
+                type="button"
+                onClick={() => setShowProfiles(!showProfiles)}
+                className={`text-[11px] font-extrabold underline transition-colors cursor-pointer ${
+                  isFarmerTheme ? 'text-lime-300 hover:text-lime-200' : 'text-sky-300 hover:text-sky-200'
+                }`}
+              >
+                {showProfiles ? 'Close All' : 'View All (15+)'}
+              </button>
+            </div>
+
+            {/* Horizontal Fast Sign In Quick Chips */}
+            <div className="flex items-center gap-2 overflow-x-auto pb-1.5 no-scrollbar">
+              {/* Show top 5 instant click badges */}
+              {(role === 'farmer' ? DEMO_PROFILES.farmer : DEMO_PROFILES.buyer).slice(0, 5).map(profile => (
+                <button
+                  key={profile.id}
+                  type="button"
+                  onClick={() => handleProfileLogin(profile, role)}
+                  className="shrink-0 px-3 py-2 rounded-xl bg-white/15 hover:bg-white/25 active:scale-95 border border-white/25 flex items-center gap-2 text-left transition-all backdrop-blur-md shadow-xs"
+                  title={`Fast Login as ${profile.name}`}
+                >
+                  <span className="text-[16px]">{profile.icon}</span>
+                  <div className="min-w-0">
+                    <p className="text-[11px] font-extrabold text-white leading-tight truncate max-w-[100px]">{profile.name}</p>
+                    <p className="text-[9px] text-white/70 leading-tight truncate max-w-[100px]">{profile.occupation}</p>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Collapsible Full Verified Profiles List (All 15 Consumers / 15 Farmers + Custom Accounts) */}
+          {showProfiles && (
+            <div className="p-3 bg-black/50 backdrop-blur-2xl rounded-2xl border border-white/30 flex flex-col gap-2 max-h-[220px] overflow-y-auto no-scrollbar animate-in slide-in-from-top-2 duration-200 shadow-2xl">
+              <div className="flex items-center justify-between pb-1.5 border-b border-white/20 sticky top-0 bg-transparent z-10">
+                <span className="text-[11px] font-black uppercase tracking-wider text-white">
+                  {isFarmerTheme ? '🌾 All 15 Verified Farmers' : '🛍️ All 15 Verified Consumers'}
+                </span>
+                <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-white/20 text-white">
+                  1-Click Sign In
+                </span>
+              </div>
+
+              {/* Custom registered accounts */}
+              {activeCustomAccounts.map(account => (
+                <button
+                  key={account.id}
+                  type="button"
+                  onClick={() => {
+                    handleProfileLogin({
+                      id: account.id,
+                      name: account.name,
+                      location: account.location,
+                      address: account.address,
+                      email: account.email || `${account.phone}@farm2flow.in`
+                    }, role);
+                  }}
+                  className="p-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 flex items-start gap-2.5 text-left transition-all active:scale-98"
+                >
+                  <span className="text-xl shrink-0 mt-0.5">{isFarmerTheme ? '🌾' : '👨‍💼'}</span>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between">
+                      <p className="font-extrabold text-[12px] text-white truncate">{account.name}</p>
+                      <span className="text-[9px] font-bold bg-amber-400 text-amber-950 px-1.5 py-0.2 rounded">New</span>
+                    </div>
+                    <p className="text-[10px] text-white/70 truncate">Ph: {account.phone} • {account.location}</p>
+                    <p className="text-[9px] text-white/60 truncate">📍 {account.address}</p>
+                  </div>
+                </button>
+              ))}
+
+              {/* All 15 Demo Profiles */}
+              {(role === 'farmer' ? DEMO_PROFILES.farmer : DEMO_PROFILES.buyer).map(profile => (
+                <button
+                  key={profile.id}
+                  type="button"
+                  onClick={() => handleProfileLogin(profile, role)}
+                  className="p-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 flex items-start gap-2.5 text-left transition-all active:scale-98"
+                >
+                  <span className="text-xl shrink-0 mt-0.5">{profile.icon}</span>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between">
+                      <p className="font-extrabold text-[12px] text-white truncate">{profile.name}</p>
+                      <span className="text-[9px] font-extrabold text-emerald-300 bg-emerald-950/60 px-1.5 py-0.2 rounded">
+                        Fast Sign In
+                      </span>
+                    </div>
+                    <p className="text-[10px] text-white/80 font-medium truncate">{profile.occupation}</p>
+                    <p className="text-[9px] text-white/60 truncate mt-0.5">📍 {profile.address}</p>
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
+
+          {/* Login Button with Custom Gradient */}
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-3.5 text-white rounded-xl text-[14px] font-black transition-all shadow-md active:scale-98 flex items-center justify-center gap-2 mt-1 cursor-pointer bg-gradient-to-r from-emerald-800 to-green-700 hover:from-emerald-900 hover:to-green-800 shadow-emerald-950/20"
+            className={`w-full h-[54px] rounded-2xl text-[16px] font-black transition-all duration-300 shadow-lg active:scale-98 flex items-center justify-center cursor-pointer mt-1 ${
+              isFarmerTheme
+                ? 'bg-gradient-to-r from-[#b7c920] to-[#25a04e] hover:from-[#c5d826] hover:to-[#2cb859] text-white shadow-emerald-950/40'
+                : 'bg-gradient-to-r from-[#1e88e5] to-[#0d47a1] hover:from-[#2196f3] hover:to-[#1565c0] text-white shadow-blue-950/40'
+            }`}
           >
             {isLoading ? (
-              <span className="flex items-center gap-2">
-                <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
-                <span>Signing in...</span>
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="w-5 h-5 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                <span className="text-[14px]">Logging in...</span>
+              </div>
             ) : (
-              <>
-                <span>Sign In as {role === 'farmer' ? 'Farmer' : 'Consumer'}</span>
-                <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
-              </>
+              <span>Login</span>
             )}
           </button>
         </form>
 
-        {/* Create Account Action Bar */}
-        <div className="border-t border-slate-200 pt-3 flex flex-col items-center gap-2 text-center">
-          <p className="text-[12px] text-slate-500 font-bold">New to Farm2Flow?</p>
+        {/* Signup Link */}
+        <div className="flex items-center justify-center gap-1.5 text-[13px] text-white/85 font-medium -mt-1">
+          <span>Don&apos;t have an account?</span>
           <button
             type="button"
             onClick={() => {
               setRegRole(role);
               setIsRegisterModalOpen(true);
             }}
-            className="w-full py-2.5 rounded-xl border-2 text-[13px] font-black transition-all active:scale-98 flex items-center justify-center gap-1.5 shadow-xs border-emerald-700 text-emerald-900 hover:bg-emerald-50"
+            className="font-black text-white hover:underline transition-all cursor-pointer"
           >
-            <span className="material-symbols-outlined text-[18px]">person_add</span>
-            <span>Create New Account</span>
+            Signup
           </button>
+        </div>
+
+        {/* Creator / Brand Footer Signature */}
+        <div className="text-center pt-2 border-t border-white/15">
+          <p className="text-[11px] text-white/70 font-medium tracking-wide">
+            Created for <span className="font-extrabold italic text-white">Farm2Flow Ecosystem</span>
+          </p>
         </div>
       </div>
 
