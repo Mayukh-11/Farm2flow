@@ -371,6 +371,7 @@ export default function LoginPage() {
     setTimeout(() => {
       const isEnam = selectedRole === 'farmer' ? (profile.isEnamVerified ?? true) : false;
       const userSession = {
+        id: profile.id,
         identifier: profile.email,
         name: profile.name,
         location: profile.location,
@@ -425,6 +426,7 @@ export default function LoginPage() {
         d => d.email.toLowerCase() === cleanIdent || d.phone.replace(/\s+/g, '') === cleanPhone
       );
 
+      let profileId = registeredMatch?.id || demoMatch?.id || (selectedRole === 'buyer' ? 'consumer-1' : 'farmer-1');
       let profileName = registeredMatch?.name || demoMatch?.name || (selectedRole === 'buyer' ? 'Sourav Mukherjee' : 'Ramesh Ghosh');
       let profileLocation = registeredMatch?.location || demoMatch?.location || (selectedRole === 'buyer' ? 'Salt Lake, Kolkata' : 'Hooghly (Singur)');
       let profileAddress = registeredMatch?.address || demoMatch?.address || (selectedRole === 'buyer' ? 'AD-Block, Sector 1, Salt Lake, Kolkata - 700064' : 'Singur Vegetable Cluster, Hooghly, WB');
@@ -436,6 +438,7 @@ export default function LoginPage() {
         : (selectedRole === 'farmer');
 
       const userSession = {
+        id: profileId,
         identifier: identifier || (selectedRole === 'buyer' ? 'sourav.consumer@farm2flow.in' : 'ramesh.farmer@farm2flow.in'),
         name: profileName,
         location: profileLocation,
@@ -509,6 +512,7 @@ export default function LoginPage() {
       setTimeout(() => {
         // Auto sign in with the new account
         const userSession = {
+          id: created.id,
           identifier: created.email || created.phone,
           name: created.name,
           location: created.location,

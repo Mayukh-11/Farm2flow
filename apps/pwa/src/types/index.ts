@@ -14,6 +14,7 @@ export interface Produce {
   farmerId: string;
   farmerName: string;
   farmerLocation: string;
+  farmerIdentifier?: string;
   cropName: string;
   variety: string;
   grade: 'Grade A' | 'Grade B' | 'Standard' | 'Export Quality';

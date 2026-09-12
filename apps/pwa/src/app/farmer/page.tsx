@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { getStoredProduce, getDemandForecast, getPriceEstimate, getOrders, saveProduce, deleteProduce } from '@/services/api';
 import { Produce, Order } from '@/types';
@@ -26,6 +26,8 @@ export default function FarmerPage() {
   const [currentLocation, setCurrentLocation] = useState<string>('Hooghly (Singur), West Bengal');
   const [farmerAddress, setFarmerAddress] = useState<string>('Singur Vegetable Cluster, Hooghly, WB');
   const [farmerPhone, setFarmerPhone] = useState<string>('+91 98310 44210');
+  const [farmerIdentifier, setFarmerIdentifier] = useState<string>('ramesh.farmer@farm2flow.in');
+  const [farmerId, setFarmerId] = useState<string>('farmer-1');
   const [isEnamVerified, setIsEnamVerified] = useState<boolean>(true);
   const [enamId, setEnamId] = useState<string>('');
   
@@ -57,6 +59,8 @@ export default function FarmerPage() {
         if (session.location) setCurrentLocation(session.location);
         if (session.address) setFarmerAddress(session.address);
         if (session.phone || session.identifier) setFarmerPhone(session.phone || session.identifier);
+        if (session.identifier) setFarmerIdentifier(session.identifier);
+        if (session.id) setFarmerId(session.id);
         setIsEnamVerified(Boolean(session.isEnamVerified));
         if (session.enamId) setEnamId(session.enamId);
       } catch (e) {}
@@ -108,6 +112,25 @@ export default function FarmerPage() {
 
   const forecast = getDemandForecast(selectedCrop);
   const priceEst = getPriceEstimate(selectedCrop);
+
+  // Personalize listings strictly to the logged-in farmer's account
+  const myProduceList = useMemo(() => {
+    return produceList.filter(p => {
+      // 1. If the produce has a specific farmerIdentifier recorded
+      if (p.farmerIdentifier && farmerIdentifier) {
+        if (p.farmerIdentifier.toLowerCase() === farmerIdentifier.toLowerCase()) return true;
+      }
+      // 2. If matched by farmerId
+      if (p.farmerId && farmerId && p.farmerId === farmerId) {
+        return true;
+      }
+      // 3. If matched by farmerName (case-insensitive)
+      if (p.farmerName && farmerName && p.farmerName.trim().toLowerCase() === farmerName.trim().toLowerCase()) {
+        return true;
+      }
+      return false;
+    });
+  }, [produceList, farmerIdentifier, farmerId, farmerName]);
 
   return (
     <div className="bg-[#051c0e] text-on-surface antialiased min-h-screen pb-28 font-sans">
@@ -263,8 +286,8 @@ export default function FarmerPage() {
               <div className="grid grid-cols-2 gap-2 text-[12px]">
                 <div className="bg-surface-container-lowest p-3 rounded-xl border border-outline-variant flex flex-col gap-1">
                   <span className="text-on-surface-variant font-bold">{t.activeListings}</span>
-                  <span className="text-[20px] font-extrabold text-primary">{produceList.length}</span>
-                  <span className="text-[10px] text-emerald-700 font-bold">{t.directToVerified}</span>
+                  <span className="text-[20px] font-extrabold text-primary">{myProduceList.length}</span>
+                  <span className="text-[10px] text-emerald-700 font-bold">From your account</span>
                 </div>
                 <div className="bg-surface-container-lowest p-3 rounded-xl border border-outline-variant flex flex-col gap-1">
                   <span className="text-on-surface-variant font-bold">{t.confirmedOrders}</span>
@@ -289,57 +312,84 @@ export default function FarmerPage() {
           {farmerTab === 'sell' && (
             <div className="flex flex-col gap-3">
               <div className="flex justify-between items-center">
-                <h3 className="text-[16px] font-bold text-on-surface">{t.myActiveListings}</h3>
+                <div>
+                  <h3 className="text-[16px] font-bold text-on-surface">{t.myActiveListings}</h3>
+                  <p className="text-[11px] text-emerald-800 font-semibold">
+                    {myProduceList.length} lot{myProduceList.length === 1 ? '' : 's'} listed by {farmerName}
+                  </p>
+                </div>
                 <button
                   onClick={() => setIsListWizardOpen(true)}
-                  className="bg-primary-container text-on-primary px-3 py-1.5 rounded-lg text-[12px] font-bold flex items-center gap-1"
+                  className="bg-primary-container text-on-primary px-3 py-1.5 rounded-lg text-[12px] font-bold flex items-center gap-1 shadow-xs active:scale-95 transition-transform"
                 >
                   <span className="material-symbols-outlined text-[16px]">add</span>
                   <span>{t.listProduce}</span>
                 </button>
               </div>
-              {produceList.map(item => (
-                <div key={item.id} className="bg-surface-container-lowest p-3.5 rounded-xl border border-outline-variant flex flex-col gap-2 shadow-xs transition-all hover:border-outline">
-                  <div className="flex justify-between items-start">
-                    <div className="flex items-center gap-3">
-                      <img
-                        src={getCropPhoto(item.cropName)}
-                        alt={item.cropName}
-                        className="w-14 h-14 rounded-xl object-cover border border-slate-100 shadow-xs shrink-0"
-                      />
-                      <div>
-                        <h4 className="font-bold text-on-surface text-[15px]">{item.cropName}</h4>
-                        <p className="text-[12px] text-on-surface-variant">{item.farmerLocation} • {item.variety}</p>
+
+              {myProduceList.length === 0 ? (
+                <div className="bg-surface-container-lowest p-6 rounded-2xl border-2 border-dashed border-emerald-300/80 text-center flex flex-col items-center gap-3 shadow-2xs my-2">
+                  <div className="w-12 h-12 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center">
+                    <span className="material-symbols-outlined text-[26px]">inventory_2</span>
+                  </div>
+                  <div>
+                    <h4 className="font-extrabold text-[15px] text-emerald-950">No produce listed yet</h4>
+                    <p className="text-[12px] text-slate-600 mt-1 max-w-[280px]">
+                      List your harvested vegetables, fruits, or grains to sell directly to verified wholesale buyers.
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setIsListWizardOpen(true)}
+                    className="bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-[12px] px-4 py-2 rounded-xl flex items-center gap-1.5 shadow-sm active:scale-95 transition-all"
+                  >
+                    <span className="material-symbols-outlined text-[16px]">add_circle</span>
+                    <span>List Produce Now</span>
+                  </button>
+                </div>
+              ) : (
+                myProduceList.map(item => (
+                  <div key={item.id} className="bg-surface-container-lowest p-3.5 rounded-xl border border-outline-variant flex flex-col gap-2 shadow-xs transition-all hover:border-outline">
+                    <div className="flex justify-between items-start">
+                      <div className="flex items-center gap-3">
+                        <img
+                          src={getCropPhoto(item.cropName)}
+                          alt={item.cropName}
+                          className="w-14 h-14 rounded-xl object-cover border border-slate-100 shadow-xs shrink-0"
+                        />
+                        <div>
+                          <h4 className="font-bold text-on-surface text-[15px]">{item.cropName}</h4>
+                          <p className="text-[12px] text-on-surface-variant">{item.farmerLocation} • {item.variety}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <span className="bg-emerald-100 text-primary-container px-2 py-0.5 rounded-full text-[11px] font-bold">
+                          {item.status}
+                        </span>
+                        <button
+                          onClick={() => handleDeleteProduce(item.id, item.cropName)}
+                          className="p-1 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors"
+                          title="Delete this listed product"
+                          aria-label="Delete listing"
+                        >
+                          <span className="material-symbols-outlined text-[18px]">delete</span>
+                        </button>
                       </div>
                     </div>
-                    <div className="flex items-center gap-1.5">
-                      <span className="bg-emerald-100 text-primary-container px-2 py-0.5 rounded-full text-[11px] font-bold">
-                        {item.status}
-                      </span>
-                      <button
-                        onClick={() => handleDeleteProduce(item.id, item.cropName)}
-                        className="p-1 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors"
-                        title="Delete this listed product"
-                        aria-label="Delete listing"
-                      >
-                        <span className="material-symbols-outlined text-[18px]">delete</span>
-                      </button>
+                    <div className="flex justify-between items-center text-[13px] pt-1.5 border-t border-outline-variant">
+                      <span className="font-bold text-on-surface">{item.quantityKg} kg</span>
+                      <div className="flex items-center gap-3">
+                        <span className="font-extrabold text-primary">₹{item.expectedPricePerKg} / kg</span>
+                        <button
+                          onClick={() => handleDeleteProduce(item.id, item.cropName)}
+                          className="text-[11px] font-bold text-red-600 hover:text-red-800 underline flex items-center gap-0.5"
+                        >
+                          <span>Remove</span>
+                        </button>
+                      </div>
                     </div>
                   </div>
-                  <div className="flex justify-between items-center text-[13px] pt-1.5 border-t border-outline-variant">
-                    <span className="font-bold text-on-surface">{item.quantityKg} kg</span>
-                    <div className="flex items-center gap-3">
-                      <span className="font-extrabold text-primary">₹{item.expectedPricePerKg} / kg</span>
-                      <button
-                        onClick={() => handleDeleteProduce(item.id, item.cropName)}
-                        className="text-[11px] font-bold text-red-600 hover:text-red-800 underline flex items-center gap-0.5"
-                      >
-                        <span>Remove</span>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           )}
 

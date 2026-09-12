@@ -324,20 +324,25 @@ export const ListProduceWizard: React.FC<ListProduceWizardProps> = ({
 
     let activeFarmerName = 'Ramesh Ghosh';
     let activeFarmerLocation = 'Hooghly (Singur)';
+    let activeFarmerIdentifier = 'ramesh.farmer@farm2flow.in';
+    let activeFarmerId = 'farmer-1';
     if (typeof window !== 'undefined') {
       try {
         const session = JSON.parse(localStorage.getItem('farm2flow_user_session') || '{}');
         if (session.name) activeFarmerName = session.name;
         if (session.location) activeFarmerLocation = session.location;
+        if (session.identifier) activeFarmerIdentifier = session.identifier;
+        if (session.id) activeFarmerId = session.id;
       } catch (err) {}
     }
 
     setTimeout(() => {
       const created: Produce = {
         id: `prod-${Date.now().toString().slice(-4)}`,
-        farmerId: `f-${Date.now().toString().slice(-3)}`,
+        farmerId: activeFarmerId || `f-${Date.now().toString().slice(-3)}`,
         farmerName: activeFarmerName,
         farmerLocation: activeFarmerLocation,
+        farmerIdentifier: activeFarmerIdentifier,
         cropName: selectedCrop.trim(),
         variety: customCatalogCrops.find(c => c.name.toLowerCase() === selectedCrop.toLowerCase())?.variety || 'Farm Fresh',
         grade,
