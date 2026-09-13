@@ -525,3 +525,43 @@ export const createOrderFromCart = (
 
   return newOrder;
 };
+
+export const updateOrderStatus = (orderId: string, status: Order['status'], paymentStatus?: Order['paymentStatus']): Order[] => {
+  if (typeof window === 'undefined') return [];
+  const currentOrders = getOrders();
+  const updated = currentOrders.map(o => {
+    if (o.id === orderId) {
+      return {
+        ...o,
+        status,
+        ...(paymentStatus ? { paymentStatus } : {})
+      };
+    }
+    return o;
+  });
+  localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(updated));
+  window.dispatchEvent(new CustomEvent('farm2flow_orders_updated', { detail: { orders: updated } }));
+  return updated;
+};
+
+export const getCompanyFinancialMetrics = () => {
+  const orders = getOrders();
+  const totalGmv = orders.reduce((sum, o) => sum + (o.totalAmount || 0), 0);
+  const totalFarmerPayout = orders.reduce((sum, o) => sum + (o.farmerPayoutAmount || 0), 0);
+  const totalPlatformFees = orders.reduce((sum, o) => sum + (o.totalPlatformFee || (o.totalQuantityKg * 3)), 0);
+  const totalVolumeKg = orders.reduce((sum, o) => sum + (o.totalQuantityKg || 0), 0);
+  const totalOrders = orders.length;
+  const activeOrders = orders.filter(o => o.status === 'Confirmed' || o.status === 'In Transit').length;
+  const deliveredOrders = orders.filter(o => o.status === 'Delivered').length;
+
+  return {
+    totalGmv,
+    totalFarmerPayout,
+    totalPlatformFees,
+    totalVolumeKg,
+    totalOrders,
+    activeOrders,
+    deliveredOrders,
+    avgOrderValue: totalOrders > 0 ? Math.round(totalGmv / totalOrders) : 0
+  };
+};

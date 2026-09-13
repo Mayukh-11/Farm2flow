@@ -1220,7 +1220,7 @@ export const PAN_INDIA_SELLERS: PanIndiaSeller[] = [
   // Additional Pan-India Farmer Products
   // Gujarat & West Coast
   {
-    id: 'seller-gj-3',
+    id: 'seller-gj-3-plus',
     name: 'Bharatbhai Vala',
     fpoOrCoop: 'Kutch Dragon Fruit Grower Cooperative',
     crop: 'Dragon Fruit',
@@ -1260,7 +1260,7 @@ export const PAN_INDIA_SELLERS: PanIndiaSeller[] = [
 
   // Maharashtra Fruits & Greens
   {
-    id: 'seller-mh-5',
+    id: 'seller-mh-5-plus',
     name: 'Gajanan Patil',
     fpoOrCoop: 'Jalgaon Mosambi & Citrus Producers',
     crop: 'Sweet Lime',
@@ -1279,7 +1279,7 @@ export const PAN_INDIA_SELLERS: PanIndiaSeller[] = [
     transitDaysToKolkata: 2.1
   },
   {
-    id: 'seller-mh-6',
+    id: 'seller-mh-6-plus',
     name: 'Prakash Deshmukh',
     fpoOrCoop: 'Beed Custard Apple Farmers Union',
     crop: 'Custard Apple',
@@ -1300,7 +1300,7 @@ export const PAN_INDIA_SELLERS: PanIndiaSeller[] = [
 
   // Himachal Pradesh & J&K Exotics
   {
-    id: 'seller-hp-3',
+    id: 'seller-hp-3-plus',
     name: 'Kuldeep Thakur',
     fpoOrCoop: 'Kullu Valley Kiwi & Exotic Fruit Orchardists',
     crop: 'Kiwi',
@@ -1397,7 +1397,7 @@ export const PAN_INDIA_SELLERS: PanIndiaSeller[] = [
 
   // West Bengal & Eastern Vegetables & Specialties
   {
-    id: 'seller-wb-10',
+    id: 'seller-wb-10-plus',
     name: 'Kartick Ghosh',
     fpoOrCoop: 'Dhaniakhali Organic Greens Cluster',
     crop: 'Coriander',
@@ -1416,7 +1416,7 @@ export const PAN_INDIA_SELLERS: PanIndiaSeller[] = [
     transitDaysToKolkata: 0.2
   },
   {
-    id: 'seller-wb-11',
+    id: 'seller-wb-11-plus',
     name: 'Nemai Mondal',
     fpoOrCoop: 'Ghatal Pointed Gourd FPO',
     crop: 'Pointed Gourd',
@@ -1435,7 +1435,7 @@ export const PAN_INDIA_SELLERS: PanIndiaSeller[] = [
     transitDaysToKolkata: 0.3
   },
   {
-    id: 'seller-wb-12',
+    id: 'seller-wb-12-plus',
     name: 'Sanatan Das',
     fpoOrCoop: 'Panchla Ridge Gourd Cultivators',
     crop: 'Ridge Gourd',
@@ -1551,7 +1551,7 @@ export const PAN_INDIA_SELLERS: PanIndiaSeller[] = [
 
   // Punjab, Haryana & Rajasthan Grains & Superfoods
   {
-    id: 'seller-pb-3',
+    id: 'seller-pb-3-plus',
     name: 'Gursewak Singh',
     fpoOrCoop: 'Bhatinda Jowar & Millets Guild',
     crop: 'Jowar',
@@ -1570,7 +1570,7 @@ export const PAN_INDIA_SELLERS: PanIndiaSeller[] = [
     transitDaysToKolkata: 2.2
   },
   {
-    id: 'seller-rj-3',
+    id: 'seller-rj-3-plus',
     name: 'Mangilal Bishnoi',
     fpoOrCoop: 'Barmer Desert Bajra Union',
     crop: 'Bajra',
@@ -1608,7 +1608,7 @@ export const PAN_INDIA_SELLERS: PanIndiaSeller[] = [
     transitDaysToKolkata: 2.1
   },
   {
-    id: 'seller-ka-3',
+    id: 'seller-ka-3-plus',
     name: 'Narayanaswamy Gowda',
     fpoOrCoop: 'Mandya Ragi & Millet Farmers FPO',
     crop: 'Ragi',
@@ -1627,7 +1627,7 @@ export const PAN_INDIA_SELLERS: PanIndiaSeller[] = [
     transitDaysToKolkata: 2.5
   },
   {
-    id: 'seller-ka-4',
+    id: 'seller-ka-4-plus',
     name: 'Shankarappa Bellad',
     fpoOrCoop: 'Dharwad Mint & Herb Growers',
     crop: 'Mint',
@@ -1686,7 +1686,7 @@ export const PAN_INDIA_SELLERS: PanIndiaSeller[] = [
     transitDaysToKolkata: 2.6
   },
   {
-    id: 'seller-tn-2',
+    id: 'seller-tn-2-plus',
     name: 'Murugesan Pandian',
     fpoOrCoop: 'Erode Turmeric Planters Society',
     crop: 'Turmeric',
@@ -1705,7 +1705,7 @@ export const PAN_INDIA_SELLERS: PanIndiaSeller[] = [
     transitDaysToKolkata: 2.4
   },
   {
-    id: 'seller-br-2',
+    id: 'seller-br-2-plus',
     name: 'Ramakant Jha',
     fpoOrCoop: 'Muzaffarpur Shahi Litchi Producers Association',
     crop: 'Litchi',
@@ -1724,7 +1724,7 @@ export const PAN_INDIA_SELLERS: PanIndiaSeller[] = [
     transitDaysToKolkata: 0.9
   },
   {
-    id: 'seller-mp-4',
+    id: 'seller-mp-4-plus',
     name: 'Digvijay Malviya',
     fpoOrCoop: 'Ujjain Malwa Yellow Mustard Syndicate',
     crop: 'Mustard',
@@ -1804,7 +1804,7 @@ export const extractCoordinatesAndState = (locStr: string): { lat: number; lng: 
   return { lat: parseFloat(jitterLat.toFixed(4)), lng: parseFloat(jitterLng.toFixed(4)), state: 'West Bengal' };
 };
 
-const SELLERS_STOCK_STORAGE_KEY = 'farm2flow_pan_india_sellers_stock';
+const SELLERS_STOCK_STORAGE_KEY = 'farm2flow_pan_india_sellers_stock_v2';
 
 export const getStoredPanIndiaSellers = (): PanIndiaSeller[] => {
   if (typeof window === 'undefined') return PAN_INDIA_SELLERS;
@@ -1814,7 +1814,16 @@ export const getStoredPanIndiaSellers = (): PanIndiaSeller[] => {
     return PAN_INDIA_SELLERS;
   }
   try {
-    return JSON.parse(stored);
+    const parsed = JSON.parse(stored);
+    // Ensure ids are unique even if legacy data existed
+    const seen = new Set<string>();
+    return parsed.map((s: PanIndiaSeller, idx: number) => {
+      if (seen.has(s.id)) {
+        return { ...s, id: `${s.id}-unique-${idx}` };
+      }
+      seen.add(s.id);
+      return s;
+    });
   } catch {
     return PAN_INDIA_SELLERS;
   }
@@ -1869,6 +1878,15 @@ export const getLivePanIndiaSellers = (userProduceItems: any[] = []): PanIndiaSe
 
   const baseSellers = getStoredPanIndiaSellers().filter(s => s.quantityKg > 0);
 
-  // Deduplicate by ID and put newest live listings at the top
-  return [...dynamicFromProduce, ...baseSellers];
+  // Guarantee every ID in the combined list is 100% unique
+  const combined = [...dynamicFromProduce, ...baseSellers];
+  const seenIds = new Set<string>();
+  return combined.map((seller, idx) => {
+    let finalId = seller.id;
+    if (seenIds.has(finalId)) {
+      finalId = `${seller.id}-uniq-${idx}`;
+    }
+    seenIds.add(finalId);
+    return { ...seller, id: finalId };
+  });
 };

@@ -9,7 +9,7 @@ import { InDriveMapModal, LocationData } from '@/components/InDriveMapModal';
 export default function LoginPage() {
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState<'farmer' | 'buyer'>('farmer');
+  const [role, setRole] = useState<'farmer' | 'buyer' | 'admin'>('farmer');
   const [rememberMe, setRememberMe] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [showProfiles, setShowProfiles] = useState(false);
@@ -341,6 +341,28 @@ export default function LoginPage() {
         phone: '+91 98351 22901',
         icon: '🍚'
       }
+    ],
+    admin: [
+      {
+        id: 'admin-1',
+        name: 'Chief Operations Officer',
+        occupation: 'Farm2Flow Executive Staff',
+        location: 'Kolkata Headquarters',
+        address: 'Farm2Flow Technology Operations, Sector 5, Salt Lake, Kolkata',
+        email: 'admin@farm2flow.in',
+        phone: '+91 98000 00001',
+        icon: '🏢'
+      },
+      {
+        id: 'admin-2',
+        name: 'Treasury & Logistics Officer',
+        occupation: 'Financial Telemetry Auditor',
+        location: 'Operations Mandi Hub',
+        address: 'National Agri-Logistics Center, New Town, Kolkata',
+        email: 'treasury@farm2flow.in',
+        phone: '+91 98000 00002',
+        icon: '💼'
+      }
     ]
   };
 
@@ -360,7 +382,7 @@ export default function LoginPage() {
     return () => window.removeEventListener('farm2flow_accounts_updated', handleAccountsUpdated);
   }, []);
 
-  const handleProfileLogin = (profile: { id: string; name: string; location: string; address: string; email: string; isEnamVerified?: boolean; enamId?: string }, selectedRole: 'farmer' | 'buyer') => {
+  const handleProfileLogin = (profile: { id: string; name: string; location: string; address: string; email: string; isEnamVerified?: boolean; enamId?: string }, selectedRole: 'farmer' | 'buyer' | 'admin') => {
     setRole(selectedRole);
     setIdentifier(profile.email);
     setPassword('demo1234');
@@ -376,7 +398,7 @@ export default function LoginPage() {
         name: profile.name,
         location: profile.location,
         address: profile.address,
-        role: selectedRole === 'buyer' ? 'consumer' : 'farmer',
+        role: selectedRole === 'buyer' ? 'consumer' : selectedRole,
         isEnamVerified: isEnam,
         enamId: profile.enamId || (isEnam ? 'ENAM-APMC-WB-712409' : undefined),
         token: `f2f-token-${profile.id}-${Date.now()}`
@@ -387,7 +409,9 @@ export default function LoginPage() {
 
       setIsLoading(false);
 
-      if (selectedRole === 'buyer') {
+      if (selectedRole === 'admin') {
+        router.push('/admin');
+      } else if (selectedRole === 'buyer') {
         router.push('/buyer');
       } else {
         router.push('/farmer');
@@ -408,14 +432,44 @@ export default function LoginPage() {
     executeLogin(role);
   };
 
-  const executeLogin = (selectedRole: 'farmer' | 'buyer') => {
+  const executeLogin = (selectedRole: 'farmer' | 'buyer' | 'admin') => {
     setIsLoading(true);
     setError('');
 
     setTimeout(() => {
-      // 1. Check custom registered accounts first
       const cleanIdent = identifier.trim().toLowerCase();
       const cleanPhone = identifier.replace(/\s+/g, '');
+
+      // Special check for Admin Role
+      if (selectedRole === 'admin') {
+        const isAdminCred = cleanIdent.includes('admin') || cleanIdent.includes('treasury') || cleanIdent === 'root' || cleanIdent === '9800000001';
+        if (!isAdminCred && password !== 'admin123' && password !== 'demo1234') {
+          setIsLoading(false);
+          setError('Invalid Company Admin credentials. Use admin@farm2flow.in or click 1-Click Fast Sign In below.');
+          return;
+        }
+
+        const adminSession = {
+          id: 'admin-exec-1',
+          identifier: cleanIdent || 'admin@farm2flow.in',
+          name: cleanIdent.includes('treasury') ? 'Treasury & Logistics Officer' : 'Chief Operations Officer',
+          location: 'Kolkata Headquarters',
+          address: 'Farm2Flow Technology Operations, Sector 5, Salt Lake, Kolkata',
+          role: 'admin',
+          isEnamVerified: true,
+          token: `f2f-admin-token-${Date.now()}`
+        };
+
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('farm2flow_user_session', JSON.stringify(adminSession));
+        }
+
+        setIsLoading(false);
+        router.push('/admin');
+        return;
+      }
+
+      // 1. Check custom registered accounts first
       const registeredMatch = registeredAccounts.find(
         u => (u.email && u.email.toLowerCase() === cleanIdent) || u.phone.replace(/\s+/g, '') === cleanPhone
       );
@@ -452,8 +506,6 @@ export default function LoginPage() {
       if (typeof window !== 'undefined') {
         localStorage.setItem('farm2flow_user_session', JSON.stringify(userSession));
       }
-
-      setIsLoading(false);
 
       if (selectedRole === 'buyer') {
         router.push('/buyer');
@@ -548,21 +600,25 @@ export default function LoginPage() {
     <div
       className="min-h-screen relative flex flex-col justify-center items-center p-4 sm:p-6 bg-cover bg-center transition-all duration-700 select-none overflow-x-hidden"
       style={{
-        backgroundImage: isFarmerTheme
+        backgroundImage: role === 'admin'
+          ? "linear-gradient(rgba(8, 18, 30, 0.75), rgba(4, 10, 18, 0.90)), url('/login-bg.jpg')"
+          : isFarmerTheme
           ? "linear-gradient(rgba(10, 35, 18, 0.40), rgba(8, 28, 14, 0.60)), url('/login-bg.jpg')"
           : "linear-gradient(rgba(8, 30, 60, 0.25), rgba(4, 18, 40, 0.45)), url('/consumer-login-bg.jpg')"
       }}
     >
       {/* Top Floating Brand & Role Switcher */}
-      <div className="w-full max-w-[390px] flex items-center justify-between mb-4 z-10 px-1">
+      <div className="w-full max-w-[420px] flex items-center justify-between mb-4 z-10 px-1">
         <div className="flex items-center gap-2">
           <div className={`w-8 h-8 rounded-xl flex items-center justify-center text-white shadow-lg backdrop-blur-md border ${
-            isFarmerTheme
+            role === 'admin'
+              ? 'bg-amber-600/80 border-amber-300/40 shadow-amber-950/40'
+              : isFarmerTheme
               ? 'bg-emerald-600/80 border-emerald-300/40 shadow-emerald-950/40'
               : 'bg-blue-600/80 border-blue-300/40 shadow-blue-950/40'
           }`}>
             <span className="material-symbols-outlined text-[18px]">
-              {isFarmerTheme ? 'agriculture' : 'storefront'}
+              {role === 'admin' ? 'monitoring' : isFarmerTheme ? 'agriculture' : 'storefront'}
             </span>
           </div>
           <span className="text-[17px] font-black text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] tracking-tight">
@@ -571,11 +627,11 @@ export default function LoginPage() {
         </div>
 
         {/* Role Pill Switcher */}
-        <div className="flex items-center bg-black/35 backdrop-blur-md p-1 rounded-full border border-white/20 shadow-inner">
+        <div className="flex items-center bg-black/45 backdrop-blur-md p-1 rounded-full border border-white/20 shadow-inner">
           <button
             type="button"
             onClick={() => setRole('farmer')}
-            className={`px-3 py-1 rounded-full text-[11px] font-extrabold transition-all duration-300 ${
+            className={`px-2.5 py-1 rounded-full text-[10.5px] font-extrabold transition-all duration-300 ${
               isFarmerTheme
                 ? 'bg-gradient-to-r from-lime-500 to-emerald-600 text-white shadow-md'
                 : 'text-white/80 hover:text-white'
@@ -586,13 +642,24 @@ export default function LoginPage() {
           <button
             type="button"
             onClick={() => setRole('buyer')}
-            className={`px-3 py-1 rounded-full text-[11px] font-extrabold transition-all duration-300 ${
-              !isFarmerTheme
+            className={`px-2.5 py-1 rounded-full text-[10.5px] font-extrabold transition-all duration-300 ${
+              role === 'buyer'
                 ? 'bg-gradient-to-r from-sky-400 to-blue-600 text-white shadow-md'
                 : 'text-white/80 hover:text-white'
             }`}
           >
             🛍️ Consumer
+          </button>
+          <button
+            type="button"
+            onClick={() => setRole('admin')}
+            className={`px-2.5 py-1 rounded-full text-[10.5px] font-extrabold transition-all duration-300 ${
+              role === 'admin'
+                ? 'bg-gradient-to-r from-amber-500 to-emerald-500 text-white shadow-md ring-1 ring-white/40'
+                : 'text-amber-200/90 hover:text-white'
+            }`}
+          >
+            🏢 Admin
           </button>
         </div>
       </div>
@@ -601,23 +668,32 @@ export default function LoginPage() {
       <div
         className="relative w-full max-w-[390px] rounded-[36px] p-7 sm:p-8 flex flex-col gap-6 text-white z-10 transition-all duration-500 shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-white/35"
         style={{
-          background: isFarmerTheme
+          background: role === 'admin'
+            ? 'rgba(15, 23, 42, 0.45)'
+            : isFarmerTheme
             ? 'rgba(255, 255, 255, 0.14)'
             : 'rgba(255, 255, 255, 0.16)',
           backdropFilter: 'blur(28px)',
           WebkitBackdropFilter: 'blur(28px)',
-          boxShadow: isFarmerTheme
-            ? '0 25px 50px -12px rgba(0, 0, 0, 0.55), inset 0 1px 1px 0 rgba(255, 255, 255, 0.55)'
-            : '0 25px 50px -12px rgba(0, 0, 0, 0.55), inset 0 1px 1px 0 rgba(255, 255, 255, 0.55)'
+          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.55), inset 0 1px 1px 0 rgba(255, 255, 255, 0.45)'
         }}
       >
         {/* Card Header Title */}
         <div className="flex flex-col gap-1.5">
-          <h2 className="text-[34px] font-black text-white tracking-tight leading-tight drop-shadow-sm">
-            Login
-          </h2>
+          <div className="flex items-center justify-between">
+            <h2 className="text-[34px] font-black text-white tracking-tight leading-tight drop-shadow-sm">
+              Login
+            </h2>
+            {role === 'admin' && (
+              <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-md bg-amber-500/30 text-amber-300 border border-amber-400/50">
+                Company Portal
+              </span>
+            )}
+          </div>
           <p className="text-[13px] text-white/85 font-medium leading-snug">
-            Welcome back please login to your {isFarmerTheme ? 'farmer' : 'consumer'} account
+            {role === 'admin'
+              ? 'Authorized operations staff: live telemetry & national transactions'
+              : `Welcome back please login to your ${isFarmerTheme ? 'farmer' : 'consumer'} account`}
           </p>
         </div>
 
@@ -684,23 +760,29 @@ export default function LoginPage() {
             <div className="flex items-center justify-between px-0.5">
               <span className="text-[11px] font-black uppercase tracking-wider text-white/90 flex items-center gap-1">
                 <span className="material-symbols-outlined text-[15px] text-amber-300">bolt</span>
-                <span>Fast Sign In ({isFarmerTheme ? 'Farmers' : 'Consumers'})</span>
+                <span>
+                  Fast Sign In ({role === 'admin' ? 'Company Staff' : isFarmerTheme ? 'Farmers' : 'Consumers'})
+                </span>
               </span>
               <button
                 type="button"
                 onClick={() => setShowProfiles(!showProfiles)}
                 className={`text-[11px] font-extrabold underline transition-colors cursor-pointer ${
-                  isFarmerTheme ? 'text-lime-300 hover:text-lime-200' : 'text-sky-300 hover:text-sky-200'
+                  role === 'admin'
+                    ? 'text-amber-300 hover:text-amber-200'
+                    : isFarmerTheme
+                    ? 'text-lime-300 hover:text-lime-200'
+                    : 'text-sky-300 hover:text-sky-200'
                 }`}
               >
-                {showProfiles ? 'Close All' : 'View All (15+)'}
+                {showProfiles ? 'Close All' : 'View All'}
               </button>
             </div>
 
             {/* Horizontal Fast Sign In Quick Chips */}
             <div className="flex items-center gap-2 overflow-x-auto pb-1.5 no-scrollbar">
-              {/* Show top 5 instant click badges */}
-              {(role === 'farmer' ? DEMO_PROFILES.farmer : DEMO_PROFILES.buyer).slice(0, 5).map(profile => (
+              {/* Show instant click badges */}
+              {(role === 'admin' ? DEMO_PROFILES.admin : role === 'farmer' ? DEMO_PROFILES.farmer : DEMO_PROFILES.buyer).slice(0, 5).map(profile => (
                 <button
                   key={profile.id}
                   type="button"
@@ -710,20 +792,20 @@ export default function LoginPage() {
                 >
                   <span className="text-[16px]">{profile.icon}</span>
                   <div className="min-w-0">
-                    <p className="text-[11px] font-extrabold text-white leading-tight truncate max-w-[100px]">{profile.name}</p>
-                    <p className="text-[9px] text-white/70 leading-tight truncate max-w-[100px]">{profile.occupation}</p>
+                    <p className="text-[11px] font-extrabold text-white leading-tight truncate max-w-[120px]">{profile.name}</p>
+                    <p className="text-[9px] text-white/70 leading-tight truncate max-w-[120px]">{profile.occupation}</p>
                   </div>
                 </button>
               ))}
             </div>
           </div>
 
-          {/* Collapsible Full Verified Profiles List (All 15 Consumers / 15 Farmers + Custom Accounts) */}
+          {/* Collapsible Full Verified Profiles List */}
           {showProfiles && (
             <div className="p-3 bg-black/50 backdrop-blur-2xl rounded-2xl border border-white/30 flex flex-col gap-2 max-h-[220px] overflow-y-auto no-scrollbar animate-in slide-in-from-top-2 duration-200 shadow-2xl">
               <div className="flex items-center justify-between pb-1.5 border-b border-white/20 sticky top-0 bg-transparent z-10">
                 <span className="text-[11px] font-black uppercase tracking-wider text-white">
-                  {isFarmerTheme ? '🌾 All 15 Verified Farmers' : '🛍️ All 15 Verified Consumers'}
+                  {role === 'admin' ? '🏢 Authorized Company Admins' : isFarmerTheme ? '🌾 All 15 Verified Farmers' : '🛍️ All 15 Verified Consumers'}
                 </span>
                 <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-white/20 text-white">
                   1-Click Sign In
@@ -731,7 +813,7 @@ export default function LoginPage() {
               </div>
 
               {/* Custom registered accounts */}
-              {activeCustomAccounts.map(account => (
+              {role !== 'admin' && activeCustomAccounts.map(account => (
                 <button
                   key={account.id}
                   type="button"
@@ -758,8 +840,8 @@ export default function LoginPage() {
                 </button>
               ))}
 
-              {/* All 15 Demo Profiles */}
-              {(role === 'farmer' ? DEMO_PROFILES.farmer : DEMO_PROFILES.buyer).map(profile => (
+              {/* Demo Profiles */}
+              {(role === 'admin' ? DEMO_PROFILES.admin : role === 'farmer' ? DEMO_PROFILES.farmer : DEMO_PROFILES.buyer).map(profile => (
                 <button
                   key={profile.id}
                   type="button"
@@ -787,7 +869,9 @@ export default function LoginPage() {
             type="submit"
             disabled={isLoading}
             className={`w-full h-[54px] rounded-2xl text-[16px] font-black transition-all duration-300 shadow-lg active:scale-98 flex items-center justify-center cursor-pointer mt-1 ${
-              isFarmerTheme
+              role === 'admin'
+                ? 'bg-gradient-to-r from-amber-500 via-orange-500 to-emerald-600 hover:from-amber-400 hover:to-emerald-500 text-white shadow-amber-950/40'
+                : isFarmerTheme
                 ? 'bg-gradient-to-r from-[#b7c920] to-[#25a04e] hover:from-[#c5d826] hover:to-[#2cb859] text-white shadow-emerald-950/40'
                 : 'bg-gradient-to-r from-[#1e88e5] to-[#0d47a1] hover:from-[#2196f3] hover:to-[#1565c0] text-white shadow-blue-950/40'
             }`}
@@ -809,7 +893,7 @@ export default function LoginPage() {
           <button
             type="button"
             onClick={() => {
-              setRegRole(role);
+              setRegRole(role === 'admin' ? 'farmer' : role);
               setIsRegisterModalOpen(true);
             }}
             className="font-black text-white hover:underline transition-all cursor-pointer"

@@ -702,11 +702,11 @@ export const PanIndiaBuyerMapModal: React.FC<PanIndiaBuyerMapModalProps> = ({
                   </button>
                 </div>
               ) : (
-                filteredSellers.map(seller => {
+                filteredSellers.map((seller, idx) => {
                   const isSelected = selectedSeller?.id === seller.id;
                   return (
                     <div
-                      key={seller.id}
+                      key={`${seller.id}-${idx}`}
                       onClick={() => handleFlyToSeller(seller)}
                       className={`p-2.5 rounded-2xl border transition-all cursor-pointer flex flex-col gap-1.5 ${
                         isSelected 

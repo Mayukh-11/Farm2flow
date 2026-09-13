@@ -209,7 +209,7 @@ export const InDriveMapModal: React.FC<InDriveMapModalProps> = ({
       err => {
         setIsLocatingGPS(false);
         setGpsError('GPS permission denied or timed out. Please select from below.');
-        console.warn('GPS Error:', err);
+        console.warn('GPS Error:', err.message || 'Unable to retrieve position');
       },
       { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
     );
